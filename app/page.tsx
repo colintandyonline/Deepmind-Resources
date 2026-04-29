@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { Sidebar } from '@/components/platform/sidebar'
 import { HeroSection } from '@/components/platform/hero-section'
 import { LearningPath } from '@/components/platform/learning-path'
@@ -121,22 +122,63 @@ export default function HomePage() {
 
           {/* Footer */}
           <footer className="mt-12 pb-8 border-t border-sand/10 pt-8 lg:mt-16">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex flex-wrap items-center justify-center gap-2 text-sand/40 text-sm sm:justify-start">
-                <span>DeepMindResources</span>
-                <span className="text-sand/20">|</span>
-                <span>AI Technical Training Platform</span>
+            <div className="glass-card rounded-2xl border border-sand/10 bg-white/80 p-6 shadow-sm sm:p-8">
+              <div className="grid gap-8 lg:grid-cols-[auto_1fr_auto] lg:items-center">
+                <div className="flex justify-center lg:justify-start">
+                  <div className="relative h-28 w-28 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-sand/10 sm:h-32 sm:w-32">
+                    <Image
+                      src="/brand/deepmind-resources-logo.png"
+                      alt="DeepMindResources logo"
+                      fill
+                      sizes="128px"
+                      className="object-contain p-2"
+                      priority={false}
+                    />
+                  </div>
+                </div>
+
+                <div className="text-center lg:text-left">
+                  <p className="font-mono text-xs uppercase tracking-[0.22em] text-signal-green">
+                    Verified AI learning intelligence
+                  </p>
+                  <h2 className="mt-3 text-2xl font-bold text-sand">
+                    DeepMindResources
+                  </h2>
+                  <p className="mt-3 max-w-2xl text-sm leading-7 text-sand/60 sm:text-base">
+                    A living AI training and tool-intelligence platform that turns verified AI
+                    updates into practical lessons, sandbox tasks, and business-ready learning
+                    paths.
+                  </p>
+
+                  <div className="mt-5 flex flex-wrap justify-center gap-2 lg:justify-start">
+                    <span className="rounded-full bg-signal-green/10 px-3 py-1 text-xs font-medium text-signal-green">
+                      Live AI Intelligence
+                    </span>
+                    <span className="rounded-full bg-signal-green/10 px-3 py-1 text-xs font-medium text-signal-green">
+                      Agentic Sandbox
+                    </span>
+                    <span className="rounded-full bg-signal-green/10 px-3 py-1 text-xs font-medium text-signal-green">
+                      Business AI Training
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid gap-3 text-center text-sm sm:grid-cols-3 lg:grid-cols-1 lg:text-right">
+                  <a href="#" className="text-sand/50 hover:text-signal-green transition-colors">
+                    Academy
+                  </a>
+                  <a href="#" className="text-sand/50 hover:text-signal-green transition-colors">
+                    Sandbox
+                  </a>
+                  <a href="#" className="text-sand/50 hover:text-signal-green transition-colors">
+                    Methodology
+                  </a>
+                </div>
               </div>
-              <div className="flex items-center gap-6 text-sm">
-                <a href="#" className="text-sand/40 hover:text-signal-green transition-colors">
-                  Documentation
-                </a>
-                <a href="#" className="text-sand/40 hover:text-signal-green transition-colors">
-                  Support
-                </a>
-                <a href="#" className="text-sand/40 hover:text-signal-green transition-colors">
-                  Privacy
-                </a>
+
+              <div className="mt-8 flex flex-col gap-3 border-t border-sand/10 pt-5 text-center text-xs text-sand/40 sm:flex-row sm:items-center sm:justify-between sm:text-left">
+                <p>© 2026 DeepMindResources. Built for verified AI skill gain.</p>
+                <p>AI update → verified meaning → practical lesson → sandbox task.</p>
               </div>
             </div>
           </footer>
