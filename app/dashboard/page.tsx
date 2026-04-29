@@ -23,30 +23,30 @@ export default async function DashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-obsidian px-4 py-10 text-sand sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-obsidian px-4 py-8 text-sand sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-7xl">
-        <header className="rounded-3xl border border-sand/10 bg-white/80 p-6 shadow-sm sm:p-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <p className="font-mono text-xs uppercase tracking-[0.24em] text-signal-green">
-                DeepMindResources dashboard
-              </p>
+        <header className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+            <div className="max-w-4xl">
+              <span className="inline-flex rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                Member dashboard
+              </span>
 
-              <h1 className="mt-4 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
-                Welcome back
+              <h1 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl lg:text-5xl">
+                Your AI learning workspace
               </h1>
 
-              <p className="mt-3 max-w-3xl text-sm leading-7 text-sand/60 sm:text-base">
-                You are signed in as {user.email}. This dashboard is the protected starting point
-                for version-aware AI lessons, sandbox practice, tool intelligence, and future
-                business training features.
+              <p className="mt-4 max-w-3xl text-base leading-8 text-sand/65">
+                Welcome back{user.email ? `, ${user.email}` : ''}. Continue building practical AI
+                skills with structured learning, sandbox practice, verified tool intelligence, and
+                update-aware training designed to stay useful as AI changes.
               </p>
             </div>
 
             <form action={signOut}>
               <button
                 type="submit"
-                className="rounded-2xl border border-sand/10 bg-white px-5 py-3 text-sm font-bold text-sand shadow-sm transition hover:border-signal-green/30 hover:text-signal-green"
+                className="rounded-2xl border border-sand/10 bg-white px-5 py-3 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
               >
                 Sign out
               </button>
@@ -55,69 +55,78 @@ export default async function DashboardPage() {
         </header>
 
         <section className="mt-8 grid gap-6 lg:grid-cols-3">
-          <article className="rounded-3xl border border-sand/10 bg-white/80 p-6 shadow-sm">
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-signal-green">
+          <article className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-7">
+            <span className="inline-flex rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
               Academy
-            </p>
-            <h2 className="mt-4 text-xl font-bold text-sand">Version-aware learning</h2>
-            <p className="mt-3 text-sm leading-6 text-sand/60">
-              The database foundation now supports learning paths, modules, lessons, lesson
-              versions, and progress tied to the exact lesson version completed.
+            </span>
+
+            <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand">
+              Learn AI step by step
+            </h2>
+
+            <p className="mt-4 text-sm leading-7 text-sand/65">
+              Follow clear learning paths from AI fundamentals through prompt engineering, tool
+              selection, workflows, agents, RAG, and validation.
             </p>
           </article>
 
-          <article className="rounded-3xl border border-sand/10 bg-white/80 p-6 shadow-sm">
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-signal-green">
+          <article className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-7">
+            <span className="inline-flex rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
               Sandbox
-            </p>
-            <h2 className="mt-4 text-xl font-bold text-sand">Practical AI skill practice</h2>
-            <p className="mt-3 text-sm leading-6 text-sand/60">
-              Sandbox task versions and sandbox attempts are ready in the database, so future
-              practice tasks can evolve as AI tools and models change.
+            </span>
+
+            <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand">
+              Practise with real tasks
+            </h2>
+
+            <p className="mt-4 text-sm leading-7 text-sand/65">
+              Build skill through practical exercises for prompts, tool use, debugging, retrieval,
+              workflow design, and business automation.
             </p>
           </article>
 
-          <article className="rounded-3xl border border-sand/10 bg-white/80 p-6 shadow-sm">
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-signal-green">
+          <article className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-7">
+            <span className="inline-flex rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
               Intelligence
-            </p>
-            <h2 className="mt-4 text-xl font-bold text-sand">Verified AI updates</h2>
-            <p className="mt-3 text-sm leading-6 text-sand/60">
-              Source tracking, AI update records, tool intelligence, comparison versions, and
-              validation reviews are now part of the foundation.
+            </span>
+
+            <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand">
+              Stay current as AI changes
+            </h2>
+
+            <p className="mt-4 text-sm leading-7 text-sand/65">
+              Track important AI updates, tool changes, source-backed recommendations, and learning
+              refreshers that help you keep your skills relevant.
             </p>
           </article>
         </section>
 
-        <section className="mt-8 rounded-3xl border border-sand/10 bg-white/80 p-6 shadow-sm sm:p-8">
-          <div className="grid gap-8 lg:grid-cols-[1fr_0.85fr] lg:items-start">
+        <section className="mt-8 rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
+          <div className="grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-start">
             <div>
-              <p className="font-mono text-xs uppercase tracking-[0.24em] text-signal-green">
-                Current build stage
-              </p>
+              <span className="inline-flex rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                Your progress
+              </span>
 
-              <h2 className="mt-4 text-2xl font-bold text-sand">
-                Database foundation complete, auth shell now starting
+              <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand">
+                Build practical AI confidence over time
               </h2>
 
-              <p className="mt-4 text-sm leading-7 text-sand/60 sm:text-base">
-                The next stage is to carefully add account/profile pages, homepage login/logout
-                controls, and small seed content without breaking the current front page or turning
-                DeepMindResources into a static course website.
+              <p className="mt-4 max-w-3xl text-base leading-8 text-sand/65">
+                DeepMindResources is designed around practical skill gain: understand what changed,
+                learn what matters, practise the task, and keep your knowledge fresh when AI tools
+                and platforms move on.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-sand/10 bg-white p-5">
-              <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-sand/60">
-                Next safe steps
-              </h3>
+            <div className="rounded-2xl border border-sand/10 bg-[#EAF7FF] p-5">
+              <h3 className="text-lg font-bold text-sand">What your workspace is for</h3>
 
-              <ul className="mt-4 space-y-3 text-sm leading-6 text-sand/60">
-                <li>1. Add homepage sign-in/sign-out state.</li>
-                <li>2. Add account/profile page.</li>
-                <li>3. Brand Supabase email templates.</li>
-                <li>4. Seed one tiny versioned lesson flow.</li>
-                <li>5. Connect public Academy pages later.</li>
+              <ul className="mt-4 space-y-3 text-sm leading-7 text-sand/65">
+                <li>Follow structured AI learning paths.</li>
+                <li>Practise with sandbox tasks and workflow exercises.</li>
+                <li>Keep track of important AI tool and platform changes.</li>
+                <li>Refresh skills when lessons or tools are updated.</li>
               </ul>
             </div>
           </div>
@@ -126,7 +135,7 @@ export default async function DashboardPage() {
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Link
             href="/"
-            className="rounded-2xl bg-signal-green px-5 py-3 text-center text-sm font-bold text-white shadow-sm transition hover:bg-signal-green/90"
+            className="rounded-2xl bg-[#123BFF] px-5 py-3 text-center text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
           >
             Return to homepage
           </Link>
