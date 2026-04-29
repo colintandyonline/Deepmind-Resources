@@ -1,138 +1,154 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Activity, Zap, BookOpen, Code, Award, RefreshCw } from 'lucide-react'
 
-interface FeedItem {
+interface IntelligenceItem {
   id: string
-  type: 'update' | 'achievement' | 'lesson' | 'code'
+  type: 'verified' | 'masterBrain' | 'toolSignal' | 'lessonUpdate' | 'sandboxTask'
   title: string
   description: string
-  timestamp: Date
+  tag: string
+  impact: string
+  age: string
   isNew?: boolean
 }
 
+interface QueueMetric {
+  label: string
+  value: string
+  description: string
+}
+
 const feedIcons = {
-  update: Activity,
-  achievement: Award,
-  lesson: BookOpen,
-  code: Code,
+  verified: Activity,
+  masterBrain: Award,
+  toolSignal: Zap,
+  lessonUpdate: BookOpen,
+  sandboxTask: Code,
 }
 
-// Mock feed data generator
-function generateMockFeedItem(): FeedItem {
-  const types: FeedItem['type'][] = ['update', 'achievement', 'lesson', 'code']
-  const type = types[Math.floor(Math.random() * types.length)]
+const queueMetrics: QueueMetric[] = [
+  {
+    label: 'Verified Updates',
+    value: '12',
+    description: 'source-checked signals',
+  },
+  {
+    label: 'Master Brain Queue',
+    value: '7',
+    description: 'claims awaiting scoring',
+  },
+  {
+    label: 'Tool Signals',
+    value: '18',
+    description: 'capability changes watched',
+  },
+  {
+    label: 'Lesson Updates Pending',
+    value: '4',
+    description: 'academy refresh candidates',
+  },
+]
 
-  const templates = {
-    update: [
-      { title: 'New Module Available', description: 'Advanced RAG Patterns now unlocked' },
-      { title: 'System Update', description: 'Sandbox environment upgraded to v2.4' },
-      { title: 'Content Refresh', description: 'LangChain documentation updated' },
-    ],
-    achievement: [
-      { title: 'Milestone Reached', description: 'First agent deployed successfully' },
-      { title: 'Streak Bonus', description: '7-day learning streak achieved' },
-      { title: 'XP Earned', description: 'Completed prompt optimization challenge' },
-    ],
-    lesson: [
-      { title: 'Recommended', description: 'Tool Calling Fundamentals - Start now' },
-      { title: 'Continue Learning', description: 'Memory Systems - 45% complete' },
-      { title: 'New Content', description: 'Multi-Modal Agents deep dive' },
-    ],
-    code: [
-      { title: 'Sandbox Ready', description: 'Your agent code passed all tests' },
-      { title: 'Code Review', description: 'Optimization suggestions available' },
-      { title: 'Template Added', description: 'ReAct pattern template imported' },
-    ],
-  }
-
-  const template = templates[type][Math.floor(Math.random() * templates[type].length)]
-
-  return {
-    id: Math.random().toString(36).substring(7),
-    type,
-    ...template,
-    timestamp: new Date(),
-    isNew: true,
-  }
-}
+const intelligenceItems: IntelligenceItem[] = [
+  {
+    id: 'verified-model-update',
+    type: 'verified',
+    title: 'Model release note detected',
+    description:
+      'Scout Agent has queued official platform notes for validation before lesson impact mapping.',
+    tag: 'Verified Update',
+    impact: 'Affects model comparison',
+    age: '2m ago',
+  },
+  {
+    id: 'tool-capability-change',
+    type: 'toolSignal',
+    title: 'Tool capability change flagged',
+    description:
+      'Tool Agent has marked a coding-assistant update for practical testing against real tasks.',
+    tag: 'Tool Signal',
+    impact: 'Affects tool selection',
+    age: '9m ago',
+  },
+  {
+    id: 'master-brain-entry',
+    type: 'masterBrain',
+    title: 'Master Brain entry pending',
+    description:
+      'A source summary, confidence score, and linked claims are waiting for Validator Agent review.',
+    tag: 'Master Brain Queue',
+    impact: 'Needs source check',
+    age: '17m ago',
+  },
+  {
+    id: 'lesson-refresh-needed',
+    type: 'lessonUpdate',
+    title: 'Lesson update recommended',
+    description:
+      'Prompt Engineering material may need a worked example refresh after a platform behaviour change.',
+    tag: 'Lesson Update Pending',
+    impact: 'Affects Academy',
+    age: '31m ago',
+  },
+  {
+    id: 'sandbox-task-candidate',
+    type: 'sandboxTask',
+    title: 'Sandbox task candidate created',
+    description:
+      'A model-comparison exercise has been proposed so learners can test the change hands-on.',
+    tag: 'Sandbox Task',
+    impact: 'Affects Agentic Sandbox',
+    age: '46m ago',
+  },
+]
 
 interface LiveFeedProps {
   className?: string
 }
 
 export function LiveFeed({ className }: LiveFeedProps) {
-  const [items, setItems] = useState<FeedItem[]>([])
+  const [items, setItems] = useState<IntelligenceItem[]>(intelligenceItems)
   const [isConnected, setIsConnected] = useState(true)
 
-  // Initialize with some items
-  useEffect(() => {
-    const initial = Array.from({ length: 5 }, () => ({
-      ...generateMockFeedItem(),
-      isNew: false,
-      timestamp: new Date(Date.now() - Math.random() * 3600000),
-    }))
-    setItems(initial)
-  }, [])
-
-  // Simulate real-time updates
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (isConnected) {
-        setItems((prev) => {
-          const newItem = generateMockFeedItem()
-          const updated = [newItem, ...prev.slice(0, 9)]
-          // Remove "new" flag from previous items
-          return updated.map((item, i) => ({
-            ...item,
-            isNew: i === 0,
-          }))
-        })
+  const refreshQueue = () => {
+    setItems((currentItems) => {
+      const [firstItem, ...remainingItems] = currentItems
+      const refreshedFirstItem: IntelligenceItem = {
+        ...firstItem,
+        age: 'just now',
+        isNew: true,
       }
-    }, 8000) // New item every 8 seconds
 
-    return () => clearInterval(interval)
-  }, [isConnected])
-
-  // Clear "new" flag after animation
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setItems((prev) => prev.map((item) => ({ ...item, isNew: false })))
-    }, 2000)
-
-    return () => clearTimeout(timeout)
-  }, [items])
-
-  const formatTime = (date: Date) => {
-    const now = new Date()
-    const diff = Math.floor((now.getTime() - date.getTime()) / 1000)
-
-    if (diff < 60) return 'just now'
-    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
-    return date.toLocaleDateString()
+      return [refreshedFirstItem, ...remainingItems].map((item, index) => ({
+        ...item,
+        isNew: index === 0,
+      }))
+    })
   }
 
   return (
     <div className={cn('glass-card rounded-xl overflow-hidden', className)}>
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-sand/10">
+      <div className="flex flex-col gap-4 px-5 py-4 border-b border-sand/10 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-3">
-          <div className="relative">
+          <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-signal-green/10">
             <Activity className="w-5 h-5 text-signal-green" />
-            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-signal-green rounded-full animate-pulse" />
+            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-signal-green rounded-full animate-pulse" />
           </div>
           <div>
-            <h2 className="font-semibold text-sand">System Calibration</h2>
-            <p className="text-xs text-sand/50 font-mono">LIVE KNOWLEDGE FEED</p>
+            <h2 className="font-semibold text-sand">Live AI Intelligence</h2>
+            <p className="text-xs text-sand/50 font-mono">
+              VERIFIED UPDATES → PRACTICAL SKILL ACTIONS
+            </p>
           </div>
         </div>
         <button
           onClick={() => setIsConnected(!isConnected)}
           className={cn(
-            'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-all',
+            'flex w-fit items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-all',
             isConnected
               ? 'bg-signal-green/10 text-signal-green'
               : 'bg-sand/10 text-sand/50'
@@ -144,8 +160,26 @@ export function LiveFeed({ className }: LiveFeedProps) {
               isConnected ? 'bg-signal-green animate-pulse' : 'bg-sand/30'
             )}
           />
-          {isConnected ? 'CONNECTED' : 'PAUSED'}
+          {isConnected ? 'TRACKING' : 'PAUSED'}
         </button>
+      </div>
+
+      {/* Queue Metrics */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 px-5 py-4 border-b border-sand/10 bg-sand/[0.02]">
+        {queueMetrics.map((metric) => (
+          <div
+            key={metric.label}
+            className="rounded-lg border border-sand/10 bg-white/60 px-3 py-3"
+          >
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="text-xs font-medium text-sand/55">{metric.label}</span>
+              <span className="text-lg font-bold font-mono text-signal-green">
+                {metric.value}
+              </span>
+            </div>
+            <p className="mt-1 text-[11px] text-sand/40">{metric.description}</p>
+          </div>
+        ))}
       </div>
 
       {/* Feed Items */}
@@ -178,27 +212,31 @@ export function LiveFeed({ className }: LiveFeedProps) {
 
               {/* Content */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h3
-                    className={cn(
-                      'font-medium text-sm truncate',
-                      item.isNew ? 'text-signal-green' : 'text-sand'
-                    )}
-                  >
-                    {item.title}
-                  </h3>
+                <div className="flex flex-wrap items-center gap-2 mb-1">
+                  <span className="px-1.5 py-0.5 text-[10px] font-bold bg-signal-green/10 text-signal-green rounded uppercase tracking-wide">
+                    {item.tag}
+                  </span>
                   {item.isNew && (
                     <span className="px-1.5 py-0.5 text-[10px] font-bold bg-signal-green/20 text-signal-green rounded">
                       NEW
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-sand/50 truncate">{item.description}</p>
+                <h3
+                  className={cn(
+                    'font-medium text-sm mb-1',
+                    item.isNew ? 'text-signal-green' : 'text-sand'
+                  )}
+                >
+                  {item.title}
+                </h3>
+                <p className="text-xs text-sand/50 leading-relaxed">{item.description}</p>
+                <p className="mt-2 text-xs font-medium text-sand/45">{item.impact}</p>
               </div>
 
               {/* Timestamp */}
               <span className="text-xs text-sand/30 font-mono shrink-0">
-                {formatTime(item.timestamp)}
+                {item.age}
               </span>
             </div>
           )
@@ -207,13 +245,17 @@ export function LiveFeed({ className }: LiveFeedProps) {
 
       {/* Footer */}
       <div className="px-5 py-3 border-t border-sand/10 bg-sand/[0.02]">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-xs text-sand/40 font-mono">
-            {items.length} updates in queue
+            AI update → verified meaning → practical lesson → sandbox task
           </span>
-          <button className="flex items-center gap-1.5 text-xs text-signal-green/70 hover:text-signal-green transition-colors">
+          <button
+            onClick={refreshQueue}
+            disabled={!isConnected}
+            className="flex w-fit items-center gap-1.5 text-xs text-signal-green/70 hover:text-signal-green transition-colors disabled:cursor-not-allowed disabled:text-sand/30"
+          >
             <RefreshCw className="w-3 h-3" />
-            Refresh
+            Refresh queue
           </button>
         </div>
       </div>
