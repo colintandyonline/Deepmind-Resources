@@ -7,25 +7,54 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
-  icons: {
-    icon: [
+  metadataBase: new URL('https://deepmindresources.pro'),
+  title: {
+    default: 'DeepMindResources | Live AI Training and Tool Intelligence',
+    template: '%s | DeepMindResources',
+  },
+  description:
+    'DeepMindResources is a living AI training and tool-intelligence platform that turns verified AI updates into practical lessons, sandbox tasks, and business-ready learning paths.',
+  applicationName: 'DeepMindResources',
+  generator: 'DeepMindResources',
+  keywords: [
+    'AI training',
+    'agentic AI systems',
+    'AI tool comparison',
+    'prompt engineering',
+    'AI agents',
+    'RAG training',
+    'business AI training',
+    'AI sandbox',
+    'AI skills',
+    'live AI intelligence',
+  ],
+  openGraph: {
+    title: 'DeepMindResources | Live AI Training and Tool Intelligence',
+    description:
+      'Learn AI from beginner to agentic systems with verified lessons, live AI intelligence, tool comparisons, and practical sandbox training.',
+    url: 'https://deepmindresources.pro',
+    siteName: 'DeepMindResources',
+    images: [
       {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
+        url: '/brand/deepmind-resources-logo.png',
+        width: 512,
+        height: 512,
+        alt: 'DeepMindResources logo',
       },
     ],
-    apple: '/apple-icon.png',
+    locale: 'en_GB',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'DeepMindResources | Live AI Training and Tool Intelligence',
+    description:
+      'Verified AI updates turned into practical lessons, sandbox tasks, tool intelligence, and business-ready learning paths.',
+    images: ['/brand/deepmind-resources-logo.png'],
+  },
+  icons: {
+    icon: '/brand/deepmind-resources-emblem.png',
+    apple: '/brand/deepmind-resources-emblem.png',
   },
 }
 
