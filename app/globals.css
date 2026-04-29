@@ -1,110 +1,131 @@
-@import 'tailwindcss';
+﻿@import 'tailwindcss';
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
-:root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
+/*
+  DeepMindResources Brand Theme
+  Purpose:
+  - Keep the original dashboard structure.
+  - Replace the black/green Obsidian look with a blue/white brand system.
+  - Preserve existing class names such as bg-obsidian, text-sand, and text-signal-green
+    so the components do not need to be rewritten yet.
+*/
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+:root {
+  /* DeepMindResources brand palette */
+  --dm-navy: #061b5b;
+  --dm-royal: #123bff;
+  --dm-electric: #0a63ff;
+  --dm-cyan: #45c9ff;
+  --dm-sky: #eaf7ff;
+  --dm-soft: #f4fbff;
+  --dm-white: #ffffff;
+  --dm-text: #07152f;
+  --dm-muted: #40516f;
+  --dm-border: rgba(18, 59, 255, 0.14);
+
+  /*
+    Legacy component tokens.
+    Existing components use these names heavily, so we remap them instead of editing
+    every component at once.
+  */
+  --obsidian: #f4fbff;
+  --sand: #07152f;
+  --signal-green: #123bff;
+  --signal-green-dim: #0a63ff;
+
+  /* Semantic tokens */
+  --background: #f4fbff;
+  --foreground: #07152f;
+
+  --card: rgba(255, 255, 255, 0.86);
+  --card-foreground: #07152f;
+
+  --popover: #ffffff;
+  --popover-foreground: #07152f;
+
+  --primary: #123bff;
+  --primary-foreground: #ffffff;
+
+  --secondary: rgba(18, 59, 255, 0.08);
+  --secondary-foreground: #061b5b;
+
+  --muted: rgba(6, 27, 91, 0.06);
+  --muted-foreground: rgba(7, 21, 47, 0.64);
+
+  --accent: #0a63ff;
+  --accent-foreground: #ffffff;
+
+  --destructive: #e5484d;
+  --destructive-foreground: #ffffff;
+
+  --border: rgba(18, 59, 255, 0.14);
+  --input: rgba(18, 59, 255, 0.12);
+  --ring: #123bff;
+
+  --chart-1: #123bff;
+  --chart-2: #0a63ff;
+  --chart-3: #45c9ff;
+  --chart-4: #061b5b;
+  --chart-5: #7aa7ff;
+
+  --radius: 0.75rem;
+
+  /* Sidebar tokens */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #07152f;
+  --sidebar-primary: #123bff;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(18, 59, 255, 0.08);
+  --sidebar-accent-foreground: #123bff;
+  --sidebar-border: rgba(18, 59, 255, 0.12);
+  --sidebar-ring: #123bff;
 }
 
 @theme inline {
-  --font-sans: 'Geist', 'Geist Fallback';
-  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --font-sans: 'Geist', 'Geist Fallback', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'Geist Mono Fallback', monospace;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
+
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -113,13 +134,152 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /*
+    Legacy colour utilities kept for existing components:
+    bg-obsidian, text-sand, text-signal-green, etc.
+  */
+  --color-obsidian: #f4fbff;
+  --color-sand: #07152f;
+  --color-signal-green: #123bff;
+  --color-signal-green-dim: #0a63ff;
+
+  /* Direct brand utilities for future components */
+  --color-dm-navy: #061b5b;
+  --color-dm-royal: #123bff;
+  --color-dm-electric: #0a63ff;
+  --color-dm-cyan: #45c9ff;
+  --color-dm-sky: #eaf7ff;
+  --color-dm-soft: #f4fbff;
+  --color-dm-text: #07152f;
+  --color-dm-muted: #40516f;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
+
+  html {
+    min-height: 100%;
+    background: #f4fbff;
   }
+
+  body {
+    min-height: 100%;
+    background:
+      radial-gradient(circle at top right, rgba(69, 201, 255, 0.18), transparent 32rem),
+      radial-gradient(circle at top left, rgba(18, 59, 255, 0.10), transparent 28rem),
+      #f4fbff;
+    color: #07152f;
+    text-rendering: geometricPrecision;
+  }
+}
+
+/* Brand pulse animation */
+@keyframes pulse-signal {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(18, 59, 255, 0.28);
+  }
+
+  50% {
+    opacity: 0.86;
+    box-shadow: 0 0 0 8px rgba(18, 59, 255, 0);
+  }
+}
+
+@keyframes glow-signal {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(18, 59, 255, 0.20);
+  }
+
+  50% {
+    box-shadow: 0 0 24px rgba(10, 99, 255, 0.32);
+  }
+}
+
+@keyframes scan-line {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes typing-cursor {
+  0%, 50% {
+    opacity: 1;
+  }
+
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+.animate-pulse-signal {
+  animation: pulse-signal 2s ease-in-out infinite;
+}
+
+.animate-glow-signal {
+  animation: glow-signal 2s ease-in-out infinite;
+}
+
+.animate-scan-line {
+  animation: scan-line 3s linear infinite;
+}
+
+.animate-typing-cursor {
+  animation: typing-cursor 1s step-end infinite;
+}
+
+/* Glass card effect, now blue/white rather than black/green */
+.glass-card {
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(18, 59, 255, 0.14);
+  box-shadow:
+    0 18px 50px rgba(6, 27, 91, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
+  backdrop-filter: blur(14px);
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(18, 59, 255, 0.26);
+  box-shadow:
+    0 22px 60px rgba(6, 27, 91, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.95) inset;
+}
+
+/* Terminal styling */
+.terminal-text {
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(6, 27, 91, 0.04);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(18, 59, 255, 0.20);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(10, 99, 255, 0.38);
+}
+
+/* Selection colour */
+::selection {
+  background: rgba(18, 59, 255, 0.20);
+  color: #061b5b;
 }
