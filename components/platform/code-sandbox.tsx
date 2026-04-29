@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { cn } from '@/lib/utils'
 import {
   Play,
@@ -9,7 +9,6 @@ import {
   Copy,
   Check,
   Terminal,
-  ChevronDown,
   Maximize2,
   Minimize2,
 } from 'lucide-react'
@@ -73,7 +72,6 @@ export function CodeSandbox({ className, initialCode = defaultCode }: CodeSandbo
     setOutput('')
     setActiveTab('output')
 
-    // Simulate code execution with streaming output
     const lines = [
       '> Initializing DeepMindResources Sandbox...',
       '> Loading LangChain components...',
@@ -89,7 +87,7 @@ export function CodeSandbox({ className, initialCode = defaultCode }: CodeSandbo
       'self-attention mechanisms to process sequential data. Key components:',
       '',
       '1. Multi-Head Attention: Allows parallel attention computation',
-      '2. Positional Encoding: Injects sequence order information', 
+      '2. Positional Encoding: Injects sequence order information',
       '3. Feed-Forward Networks: Dense layers for transformation',
       '4. Layer Normalization: Stabilizes training',
       '',
@@ -126,25 +124,27 @@ export function CodeSandbox({ className, initialCode = defaultCode }: CodeSandbo
     <div
       className={cn(
         'glass-card rounded-xl overflow-hidden flex flex-col',
-        isExpanded ? 'fixed inset-4 z-50' : 'h-[500px]',
+        isExpanded ? 'fixed inset-3 z-50 sm:inset-4' : 'h-[560px] md:h-[500px]',
         className
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-sand/10 bg-obsidian/50">
-        <div className="flex items-center gap-3">
-          <Terminal className="w-5 h-5 text-signal-green" />
-          <span className="font-semibold text-sand">Agentic Sandbox</span>
-          <span className="text-xs font-mono text-sand/40">Python 3.11</span>
+      <div className="flex flex-col gap-3 px-4 py-3 border-b border-sand/10 bg-obsidian/50 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-center gap-3">
+          <Terminal className="w-5 h-5 shrink-0 text-signal-green" />
+          <div className="min-w-0">
+            <span className="block truncate font-semibold text-sand">Agentic Sandbox</span>
+            <span className="block text-xs font-mono text-sand/40 sm:hidden">Python 3.11</span>
+          </div>
+          <span className="hidden text-xs font-mono text-sand/40 sm:inline">Python 3.11</span>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Tab Switcher (Mobile) */}
-          <div className="flex md:hidden items-center bg-sand/5 rounded-lg p-0.5">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="flex min-w-0 flex-1 items-center rounded-lg bg-sand/5 p-0.5 md:hidden">
             <button
               onClick={() => setActiveTab('code')}
               className={cn(
-                'px-3 py-1 text-xs font-medium rounded-md transition-all',
+                'flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-all',
                 activeTab === 'code'
                   ? 'bg-signal-green/20 text-signal-green'
                   : 'text-sand/50'
@@ -155,7 +155,7 @@ export function CodeSandbox({ className, initialCode = defaultCode }: CodeSandbo
             <button
               onClick={() => setActiveTab('output')}
               className={cn(
-                'px-3 py-1 text-xs font-medium rounded-md transition-all',
+                'flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-all',
                 activeTab === 'output'
                   ? 'bg-signal-green/20 text-signal-green'
                   : 'text-sand/50'
@@ -165,28 +165,32 @@ export function CodeSandbox({ className, initialCode = defaultCode }: CodeSandbo
             </button>
           </div>
 
-          {/* Actions */}
           <Button
             variant="ghost"
             size="icon"
-            className="w-8 h-8 text-sand/50 hover:text-sand hover:bg-sand/10"
+            className="w-8 h-8 shrink-0 text-sand/50 hover:text-sand hover:bg-sand/10"
             onClick={handleCopy}
+            aria-label="Copy sandbox code"
           >
             {isCopied ? <Check className="w-4 h-4 text-signal-green" /> : <Copy className="w-4 h-4" />}
           </Button>
+
           <Button
             variant="ghost"
             size="icon"
-            className="w-8 h-8 text-sand/50 hover:text-sand hover:bg-sand/10"
+            className="hidden w-8 h-8 shrink-0 text-sand/50 hover:text-sand hover:bg-sand/10 sm:inline-flex"
             onClick={handleReset}
+            aria-label="Reset sandbox code"
           >
             <RotateCcw className="w-4 h-4" />
           </Button>
+
           <Button
             variant="ghost"
             size="icon"
-            className="w-8 h-8 text-sand/50 hover:text-sand hover:bg-sand/10"
+            className="hidden w-8 h-8 shrink-0 text-sand/50 hover:text-sand hover:bg-sand/10 sm:inline-flex"
             onClick={() => setIsExpanded(!isExpanded)}
+            aria-label={isExpanded ? 'Minimize sandbox' : 'Expand sandbox'}
           >
             {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </Button>
@@ -198,19 +202,21 @@ export function CodeSandbox({ className, initialCode = defaultCode }: CodeSandbo
         {/* Code Editor */}
         <div
           className={cn(
-            'flex-1 flex flex-col border-b md:border-b-0 md:border-r border-sand/10 min-h-0',
+            'flex-1 flex flex-col border-b md:border-b-0 md:border-r border-sand/10 min-w-0 min-h-0',
             activeTab !== 'code' && 'hidden md:flex'
           )}
         >
           <div className="px-4 py-2 border-b border-sand/10 bg-sand/[0.02]">
             <span className="text-xs font-mono text-sand/40">main.py</span>
           </div>
+
           <div className="flex-1 overflow-auto p-4">
             <textarea
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              className="w-full h-full min-h-[200px] bg-transparent font-mono text-sm text-sand/90 resize-none focus:outline-none leading-relaxed"
+              className="h-full min-h-[260px] w-full min-w-[42rem] bg-transparent font-mono text-sm leading-relaxed text-sand/90 resize-none focus:outline-none md:min-w-0"
               spellCheck={false}
+              wrap="off"
               placeholder="Write your agent code here..."
             />
           </div>
@@ -219,13 +225,14 @@ export function CodeSandbox({ className, initialCode = defaultCode }: CodeSandbo
         {/* Output Panel */}
         <div
           className={cn(
-            'flex-1 flex flex-col bg-obsidian/30 min-h-0',
+            'flex-1 flex flex-col bg-obsidian/30 min-w-0 min-h-0',
             activeTab !== 'output' && 'hidden md:flex'
           )}
         >
           <div className="px-4 py-2 border-b border-sand/10 bg-sand/[0.02]">
             <span className="text-xs font-mono text-sand/40">Output</span>
           </div>
+
           <div className="flex-1 overflow-auto p-4">
             <pre className="font-mono text-sm text-sand/70 whitespace-pre-wrap leading-relaxed">
               {output || (
@@ -240,15 +247,20 @@ export function CodeSandbox({ className, initialCode = defaultCode }: CodeSandbo
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between px-4 py-3 border-t border-sand/10 bg-obsidian/50">
-        <div className="flex items-center gap-2 text-xs text-sand/40 font-mono">
-          <span className="flex items-center gap-1">
-            <span className={cn('w-2 h-2 rounded-full', isRunning ? 'bg-signal-green animate-pulse' : 'bg-sand/30')} />
+      <div className="flex items-center justify-between gap-3 px-4 py-3 border-t border-sand/10 bg-obsidian/50">
+        <div className="flex min-w-0 items-center gap-2 text-xs text-sand/40 font-mono">
+          <span className="flex items-center gap-1 truncate">
+            <span
+              className={cn(
+                'w-2 h-2 shrink-0 rounded-full',
+                isRunning ? 'bg-signal-green animate-pulse' : 'bg-sand/30'
+              )}
+            />
             {isRunning ? 'Running...' : 'Ready'}
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           {isRunning ? (
             <Button
               onClick={handleStop}
