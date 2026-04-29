@@ -66,13 +66,13 @@ export default function HomePage() {
       <Sidebar />
 
       {/* Main Content */}
-      <main className="pl-64 min-h-screen">
-        <div className="max-w-7xl mx-auto px-6 py-8">
+      <main className="min-h-screen pt-16 md:pl-64 md:pt-0">
+        <div className="w-full max-w-7xl mx-auto px-4 py-6 sm:px-6 sm:py-8">
           {/* Hero Section */}
           <HeroSection />
 
           {/* Dashboard Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8 lg:mt-12">
             {/* Learning Path - Takes 1 column */}
             <div className="lg:col-span-1">
               <LearningPath />
@@ -85,15 +85,15 @@ export default function HomePage() {
           </div>
 
           {/* Featured Modules Section */}
-          <section className="mt-12">
-            <div className="flex items-center justify-between mb-6">
+          <section className="mt-10 lg:mt-12">
+            <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-sand">Continue Learning</h2>
                 <p className="text-sand/50 mt-1">
                   Pick up where you left off or start a new module
                 </p>
               </div>
-              <button className="text-sm text-signal-green hover:text-signal-green/80 font-medium transition-colors">
+              <button className="w-fit text-sm text-signal-green hover:text-signal-green/80 font-medium transition-colors">
                 View All Modules
               </button>
             </div>
@@ -101,8 +101,8 @@ export default function HomePage() {
           </section>
 
           {/* Code Sandbox Section */}
-          <section className="mt-12">
-            <div className="flex items-center justify-between mb-6">
+          <section className="mt-10 lg:mt-12">
+            <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-sand">Agentic Sandbox</h2>
                 <p className="text-sand/50 mt-1">
@@ -120,9 +120,9 @@ export default function HomePage() {
           </section>
 
           {/* Footer */}
-          <footer className="mt-16 pb-8 border-t border-sand/10 pt-8">
+          <footer className="mt-12 pb-8 border-t border-sand/10 pt-8 lg:mt-16">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2 text-sand/40 text-sm">
+              <div className="flex flex-wrap items-center justify-center gap-2 text-sand/40 text-sm sm:justify-start">
                 <span>DeepMindResources</span>
                 <span className="text-sand/20">|</span>
                 <span>AI Technical Training Platform</span>
