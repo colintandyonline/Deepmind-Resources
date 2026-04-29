@@ -1,251 +1,425 @@
-# DeepMindResources Project Skills
+﻿# DeepMindResources Skills Index
 
-This file defines repeatable build standards for DeepMindResources.
+This file is the master map for the DeepMindResources skill system.
 
-These rules should be applied when creating, editing, or reviewing pages, components, copy, metadata, and public-facing product material.
+The files in `docs/skills/` define how the platform should be built, validated, structured, published, secured, and improved over time.
+
+These skills are the backbone of DeepMindResources.
+
+They should guide:
+
+- Page creation
+- SEO and AI-search structure
+- Lesson building
+- Sandbox task creation
+- Tool comparisons
+- Live AI Intelligence updates
+- Master Brain records
+- Agent behaviour
+- Business training material
+- Data modelling
+- Security and privacy
+- Build and deployment QA
 
 ---
 
-## Core Build Principle
+## Core Product Promise
 
-DeepMindResources is not a generic dashboard or static course website.
+DeepMindResources is a living AI training and tool-intelligence platform.
 
-It is a living AI training and tool-intelligence platform.
-
-Every public-facing page should support the product promise:
+The platform promise is:
 
 AI update → verified meaning → practical lesson → sandbox task → user skill gain
 
----
-
-## Page Quality Standard
-
-Every page must be treated as a proper customer-facing page.
-
-Do not leave pages as placeholder app screens, internal dashboard stubs, or generic v0-generated content.
-
-Each page should clearly explain:
-
-- What the page is about
-- Who it is for
-- What problem it solves
-- What the user can learn or do next
-- Why the information is trustworthy
-- How the page connects to the DeepMindResources product promise
-
-Avoid:
-
-- Placeholder copy
-- Generic SaaS filler text
-- Empty marketing claims
-- Unverified AI hype
-- Internal admin language on public pages
-- Random dashboard labels acting as real page content
+Every page, feature, agent, lesson, sandbox task, and data model should support this promise.
 
 ---
 
-## SEO, Metadata and AI Search Intent Standard
+## Core Build Rule
 
-Every public-facing page must be built with correct SEO metadata and AI-search readability.
+Do not build random pages, generic dashboard sections, placeholder app screens, or unverified AI content.
 
-This applies to Google search, Bing, Perplexity-style answer engines, ChatGPT-style browsing/search contexts, Gemini-style answer systems, and other LLM-based search or citation experiences.
+Every public-facing page should have:
 
-The goal is not keyword stuffing.
-
-The goal is to make each page genuinely useful, clearly structured, easy to understand, and easy for search systems and AI assistants to identify accurately.
-
----
-
-## Required Metadata for Each Page
-
-Each public route should have unique metadata.
-
-Required fields:
-
-- Page title
-- Meta description
-- Open Graph title
-- Open Graph description
-- Canonical page intent
-- Social preview text where relevant
-
-Avoid generic defaults such as:
-
-- `v0 App`
-- `Created with v0`
-- `Dashboard`
-- `Untitled Page`
-- Reused descriptions across multiple pages
-
-Page titles should be specific, useful, and aligned with search intent.
-
-Meta descriptions should explain the value of the page in plain language.
+- A clear purpose
+- A clear audience
+- Correct SEO metadata
+- AI-search readable structure
+- Useful human-facing copy
+- Mobile-responsive layout
+- A clear next action
+- No placeholder v0 metadata
+- No unsupported AI hype
 
 ---
 
-## Search Intent Requirement
+## Skill Files
 
-Before a page is considered finished, define its search intent.
+### `docs/skills/AGENT_RULES.md`
 
-Each page should answer:
+Use this when defining or reviewing future specialist agents.
 
-- What would someone search to find this page?
-- What question does this page answer?
-- Is the visitor a beginner, advanced user, business buyer, team manager, or technical builder?
-- What task is the visitor trying to complete?
-- What should the visitor understand after reading the page?
+Covers:
 
-Examples of valid DeepMindResources search intents:
-
-- Learn AI from beginner to professional level
-- Compare AI tools for coding, research, automation, writing, or business use
-- Understand AI agents and agentic workflows
-- Practise prompt engineering in a sandbox
-- Track verified AI model and platform updates
-- Train staff on current AI tools
-- Choose the right AI subscription for a specific use case
-- Understand RAG, tool calling, multi-agent systems, and AI validation
+- Agent roles
+- Agent boundaries
+- Scout Agent
+- Validator Agent
+- Noise Filter Agent
+- Tool Agent
+- Comparison Agent
+- Lesson Builder Agent
+- Sandbox Builder Agent
+- Business Training Agent
+- Master Brain workflow responsibilities
 
 ---
 
-## LLM-Friendly Page Structure
+### `docs/skills/BUILD_DEPLOYMENT_AND_QA.md`
 
-Pages should be structured so both humans and AI systems can understand them quickly.
+Use this when making, committing, deploying, or checking code changes.
 
-Each public page should include:
+Covers:
 
-- One clear H1
-- Logical H2 sections
-- H3 subsections where useful
-- A short plain-English summary near the top
-- Clear definitions for important concepts
-- Practical examples where relevant
-- Comparison tables where useful
-- FAQ sections where useful
-- Clear next steps or calls to action
-- Internal links to related DeepMindResources pages when available
-
-The page should make it easy for an AI assistant to summarise the page correctly without guessing.
+- Local build checks
+- Git and GitHub workflow
+- Vercel deployment checks
+- Supabase/environment checks
+- Mobile QA
+- SEO QA
+- Post-deploy verification
+- Rollback awareness
+- No secret exposure
 
 ---
 
-## Core LLM-Readable Positioning Text
+### `docs/skills/BUSINESS_TRAINING.md`
 
-The site should consistently communicate this idea in natural wording:
+Use this when creating business-facing AI training, staff learning paths, team material, or workplace AI guidance.
 
-DeepMindResources is a living AI training and tool-intelligence platform that turns verified AI updates into practical lessons, sandbox tasks, and business-ready learning paths.
+Covers:
 
-Do not repeat this exact sentence unnaturally on every page.
-
-Use it as the core meaning that page copy should support.
-
----
-
-## Trust and Validation Standard
-
-DeepMindResources must not publish AI slop.
-
-Pages should make clear that the platform values:
-
-- Official documentation
-- Official release notes
-- Trusted sources
-- Reproducible testing
-- Practical value
-- Multiple-source agreement where possible
-- Confidence scoring where appropriate
-- Clear separation between verified facts, practical interpretation, and opinion
-
-Avoid publishing pages that make unsupported claims about AI tools, models, or platforms.
-
-If a claim may change quickly, the page should either cite/update from trusted sources or clearly avoid overclaiming.
+- Staff AI onboarding
+- Role-based training
+- Business workflows
+- Tool spend reduction
+- Team dashboards
+- Staff progress tracking
+- Privacy and risk awareness
+- Manager-facing AI training
 
 ---
 
-## Page Copy Standard
+### `docs/skills/CONTENT_ARCHITECTURE.md`
 
-Public page copy should be:
+Use this when deciding where pages, lessons, tools, updates, sandbox tasks, and business content belong.
 
-- Clear
-- Useful
-- Specific
-- Human-readable
-- Business-aware where relevant
-- Free from hype
-- Free from vague AI buzzwords unless explained
-- Written for people first, search engines second, and AI search systems third
+Covers:
 
-Good page copy should answer practical questions such as:
-
-- What changed?
-- Why does it matter?
-- Who should care?
-- What skill does this affect?
-- Should a lesson be updated?
-- Should a sandbox task be created?
-- Which tool is best for this use case?
-- What should a beginner do next?
-- What should a business team do next?
+- Content pillars
+- User journeys
+- Academy structure
+- Tool pages
+- Comparison pages
+- Business pages
+- Internal linking
+- URL and slug rules
+- Public vs internal content
+- Content lifecycle
 
 ---
 
-## Technical SEO Checklist
+### `docs/skills/DATA_MODEL_AND_SCHEMA.md`
 
-Before a public page is considered complete, check:
+Use this when designing Supabase tables, data schemas, Master Brain records, lesson records, sandbox records, or agent output structures.
 
-- Unique title
-- Unique meta description
-- Correct H1
-- Sensible H2/H3 structure
-- Mobile layout works
-- No placeholder v0 metadata remains
-- No generic placeholder copy remains
-- Page purpose is obvious within the first screen
-- Internal links are sensible
-- CTA is clear
-- The page supports the DeepMindResources product promise
-- Content is understandable to humans and AI search systems
+Covers:
 
----
-
-## Future Structured Data
-
-When the main page set is stable, add structured data where appropriate.
-
-Potential schema types:
-
-- Organization
-- WebSite
-- WebApplication
-- Course
-- FAQPage
-- BreadcrumbList
-- Article
-- Dataset, where relevant for verified AI intelligence records
-
-Structured data should accurately describe the page.
-
-Do not add fake schema or mark up content that is not actually present on the page.
+- Master Brain schema
+- Source records
+- Verified claims
+- Tool records
+- Lessons
+- Learning paths
+- Sandbox tasks
+- AI updates
+- Agent findings
+- User progress
+- Business/team data
 
 ---
 
-## Build Workflow Reminder
+### `docs/skills/LESSON_BUILDER.md`
 
-For future public pages, the normal build standard is:
+Use this when creating or updating Academy lessons.
 
-1. Confirm page purpose.
-2. Define user/search intent.
-3. Write clear human copy.
-4. Add correct metadata.
-5. Make the page mobile-responsive.
-6. Ensure the page fits the blue/white DeepMindResources brand system.
-7. Remove placeholder/internal language.
-8. Check the page against the SEO and AI-search checklist.
-9. Build locally.
-10. Commit to `main`.
+Covers:
+
+- Lesson structure
+- Learning outcomes
+- Beginner/intermediate/advanced levels
+- Business lessons
+- Source-backed learning
+- Common mistakes
+- Assessments
+- Lesson-to-sandbox links
+
+---
+
+### `docs/skills/LIVE_AI_INTELLIGENCE.md`
+
+Use this when building or reviewing the live AI update system.
+
+Covers:
+
+- AI update categories
+- Verified updates
+- Master Brain queue
+- Tool signals
+- Lesson updates pending
+- Sandbox task candidates
+- Business training impact
+- Public feed rules
+
+---
+
+### `docs/skills/MASTER_BRAIN.md`
+
+Use this when designing or updating the central verified knowledge base.
+
+Covers:
+
+- Master Brain records
+- Source references
+- Confidence scores
+- Update history
+- Verified claims
+- Tool capabilities
+- Lesson links
+- Sandbox task links
+- Business training implications
+
+---
+
+### `docs/skills/PROGRESS_TRACKING_AND_ASSESSMENT.md`
+
+Use this when building progress tracking, assessments, team dashboards, or skill measurement.
+
+Covers:
+
+- Lesson progress
+- Sandbox progress
+- Skill confidence
+- Assessments
+- Evidence of skill
+- Business team progress
+- Manager reporting
+- Updated-content rechecks
+
+---
+
+### `docs/skills/SANDBOX_BUILDER.md`
+
+Use this when creating practical sandbox tasks.
+
+Covers:
+
+- Prompt tests
+- Model comparisons
+- Tool-calling tasks
+- Agent-building tasks
+- RAG exercises
+- Debugging tasks
+- Business workflow simulations
+- Assessment criteria
+- Sandbox safety
+
+---
+
+### `docs/skills/SECURITY_PRIVACY_AND_PERMISSIONS.md`
+
+Use this when building anything involving user data, Supabase records, accounts, teams, agents, APIs, or private content.
+
+Covers:
+
+- Secrets
+- Environment variables
+- Supabase/RLS thinking
+- User progress privacy
+- Business/team data
+- Agent data boundaries
+- Sandbox safety
+- API route permissions
+- Safe logging
+
+---
+
+### `docs/skills/SEO_AND_AI_SEARCH.md`
+
+Use this when creating or reviewing any public-facing page.
+
+Covers:
+
+- SEO metadata
+- Search intent
+- AI-search readability
+- Titles and descriptions
+- H1/H2 structure
+- LLM-readable summaries
+- Tool comparison SEO
+- Lesson SEO
+- Business page SEO
+- Structured data planning
+
+---
+
+### `docs/skills/SOURCE_INGESTION_AND_RESEARCH.md`
+
+Use this when collecting or reviewing outside AI information before validation.
+
+Covers:
+
+- Official sources
+- Weak sources
+- Source classification
+- Signal types
+- Research questions
+- Routing rules
+- De-duplication
+- Time-sensitive claims
+- Noise filtering
+
+---
+
+### `docs/skills/TOOL_COMPARISON.md`
+
+Use this when comparing AI tools, platforms, models, coding assistants, automation tools, or agent frameworks.
+
+Covers:
+
+- Scenario-based comparisons
+- Use-case mapping
+- Evidence requirements
+- Tool strengths and weaknesses
+- Pricing caveats
+- Business fit
+- Technical fit
+- Non-technical user fit
+- SEO for comparison pages
+
+---
+
+### `docs/skills/TRUST_METHODOLOGY_AND_TRANSPARENCY.md`
+
+Use this when explaining how DeepMindResources verifies information and avoids AI slop.
+
+Covers:
+
+- Source transparency
+- Confidence labels
+- Public methodology pages
+- Time-sensitive claims
+- Tool comparison transparency
+- Business transparency
+- Honest uncertainty language
+- Anti-hype rules
+
+---
+
+### `docs/skills/UI_MOBILE_AND_PAGE_EXPERIENCE.md`
+
+Use this when building layouts, dashboards, navigation, mobile views, and user-facing components.
+
+Covers:
+
+- Mobile-first layout
+- Responsive sidebars
+- Hero sections
+- Dashboard grids
+- Cards
+- Buttons
+- Accessibility
+- Empty states
+- Status UI
+- Page experience
+
+---
+
+### `docs/skills/UPDATE_REVIEW_AND_PUBLICATION_WORKFLOW.md`
+
+Use this when moving an AI signal from discovery to possible publication.
+
+Covers:
+
+- Signal detection
+- Source classification
+- Duplicate checks
+- Noise filtering
+- Claim extraction
+- Validation review
+- Master Brain updates
+- Lesson impact
+- Sandbox impact
+- Tool comparison impact
+- Business training impact
+- Publication decisions
+
+---
+
+### `docs/skills/VALIDATION_AND_SOURCES.md`
+
+Use this when checking whether a claim is trustworthy enough to influence public content, lessons, recommendations, or the Master Brain.
+
+Covers:
+
+- Source quality levels
+- Confidence scores
+- Claim types
+- Validation questions
+- Noise filtering
+- Publication rules
+- Tool comparison validation
+- Lesson update validation
+- Sandbox task validation
+
+---
+
+## How to Use These Skills
+
+Before building or changing anything, identify which skill files apply.
+
+Examples:
+
+- New public page → use `SEO_AND_AI_SEARCH.md`, `CONTENT_ARCHITECTURE.md`, and `UI_MOBILE_AND_PAGE_EXPERIENCE.md`
+- New lesson → use `LESSON_BUILDER.md`, `VALIDATION_AND_SOURCES.md`, and `SANDBOX_BUILDER.md`
+- New tool comparison → use `TOOL_COMPARISON.md`, `VALIDATION_AND_SOURCES.md`, and `SEO_AND_AI_SEARCH.md`
+- New AI update workflow → use `SOURCE_INGESTION_AND_RESEARCH.md`, `UPDATE_REVIEW_AND_PUBLICATION_WORKFLOW.md`, and `MASTER_BRAIN.md`
+- New user/team feature → use `SECURITY_PRIVACY_AND_PERMISSIONS.md`, `DATA_MODEL_AND_SCHEMA.md`, and `PROGRESS_TRACKING_AND_ASSESSMENT.md`
+- New deployment or repo change → use `BUILD_DEPLOYMENT_AND_QA.md`
+
+---
+
+## Definition of Done
+
+A DeepMindResources feature, page, lesson, task, or workflow is not complete unless it has been checked against the relevant skill files.
+
+At minimum, check:
+
+- Purpose
+- Audience
+- Search intent
+- Source/validation needs
+- Master Brain relationship
+- Lesson or sandbox relationship
+- Mobile layout
+- SEO metadata
+- Privacy and permissions
+- Deployment/QA
 
 ---
 
 ## Locked Rule
 
-Going forward, SEO metadata, search intent, LLM-readable structure, and trustworthy page copy are part of the normal definition of done for every DeepMindResources public page.
+The skill files are the operating system for DeepMindResources.
+
+When in doubt, follow the relevant skill file before adding new content, features, pages, agents, data models, or public claims.
