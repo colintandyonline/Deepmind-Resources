@@ -102,6 +102,8 @@ async function updateAccountProfile(formData: FormData) {
   const timezone = cleanFormString(formData.get('timezone'))
   const marketingEmailOptIn = formData.get('marketing_email_opt_in') === 'on'
 
+  const now = new Date().toISOString()
+
   const { error } = await supabase
     .from('user_profiles')
     .update({
@@ -114,13 +116,34 @@ async function updateAccountProfile(formData: FormData) {
       timezone,
       marketing_email_opt_in: marketingEmailOptIn,
       onboarding_status: 'profile_complete',
-      onboarding_completed_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      onboarding_completed_at: now,
+      updated_at: now,
     })
     .eq('id', user.id)
 
   if (error) {
-    throw new Error(error.message)
+    const { error: fallbackError } = await supabase
+      .from('user_profiles')
+      .update({
+        first_name: firstName,
+        last_name: lastName,
+        display_name: displayName,
+        job_title: jobTitle,
+        company_name: companyName,
+        marketing_email_opt_in: marketingEmailOptIn,
+        onboarding_status: 'profile_complete',
+        onboarding_completed_at: now,
+        updated_at: now,
+      })
+      .eq('id', user.id)
+
+    if (fallbackError) {
+      console.error('DeepMind Resources account save failed:', fallbackError.message)
+      redirect('/account?save=error')
+    }
+
+    console.error('DeepMind Resources account optional fields failed:', error.message)
+    redirect('/account?save=partial')
   }
 
   revalidatePath('/account')
@@ -586,3 +609,4 @@ export default async function AccountPage() {
     </main>
   )
 }
+
