@@ -3,27 +3,32 @@ import type { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import {
   ArrowRight,
+  BarChart3,
   BookOpenCheck,
   BrainCircuit,
   BriefcaseBusiness,
   CheckCircle2,
   ClipboardCheck,
   Code2,
+  Database,
+  GitCompareArrows,
   GraduationCap,
   Layers3,
   Lightbulb,
   Radar,
   Route,
+  SearchCheck,
   ShieldCheck,
   Sparkles,
   Target,
   WandSparkles,
+  Workflow,
 } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'AI Syllabus | DeepMind Resources',
   description:
-    'Explore the DeepMind Resources AI syllabus: practical learning paths for AI foundations, prompting, tool intelligence, agents, sandbox practice, and business-ready AI skills.',
+    'Explore the DeepMind Resources AI syllabus: practical learning paths for AI foundations, prompting, tool intelligence, agents, sandbox practice, business productivity, RAG, workflow automation, and AI safety.',
   alternates: {
     canonical: '/syllabus',
   },
@@ -37,11 +42,16 @@ export const metadata: Metadata = {
     'AI sandbox practice',
     'AI tool intelligence',
     'professional AI training',
+    'AI business productivity',
+    'RAG training',
+    'AI workflow automation',
+    'AI safety training',
+    'AI tool comparison',
   ],
   openGraph: {
     title: 'AI Syllabus | DeepMind Resources',
     description:
-      'A practical AI syllabus for learning foundations, prompts, tool intelligence, agents, workflows, sandbox tasks, and business-ready AI skills.',
+      'A practical AI syllabus for learning foundations, prompts, tool intelligence, agents, workflows, sandbox tasks, business productivity, RAG, and AI safety.',
     url: 'https://deepmindresources.pro/syllabus',
     siteName: 'DeepMind Resources',
     type: 'website',
@@ -50,7 +60,7 @@ export const metadata: Metadata = {
     card: 'summary',
     title: 'AI Syllabus | DeepMind Resources',
     description:
-      'Explore practical AI learning paths for foundations, prompts, agents, sandbox practice, and business-ready AI skills.',
+      'Explore practical AI learning paths for foundations, prompts, agents, sandbox practice, tool intelligence, business productivity, and AI safety.',
   },
 }
 
@@ -67,6 +77,13 @@ type ModuleGroup = {
   description: string
   icon: LucideIcon
   modules: string[]
+}
+
+type CapabilityArea = {
+  title: string
+  description: string
+  icon: LucideIcon
+  capabilities: string[]
 }
 
 type LearningStep = {
@@ -185,6 +202,105 @@ const moduleGroups: ModuleGroup[] = [
   },
 ]
 
+const capabilityAreas: CapabilityArea[] = [
+  {
+    title: 'AI Tool Selection',
+    description:
+      'Learn how to choose the right AI platform or tool for the job instead of chasing every new release or subscription.',
+    icon: SearchCheck,
+    capabilities: [
+      'Coding and development use cases',
+      'Research and knowledge work',
+      'Writing, content, and communication',
+      'Automation, support, and operations',
+    ],
+  },
+  {
+    title: 'Business Productivity',
+    description:
+      'Use AI across real workplace tasks, not just demos: admin, operations, planning, documentation, marketing, sales, and support.',
+    icon: BriefcaseBusiness,
+    capabilities: [
+      'Admin and process improvement',
+      'Marketing and content workflows',
+      'Sales and customer response quality',
+      'Meeting, reporting, and planning tasks',
+    ],
+  },
+  {
+    title: 'RAG & Knowledge Systems',
+    description:
+      'Understand how AI can work with internal knowledge, source-backed answers, retrieval workflows, and company documentation.',
+    icon: Database,
+    capabilities: [
+      'Internal knowledge bases',
+      'Document search and retrieval',
+      'Source-backed answer patterns',
+      'Onboarding and policy support',
+    ],
+  },
+  {
+    title: 'Agentic Workflows',
+    description:
+      'Move beyond one-off prompts into tool-connected workflows, approval loops, task chains, and practical automation patterns.',
+    icon: Workflow,
+    capabilities: [
+      'Tool calling and functions',
+      'Workflow simulations',
+      'Human review and approval loops',
+      'Business automation exercises',
+    ],
+  },
+  {
+    title: 'Data & Decision Support',
+    description:
+      'Use AI to support analysis, research, spreadsheet thinking, summaries, competitor review, scenarios, and management reporting.',
+    icon: BarChart3,
+    capabilities: [
+      'Research and competitor analysis',
+      'Spreadsheet and data assistance',
+      'Scenario and planning support',
+      'Executive summaries and reports',
+    ],
+  },
+  {
+    title: 'AI Safety & Validation',
+    description:
+      'Build practical habits for checking claims, controlling hallucinations, protecting sensitive data, and knowing what not to automate.',
+    icon: ShieldCheck,
+    capabilities: [
+      'Hallucination control',
+      'Source checking and review steps',
+      'Privacy and sensitive data habits',
+      'Risk-aware automation decisions',
+    ],
+  },
+  {
+    title: 'Live Release Intelligence',
+    description:
+      'Stay current as major AI models, tools, platforms, APIs, coding assistants, automation tools, and agent frameworks change.',
+    icon: Radar,
+    capabilities: [
+      'New model and platform updates',
+      'API and feature changes',
+      'Tool deprecations and new tools',
+      'Lesson and sandbox refresh triggers',
+    ],
+  },
+  {
+    title: 'Tool Comparison Intelligence',
+    description:
+      'Compare AI tools by real scenarios so learners and businesses understand what each tool is actually good for.',
+    icon: GitCompareArrows,
+    capabilities: [
+      'Best tool for coding or research',
+      'Best tool for business automation',
+      'Best tool for internal knowledge',
+      'Best tool for non-technical staff',
+    ],
+  },
+]
+
 const learningSteps: LearningStep[] = [
   {
     step: '01',
@@ -217,12 +333,12 @@ const structuredData = {
   '@type': 'ItemList',
   name: 'DeepMind Resources AI Syllabus',
   description:
-    'A practical AI syllabus covering AI foundations, prompt engineering, tool intelligence, agentic AI systems, sandbox practice, and business-ready AI skills.',
-  itemListElement: syllabusTracks.map((track, index) => ({
+    'A practical AI syllabus covering AI foundations, prompt engineering, tool intelligence, agentic AI systems, sandbox practice, business productivity, RAG, workflow automation, tool comparison, and AI safety.',
+  itemListElement: [...syllabusTracks, ...capabilityAreas].map((item, index) => ({
     '@type': 'ListItem',
     position: index + 1,
-    name: track.title,
-    description: track.description,
+    name: item.title,
+    description: item.description,
   })),
 }
 
@@ -265,6 +381,9 @@ export default function SyllabusPage() {
               <a href="#modules" className="transition hover:text-[#123BFF]">
                 Modules
               </a>
+              <a href="#capabilities" className="transition hover:text-[#123BFF]">
+                Capabilities
+              </a>
               <Link href="/business-ai-training" className="transition hover:text-[#123BFF]">
                 Business
               </Link>
@@ -295,13 +414,13 @@ export default function SyllabusPage() {
               </span>
 
               <h1 className="mt-6 max-w-5xl text-4xl font-bold tracking-tight text-sand sm:text-5xl lg:text-6xl">
-                A practical AI syllabus for real skill, not passive watching.
+                A practical AI syllabus for real-world capability, not chatbot demos.
               </h1>
 
               <p className="mt-6 max-w-3xl text-base leading-8 text-sand/70 sm:text-lg">
                 DeepMind Resources gives learners a structured path from AI foundations to prompt
-                engineering, tool intelligence, sandbox practice, agentic systems, and business-ready
-                AI workflows.
+                engineering, tool intelligence, sandbox practice, agentic systems, business
+                productivity, RAG, automation, and AI safety.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -330,10 +449,10 @@ export default function SyllabusPage() {
                   Prompting
                 </span>
                 <span className="rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
-                  Agents
+                  Tool Intelligence
                 </span>
                 <span className="rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
-                  Sandbox
+                  Automation
                 </span>
               </div>
             </div>
@@ -349,7 +468,7 @@ export default function SyllabusPage() {
                       Learning route
                     </p>
                     <h2 className="mt-1 text-xl font-bold text-sand">
-                      Learn the idea, practise the task, then apply it at work.
+                      Learn the idea, practise the task, then apply it in the real world.
                     </h2>
                   </div>
                 </div>
@@ -374,7 +493,8 @@ export default function SyllabusPage() {
                         aria-hidden="true"
                       />
                       <p className="text-sm leading-7 text-sand/70">
-                        Practise useful prompts, checks, reviews, tool choices, and workflow tasks.
+                        Practise prompts, checks, tool choices, RAG patterns, automation, and
+                        workflow tasks.
                       </p>
                     </div>
                   </div>
@@ -386,8 +506,8 @@ export default function SyllabusPage() {
                         aria-hidden="true"
                       />
                       <p className="text-sm leading-7 text-sand/70">
-                        Refresh your learning when AI tools, features, and recommended practices
-                        change.
+                        Refresh your learning when AI tools, models, releases, and recommended
+                        practices change.
                       </p>
                     </div>
                   </div>
@@ -546,6 +666,81 @@ export default function SyllabusPage() {
             </div>
           </section>
 
+          <section id="capabilities" className="py-8" aria-labelledby="capabilities-title">
+            <div className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
+              <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+                <div>
+                  <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                    <Sparkles className="h-4 w-4" aria-hidden="true" />
+                    Real-world AI capability
+                  </span>
+
+                  <h2
+                    id="capabilities-title"
+                    className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl"
+                  >
+                    This is not a chatbot course. It is practical AI capability for modern work.
+                  </h2>
+
+                  <p className="mt-4 text-base leading-8 text-sand/65">
+                    DeepMind Resources is designed to help people understand where AI actually
+                    improves work: tool choice, business productivity, internal knowledge, workflow
+                    automation, data support, safety, validation, and release-aware learning.
+                  </p>
+
+                  <div className="mt-6 rounded-2xl bg-[#EAF7FF] p-5">
+                    <div className="flex items-start gap-3">
+                      <Radar
+                        className="mt-1 h-5 w-5 shrink-0 text-[#123BFF]"
+                        aria-hidden="true"
+                      />
+                      <p className="text-sm leading-7 text-sand/70">
+                        The goal is to turn important AI releases and platform changes into useful
+                        lessons, sandbox tasks, tool comparisons, and business-ready training
+                        insights.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {capabilityAreas.map((area) => {
+                    const Icon = area.icon
+
+                    return (
+                      <article
+                        key={area.title}
+                        className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
+                      >
+                        <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
+                          <Icon className="h-6 w-6" aria-hidden="true" />
+                        </span>
+
+                        <h3 className="mt-5 text-xl font-bold text-sand">{area.title}</h3>
+
+                        <p className="mt-3 text-sm leading-7 text-sand/65">
+                          {area.description}
+                        </p>
+
+                        <ul className="mt-4 space-y-3 text-sm leading-7 text-sand/65">
+                          {area.capabilities.map((capability) => (
+                            <li key={capability} className="flex gap-3">
+                              <CheckCircle2
+                                className="mt-1 h-5 w-5 shrink-0 text-[#123BFF]"
+                                aria-hidden="true"
+                              />
+                              <span>{capability}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </article>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          </section>
+
           <section className="py-8" aria-labelledby="method-title">
             <div className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
               <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
@@ -611,7 +806,8 @@ export default function SyllabusPage() {
 
                   <p className="mt-4 max-w-3xl text-base leading-8 text-white/80">
                     Business AI training turns the syllabus into a team-ready path with practical
-                    workflows, sandbox tasks, tool intelligence, and safer adoption habits.
+                    workflows, sandbox tasks, tool intelligence, release-aware updates, and safer
+                    adoption habits.
                   </p>
                 </div>
 
@@ -644,7 +840,7 @@ export default function SyllabusPage() {
 
                   <p className="mt-4 max-w-3xl text-base leading-8 text-sand/65">
                     Start with structured lessons, then move into sandbox practice, workflow
-                    thinking, tool intelligence, and business-ready AI habits.
+                    thinking, tool intelligence, release awareness, and business-ready AI habits.
                   </p>
                 </div>
 
