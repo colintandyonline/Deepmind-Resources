@@ -23,12 +23,34 @@ export default async function DashboardPage() {
     redirect('/auth/login')
   }
 
-  const firstName =
+  const { data: profile } = await supabase
+    .from('user_profiles')
+    .select('first_name, display_name')
+    .eq('id', user.id)
+    .maybeSingle()
+
+  const profileFirstName =
+    typeof profile?.first_name === 'string' && profile.first_name.trim()
+      ? profile.first_name.trim()
+      : null
+
+  const profileDisplayName =
+    typeof profile?.display_name === 'string' && profile.display_name.trim()
+      ? profile.display_name.trim()
+      : null
+
+  const metadataFirstName =
     typeof user.user_metadata?.first_name === 'string' && user.user_metadata.first_name.trim()
       ? user.user_metadata.first_name.trim()
       : null
 
-  const displayName = firstName ?? 'there'
+  const metadataFullName =
+    typeof user.user_metadata?.full_name === 'string' && user.user_metadata.full_name.trim()
+      ? user.user_metadata.full_name.trim()
+      : null
+
+  const displayName =
+    profileFirstName ?? profileDisplayName ?? metadataFirstName ?? metadataFullName ?? null
 
   return (
     <main className="min-h-screen bg-obsidian px-4 py-8 text-sand sm:px-6 lg:px-8">
@@ -48,9 +70,10 @@ export default async function DashboardPage() {
               </h1>
 
               <p className="mt-4 max-w-3xl text-base leading-8 text-sand/65">
-                Welcome back, {displayName}. Continue building practical AI skills with structured
-                learning, sandbox practice, verified tool intelligence, and update-aware training
-                designed to stay useful as AI changes.
+                {displayName ? `Welcome back, ${displayName}. ` : 'Welcome back. '}
+                Continue building practical AI skills with structured learning, sandbox practice,
+                verified tool intelligence, and update-aware training designed to stay useful as AI
+                changes.
               </p>
             </div>
 
