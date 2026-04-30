@@ -195,10 +195,11 @@ export default function HomePage() {
                 </div>
 
                 <div className="text-center lg:text-left">
-                  <p className="font-mono text-xs uppercase tracking-[0.22em] text-signal-green">
+                  <span className="inline-flex rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-white shadow-sm">
                     Verified AI learning intelligence
-                  </p>
-                  <h2 className="mt-3 text-2xl font-bold tracking-tight text-sand">
+                  </span>
+
+                  <h2 className="mt-4 text-2xl font-bold tracking-tight text-sand">
                     DeepMind Resources
                   </h2>
                   <p className="mt-3 max-w-2xl text-sm leading-7 text-sand/60 sm:text-base">
@@ -208,15 +209,15 @@ export default function HomePage() {
                   </p>
 
                   <div className="mt-5 flex flex-wrap justify-center gap-2 lg:justify-start">
-                    <span className="rounded-full bg-signal-green/10 px-3 py-1 text-xs font-medium text-signal-green">
+                    <span className="rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold text-[#123BFF] shadow-sm">
                       Live AI Intelligence
                     </span>
-                    <span className="rounded-full bg-signal-green/10 px-3 py-1 text-xs font-medium text-signal-green">
+                    <span className="rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold text-[#123BFF] shadow-sm">
                       Agentic Sandbox
                     </span>
                     <Link
                       href="/business-ai-training"
-                      className="rounded-full bg-signal-green/10 px-3 py-1 text-xs font-medium text-signal-green transition hover:bg-signal-green hover:text-white"
+                      className="rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
                     >
                       Business AI Training
                     </Link>
@@ -224,24 +225,32 @@ export default function HomePage() {
                 </div>
 
                 <div className="grid gap-3 text-center text-sm sm:grid-cols-3 lg:grid-cols-1 lg:text-right">
-                  <a href="#learning" className="text-sand/50 hover:text-signal-green transition-colors">
+                  <a
+                    href="#learning"
+                    className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
+                  >
                     Academy
                   </a>
-                  <a href="#sandbox" className="text-sand/50 hover:text-signal-green transition-colors">
+                  <a
+                    href="#sandbox"
+                    className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
+                  >
                     Sandbox
                   </a>
                   <Link
                     href="/business-ai-training"
-                    className="text-sand/50 hover:text-signal-green transition-colors"
+                    className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
                   >
                     Business Training
                   </Link>
                 </div>
               </div>
 
-              <div className="mt-8 flex flex-col gap-3 border-t border-sand/10 pt-5 text-center text-xs text-sand/40 sm:flex-row sm:items-center sm:justify-between sm:text-left">
-                <p>© 2026 DeepMind Resources. Built for verified AI skill gain.</p>
-                <p>AI update → verified meaning → practical lesson → sandbox task.</p>
+              <div className="mt-8 rounded-2xl bg-[#123BFF] px-5 py-4 text-white shadow-sm">
+                <div className="flex flex-col gap-3 text-center text-xs sm:flex-row sm:items-center sm:justify-between sm:text-left">
+                  <p>© 2026 DeepMind Resources. Built for verified AI skill gain.</p>
+                  <p>AI update → verified meaning → practical lesson → sandbox task.</p>
+                </div>
               </div>
             </div>
           </footer>
