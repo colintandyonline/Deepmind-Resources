@@ -371,6 +371,18 @@ export default function SignupPage() {
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </button>
 
+              <p className="text-xs leading-6 text-sand/50">
+                By creating a workspace, you agree to the{' '}
+                <Link href="/terms" className="font-bold text-[#123BFF] hover:text-[#0A63FF]">
+                  Terms of Service
+                </Link>{' '}
+                and acknowledge the{' '}
+                <Link href="/privacy" className="font-bold text-[#123BFF] hover:text-[#0A63FF]">
+                  Privacy Policy
+                </Link>
+                .
+              </p>
+
               {message ? (
                 <div
                   className={`rounded-2xl border px-4 py-3 text-sm ${
