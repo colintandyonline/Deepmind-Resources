@@ -11,10 +11,12 @@ import {
   Mail,
   ShieldCheck,
   Sparkles,
+  X,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 type FormStatus = 'idle' | 'loading' | 'error'
+type ResetStatus = 'idle' | 'loading' | 'sent' | 'error'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -22,6 +24,10 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [status, setStatus] = useState<FormStatus>('idle')
   const [message, setMessage] = useState('')
+  const [isResetOpen, setIsResetOpen] = useState(false)
+  const [resetEmail, setResetEmail] = useState('')
+  const [resetStatus, setResetStatus] = useState<ResetStatus>('idle')
+  const [resetMessage, setResetMessage] = useState('')
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -46,12 +52,56 @@ export default function LoginPage() {
 
     if (error) {
       setStatus('error')
-      setMessage('We could not sign you in with those details. Check your email and password, or reset your password.')
+      setMessage(
+        'We could not sign you in with those details. Check your email and password, or reset your password.'
+      )
       return
     }
 
     router.push('/dashboard')
     router.refresh()
+  }
+
+  function openResetModal() {
+    setResetEmail(email.trim().toLowerCase())
+    setResetStatus('idle')
+    setResetMessage('')
+    setIsResetOpen(true)
+  }
+
+  async function handlePasswordReset(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    const cleanResetEmail = resetEmail.trim().toLowerCase()
+
+    if (!cleanResetEmail) {
+      setResetStatus('error')
+      setResetMessage('Enter the email address connected to your account.')
+      return
+    }
+
+    setResetStatus('loading')
+    setResetMessage('')
+
+    const supabase = createClient()
+
+    const redirectTo =
+      typeof window !== 'undefined'
+        ? `${window.location.origin}/auth/reset-password`
+        : undefined
+
+    const { error } = await supabase.auth.resetPasswordForEmail(cleanResetEmail, {
+      redirectTo,
+    })
+
+    if (error) {
+      setResetStatus('error')
+      setResetMessage(error.message || 'We could not send the reset email. Please try again.')
+      return
+    }
+
+    setResetStatus('sent')
+    setResetMessage('Password reset link sent. Check your email to continue.')
   }
 
   return (
@@ -88,8 +138,9 @@ export default function LoginPage() {
               </h1>
 
               <p className="mt-4 max-w-2xl text-base leading-8 text-sand/65">
-                Access your DeepMind Resources dashboard with your email and password. Email links
-                are reserved for account verification, password reset, and recovery flows.
+                Access your DeepMind Resources dashboard with your email and password. Your
+                workspace connects structured AI learning, verified sandbox practice, and
+                release-aware training.
               </p>
             </div>
 
@@ -122,12 +173,13 @@ export default function LoginPage() {
                   <label htmlFor="password" className="block text-sm font-semibold text-sand">
                     Password
                   </label>
-                  <Link
-                    href="/auth/forgot-password"
+                  <button
+                    type="button"
+                    onClick={openResetModal}
                     className="text-sm font-bold text-[#123BFF] hover:text-[#0A63FF]"
                   >
                     Forgot password?
-                  </Link>
+                  </button>
                 </div>
                 <div className="relative mt-2">
                   <LockKeyhole
@@ -184,10 +236,10 @@ export default function LoginPage() {
                     <ShieldCheck className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <div>
-                    <h2 className="text-lg font-bold text-sand">Secure on-site login</h2>
+                    <h2 className="text-lg font-bold text-sand">Secure workspace access</h2>
                     <p className="mt-2 text-sm leading-7 text-sand/65">
-                      Sign in directly with your password. Recovery links are used only when you
-                      need to reset or verify account access.
+                      Sign in directly with your password. Recovery emails are reserved for
+                      verification and account reset actions.
                     </p>
                   </div>
                 </div>
@@ -199,9 +251,9 @@ export default function LoginPage() {
                     <Brain className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <div>
-                    <h2 className="text-lg font-bold text-sand">AI competency workspace</h2>
+                    <h2 className="text-lg font-bold text-sand">AI competency dashboard</h2>
                     <p className="mt-2 text-sm leading-7 text-sand/65">
-                      Your dashboard is the protected space for learning progress, account details,
+                      Your dashboard is the protected layer for learning progress, account details,
                       and future verified sandbox activity.
                     </p>
                   </div>
@@ -214,10 +266,10 @@ export default function LoginPage() {
                     <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <div>
-                    <h2 className="text-lg font-bold text-sand">Recovery comes next</h2>
+                    <h2 className="text-lg font-bold text-sand">Password recovery</h2>
                     <p className="mt-2 text-sm leading-7 text-sand/65">
-                      Password reset and account recovery will use secure email links, separate from
-                      the normal on-site login flow.
+                      If you forget your password, request a secure reset email and return to your
+                      workspace with a new password.
                     </p>
                   </div>
                 </div>
@@ -225,15 +277,95 @@ export default function LoginPage() {
             </div>
 
             <div className="mt-8 rounded-2xl border border-[#123BFF]/20 bg-[#EAF7FF] p-5">
-              <p className="text-sm font-bold text-sand">Having trouble signing in?</p>
+              <p className="text-sm font-bold text-sand">Built for current AI skills.</p>
               <p className="mt-2 text-sm leading-7 text-sand/65">
-                Use the password reset flow once it is added. Existing magic-link users can use
-                recovery to set a password.
+                DeepMind Resources is designed to connect structured learning, tool intelligence,
+                and verified sandbox practice into one professional AI training workspace.
               </p>
             </div>
           </aside>
         </div>
       </div>
+
+      {isResetOpen ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-sand/25 px-4 backdrop-blur-sm">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="reset-password-title"
+            className="w-full max-w-lg rounded-[2rem] border border-sand/10 bg-white p-6 text-sand shadow-2xl sm:p-8"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <span className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#123BFF] text-white shadow-sm">
+                <LockKeyhole className="h-7 w-7" aria-hidden="true" />
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsResetOpen(false)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-sand/10 text-sand/45 transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
+                aria-label="Close password reset"
+              >
+                <X className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </div>
+
+            <h2 id="reset-password-title" className="mt-6 text-2xl font-bold tracking-tight">
+              Reset your password.
+            </h2>
+
+            <p className="mt-3 text-sm leading-7 text-sand/65">
+              Enter the email address connected to your DeepMind Resources account. We will send a
+              secure reset link using the branded recovery email.
+            </p>
+
+            <form onSubmit={handlePasswordReset} className="mt-6 space-y-4">
+              <div>
+                <label htmlFor="resetEmail" className="block text-sm font-semibold text-sand">
+                  Account email
+                </label>
+                <div className="relative mt-2">
+                  <Mail
+                    className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-sand/35"
+                    aria-hidden="true"
+                  />
+                  <input
+                    id="resetEmail"
+                    name="resetEmail"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={resetEmail}
+                    onChange={(event) => setResetEmail(event.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full rounded-2xl border border-sand/10 bg-white py-3 pl-12 pr-4 text-base text-sand shadow-sm outline-none transition focus:border-[#123BFF] focus:ring-4 focus:ring-[#123BFF]/10"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={resetStatus === 'loading'}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF] disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {resetStatus === 'loading' ? 'Sending reset link...' : 'Send reset link'}
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </button>
+
+              {resetMessage ? (
+                <div
+                  className={`rounded-2xl border px-4 py-3 text-sm ${
+                    resetStatus === 'error'
+                      ? 'border-red-200 bg-red-50 text-red-700'
+                      : 'border-[#123BFF]/20 bg-[#EAF7FF] text-sand'
+                  }`}
+                >
+                  {resetMessage}
+                </div>
+              ) : null}
+            </form>
+          </div>
+        </div>
+      ) : null}
     </main>
   )
 }
