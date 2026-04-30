@@ -19,6 +19,33 @@ import { createClient } from '@/lib/supabase/server'
 
 type ProfileRecord = Record<string, unknown> | null
 
+const learningLevelOptions = [
+  'AI Beginner',
+  'Practical AI User',
+  'AI Workflow Builder',
+  'Business AI Lead',
+  'Advanced AI Operator',
+]
+
+const timezoneOptions = [
+  { value: 'Europe/London', label: 'United Kingdom — London' },
+  { value: 'Europe/Dublin', label: 'Ireland — Dublin' },
+  { value: 'Europe/Paris', label: 'Central Europe — Paris, Berlin, Madrid' },
+  { value: 'Europe/Athens', label: 'Eastern Europe — Athens' },
+  { value: 'America/New_York', label: 'United States — New York' },
+  { value: 'America/Chicago', label: 'United States — Chicago' },
+  { value: 'America/Denver', label: 'United States — Denver' },
+  { value: 'America/Los_Angeles', label: 'United States — Los Angeles' },
+  { value: 'America/Toronto', label: 'Canada — Toronto' },
+  { value: 'America/Vancouver', label: 'Canada — Vancouver' },
+  { value: 'Australia/Sydney', label: 'Australia — Sydney' },
+  { value: 'Australia/Perth', label: 'Australia — Perth' },
+  { value: 'Asia/Dubai', label: 'United Arab Emirates — Dubai' },
+  { value: 'Asia/Singapore', label: 'Singapore' },
+  { value: 'Asia/Tokyo', label: 'Japan — Tokyo' },
+  { value: 'Asia/Kolkata', label: 'India — Kolkata' },
+]
+
 function readString(source: ProfileRecord | undefined, key: string) {
   const value = source?.[key]
 
@@ -71,6 +98,7 @@ async function updateAccountProfile(formData: FormData) {
   const displayName = cleanFormString(formData.get('display_name'))
   const jobTitle = cleanFormString(formData.get('job_title'))
   const companyName = cleanFormString(formData.get('company_name'))
+  const currentLevel = cleanFormString(formData.get('current_level'))
   const timezone = cleanFormString(formData.get('timezone'))
   const marketingEmailOptIn = formData.get('marketing_email_opt_in') === 'on'
 
@@ -82,6 +110,7 @@ async function updateAccountProfile(formData: FormData) {
       display_name: displayName,
       job_title: jobTitle,
       company_name: companyName,
+      current_level: currentLevel,
       timezone,
       marketing_email_opt_in: marketingEmailOptIn,
       onboarding_status: 'profile_complete',
@@ -145,7 +174,7 @@ export default async function AccountPage() {
   const timezone = readString(profileRecord, 'timezone')
   const marketingEmailOptIn = readBoolean(profileRecord, 'marketing_email_opt_in') ?? true
 
-  const currentLevel = readString(profileRecord, 'current_level') ?? 'AI Beginner'
+  const currentLevel = readString(profileRecord, 'current_level')
   const email = user.email ?? 'No email found'
   const emailConfirmed = Boolean(user.email_confirmed_at)
 
@@ -300,17 +329,49 @@ export default async function AccountPage() {
               </div>
 
               <div>
+                <label htmlFor="current_level" className="block text-sm font-semibold text-sand">
+                  Current AI level
+                </label>
+                <select
+                  id="current_level"
+                  name="current_level"
+                  defaultValue={currentLevel ?? ''}
+                  className="mt-2 w-full rounded-2xl border border-sand/10 bg-white px-4 py-3 text-base text-sand shadow-sm outline-none transition focus:border-[#123BFF] focus:ring-4 focus:ring-[#123BFF]/10"
+                >
+                  <option value="">Select your current level</option>
+                  {learningLevelOptions.map((level) => (
+                    <option key={level} value={level}>
+                      {level}
+                    </option>
+                  ))}
+                </select>
+                <p className="mt-2 text-xs leading-5 text-sand/45">
+                  Choose the level that best reflects your current confidence with AI tools,
+                  workflows, and practical usage.
+                </p>
+              </div>
+
+              <div>
                 <label htmlFor="timezone" className="block text-sm font-semibold text-sand">
                   Timezone
                 </label>
-                <input
+                <select
                   id="timezone"
                   name="timezone"
-                  type="text"
-                  placeholder="Europe/London"
                   defaultValue={timezone ?? ''}
-                  className="mt-2 w-full rounded-2xl border border-sand/10 bg-white px-4 py-3 text-base text-sand shadow-sm outline-none transition placeholder:text-sand/35 focus:border-[#123BFF] focus:ring-4 focus:ring-[#123BFF]/10"
-                />
+                  className="mt-2 w-full rounded-2xl border border-sand/10 bg-white px-4 py-3 text-base text-sand shadow-sm outline-none transition focus:border-[#123BFF] focus:ring-4 focus:ring-[#123BFF]/10"
+                >
+                  <option value="">Select your timezone</option>
+                  {timezoneOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <p className="mt-2 text-xs leading-5 text-sand/45">
+                  This helps DeepMind Resources show account timing, reminders, and business
+                  workspace activity in the right region.
+                </p>
               </div>
 
               <label className="flex items-start gap-3 rounded-2xl border border-sand/10 bg-[#EAF7FF] p-4">
@@ -380,7 +441,9 @@ export default async function AccountPage() {
                   <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
                     Current level
                   </p>
-                  <p className="mt-2 text-sm font-semibold text-sand">{currentLevel}</p>
+                  <p className="mt-2 text-sm font-semibold text-sand">
+                    {currentLevel || 'Not selected yet'}
+                  </p>
                 </div>
               </div>
             </article>
