@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useState } from 'react'
 import type { ElementType } from 'react'
@@ -16,6 +16,7 @@ import {
   Brain,
   Network,
   Layers,
+  Mail,
   Menu,
   X,
   LogIn,
@@ -35,6 +36,7 @@ const mainNavItems: NavItem[] = [
   { icon: Home, label: 'Home', href: '/' },
   { icon: Layers, label: 'Platform', href: '/platform' },
   { icon: BookOpen, label: 'Syllabus', href: '/syllabus' },
+  { icon: Mail, label: 'Contact', href: '/contact' },
   { icon: Code, label: 'Sandbox', href: '/sandbox', badge: 'LIVE' },
   { icon: Activity, label: 'Progress', href: '/progress' },
 ]
