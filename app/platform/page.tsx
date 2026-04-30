@@ -373,7 +373,7 @@ export default function PlatformPage() {
               </h1>
 
               <p className="mt-6 max-w-3xl text-base leading-8 text-sand/70 sm:text-lg">
-                DeepMind Resources is the real-time operating system for AI competency. We distill the chaos of shifting models and protocols into a deterministic learning path for your team. From Agentic Orchestration to GraphRAG deployment, we turn global AI breakthroughs into production-ready skills and verified sandbox tasks—ensuring your business stays ahead of the curve, not just in the queue.
+                DeepMind Resources is the real-time operating system for AI competency. We distill the chaos of shifting models and protocols into a deterministic learning path for your team. From Agentic Orchestration to GraphRAG deployment, we turn global AI breakthroughs into production-ready skills and verified sandbox tasksâ€”ensuring your business stays ahead of the curve, not just in the queue.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -418,7 +418,7 @@ export default function PlatformPage() {
                       Core platform loop
                     </p>
                     <h2 className="mt-1 text-xl font-bold text-sand">
-                      AI update â†’ verified meaning â†’ practical lesson â†’ sandbox task â†’ skill gain
+                      AI update Ã¢â€ â€™ verified meaning Ã¢â€ â€™ practical lesson Ã¢â€ â€™ sandbox task Ã¢â€ â€™ skill gain
                     </h2>
                   </div>
                 </div>
@@ -494,7 +494,7 @@ export default function PlatformPage() {
                   id="platform-pillars"
                   className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl"
                 >
-                  Built around learning, tool judgement, and practical skill development.
+                  The operating layer behind AI competency.
                 </h2>
 
                 <p className="mt-4 text-base leading-8 text-sand/65">
@@ -552,7 +552,7 @@ export default function PlatformPage() {
                     id="loop-title"
                     className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl"
                   >
-                    The platform turns AI change into practical learning action.
+                    From model shift to workforce skill.
                   </h2>
 
                   <p className="mt-4 text-base leading-8 text-sand/65">
@@ -623,7 +623,7 @@ export default function PlatformPage() {
                 id="capabilities-title"
                 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl"
               >
-                A platform for the skills modern AI work actually needs.
+                The AI capability map for production workflows.
               </h2>
 
               <p className="mt-4 text-base leading-8 text-sand/65">
@@ -672,7 +672,7 @@ export default function PlatformPage() {
                     id="audiences-title"
                     className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl"
                   >
-                    One platform direction, different practical routes.
+                    Built for teams that cannot afford stale AI training.
                   </h2>
 
                   <p className="mt-4 text-base leading-8 text-sand/65">
