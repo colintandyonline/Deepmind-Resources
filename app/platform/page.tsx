@@ -373,7 +373,7 @@ export default function PlatformPage() {
               </h1>
 
               <p className="mt-6 max-w-3xl text-base leading-8 text-sand/70 sm:text-lg">
-                DeepMind Resources is the real-time operating system for AI competency. We distill the chaos of shifting models and protocols into a deterministic learning path for your team. From Agentic Orchestration to GraphRAG deployment, we turn global AI breakthroughs into production-ready skills and verified sandbox tasksâ€”ensuring your business stays ahead of the curve, not just in the queue.
+                DeepMind Resources is the real-time operating system for AI competency. We distill the chaos of shifting models and protocols into a deterministic learning path for your team. From Agentic Orchestration to GraphRAG deployment, we turn global AI breakthroughs into production-ready skills and verified sandbox tasksÃ¢â‚¬â€ensuring your business stays ahead of the curve, not just in the queue.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -418,7 +418,7 @@ export default function PlatformPage() {
                       Core platform loop
                     </p>
                     <h2 className="mt-1 text-xl font-bold text-sand">
-                      AI update Ã¢â€ â€™ verified meaning Ã¢â€ â€™ practical lesson Ã¢â€ â€™ sandbox task Ã¢â€ â€™ skill gain
+                      AI update → verified meaning → practical lesson → sandbox task → skill gain
                     </h2>
                   </div>
                 </div>
@@ -494,13 +494,11 @@ export default function PlatformPage() {
                   id="platform-pillars"
                   className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl"
                 >
-                  The operating layer behind AI competency.
+                  The Operating Layer for Enterprise AI Competency.
                 </h2>
 
                 <p className="mt-4 text-base leading-8 text-sand/65">
-                  DeepMind Resources is structured to connect what people learn with what they can
-                  actually do: understand AI, choose better tools, practise workflows, and keep
-                  skills current.
+                  DeepMind Resources is engineered to bridge the gap between theoretical knowledge and production-ready implementation. We provide the deterministic framework for teams to evaluate high-velocity tools, master agentic workflows, and maintain a skill set that evolves at the speed of the AI frontier.
                 </p>
               </div>
 
