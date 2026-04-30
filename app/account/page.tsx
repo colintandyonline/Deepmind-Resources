@@ -19,6 +19,12 @@ import { createClient } from '@/lib/supabase/server'
 
 type ProfileRecord = Record<string, unknown> | null
 
+type AccountPageProps = {
+  searchParams?: Promise<{
+    save?: string
+  }>
+}
+
 const learningLevelOptions = [
   'AI Beginner',
   'Practical AI User',
@@ -68,6 +74,12 @@ function cleanFormString(value: FormDataEntryValue | null) {
   return trimmed ? trimmed : null
 }
 
+function readMetadataString(source: Record<string, unknown>, key: string) {
+  const value = source[key]
+
+  return typeof value === 'string' && value.trim() ? value.trim() : null
+}
+
 function formatAccountType(value: string | null) {
   if (value === 'business') {
     return 'Business'
@@ -93,6 +105,15 @@ async function updateAccountProfile(formData: FormData) {
     redirect('/auth/login')
   }
 
+  const { data: existingProfile } = await supabase
+    .from('user_profiles')
+    .select('account_type')
+    .eq('id', user.id)
+    .maybeSingle()
+
+  const userMetadata = user.user_metadata ?? {}
+  const existingProfileRecord = (existingProfile ?? null) as ProfileRecord
+
   const firstName = cleanFormString(formData.get('first_name'))
   const lastName = cleanFormString(formData.get('last_name'))
   const displayName = cleanFormString(formData.get('display_name'))
@@ -102,40 +123,55 @@ async function updateAccountProfile(formData: FormData) {
   const timezone = cleanFormString(formData.get('timezone'))
   const marketingEmailOptIn = formData.get('marketing_email_opt_in') === 'on'
 
+  const accountType =
+    readString(existingProfileRecord, 'account_type') ??
+    readMetadataString(userMetadata, 'account_type') ??
+    'individual'
+
   const now = new Date().toISOString()
+
+  const profilePayload = {
+    id: user.id,
+    first_name: firstName,
+    last_name: lastName,
+    display_name: displayName,
+    job_title: jobTitle,
+    company_name: companyName,
+    account_type: accountType,
+    current_level: currentLevel,
+    timezone,
+    marketing_email_opt_in: marketingEmailOptIn,
+    onboarding_status: 'profile_complete',
+    onboarding_completed_at: now,
+    updated_at: now,
+  }
 
   const { error } = await supabase
     .from('user_profiles')
-    .update({
+    .upsert(profilePayload, {
+      onConflict: 'id',
+    })
+
+  if (error) {
+    const fallbackPayload = {
+      id: user.id,
       first_name: firstName,
       last_name: lastName,
       display_name: displayName,
       job_title: jobTitle,
       company_name: companyName,
-      current_level: currentLevel,
-      timezone,
+      account_type: accountType,
       marketing_email_opt_in: marketingEmailOptIn,
       onboarding_status: 'profile_complete',
       onboarding_completed_at: now,
       updated_at: now,
-    })
-    .eq('id', user.id)
+    }
 
-  if (error) {
     const { error: fallbackError } = await supabase
       .from('user_profiles')
-      .update({
-        first_name: firstName,
-        last_name: lastName,
-        display_name: displayName,
-        job_title: jobTitle,
-        company_name: companyName,
-        marketing_email_opt_in: marketingEmailOptIn,
-        onboarding_status: 'profile_complete',
-        onboarding_completed_at: now,
-        updated_at: now,
+      .upsert(fallbackPayload, {
+        onConflict: 'id',
       })
-      .eq('id', user.id)
 
     if (fallbackError) {
       console.error('DeepMind Resources account save failed:', fallbackError.message)
@@ -143,11 +179,12 @@ async function updateAccountProfile(formData: FormData) {
     }
 
     console.error('DeepMind Resources account optional fields failed:', error.message)
+    revalidatePath('/account')
     redirect('/account?save=partial')
   }
 
   revalidatePath('/account')
-  redirect('/account')
+  redirect('/account?save=success')
 }
 
 async function signOut() {
@@ -159,7 +196,10 @@ async function signOut() {
   redirect('/')
 }
 
-export default async function AccountPage() {
+export default async function AccountPage({ searchParams }: AccountPageProps) {
+  const resolvedSearchParams = await searchParams
+  const saveStatus = resolvedSearchParams?.save ?? null
+
   const supabase = await createClient()
 
   const {
@@ -248,6 +288,26 @@ export default async function AccountPage() {
             </form>
           </div>
         </header>
+
+        {saveStatus === 'success' ? (
+          <div className="mt-6 rounded-3xl border border-emerald-200 bg-emerald-50 p-5 text-sm font-semibold leading-7 text-emerald-800 shadow-sm">
+            Account details saved.
+          </div>
+        ) : null}
+
+        {saveStatus === 'partial' ? (
+          <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50 p-5 text-sm font-semibold leading-7 text-amber-800 shadow-sm">
+            Your main account details were saved, but the learning level or timezone fields could
+            not be saved yet. The account page is still usable.
+          </div>
+        ) : null}
+
+        {saveStatus === 'error' ? (
+          <div className="mt-6 rounded-3xl border border-red-200 bg-red-50 p-5 text-sm font-semibold leading-7 text-red-800 shadow-sm">
+            Your account details could not be saved. Please check the profile table permissions and
+            try again.
+          </div>
+        ) : null}
 
         <section className="mt-8 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
           <article className="rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8">
@@ -609,4 +669,3 @@ export default async function AccountPage() {
     </main>
   )
 }
-
