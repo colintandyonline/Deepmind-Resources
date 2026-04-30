@@ -21,6 +21,18 @@ type AccountType = 'individual' | 'business'
 type FormStatus = 'idle' | 'loading' | 'sent' | 'error'
 
 const MIN_PASSWORD_LENGTH = 8
+const PASSWORD_RULE_MESSAGE =
+  'Password must be at least 8 characters and include uppercase, lowercase, a number, and a symbol.'
+
+function passwordMeetsRequirements(value: string) {
+  return (
+    value.length >= MIN_PASSWORD_LENGTH &&
+    /[a-z]/.test(value) &&
+    /[A-Z]/.test(value) &&
+    /\d/.test(value) &&
+    /[^A-Za-z0-9]/.test(value)
+  )
+}
 
 export default function SignupPage() {
   const [accountType, setAccountType] = useState<AccountType>('individual')
@@ -68,9 +80,9 @@ export default function SignupPage() {
       return
     }
 
-    if (password.length < MIN_PASSWORD_LENGTH) {
+    if (!passwordMeetsRequirements(password)) {
       setStatus('error')
-      setMessage(`Create a password with at least ${MIN_PASSWORD_LENGTH} characters.`)
+      setMessage(PASSWORD_RULE_MESSAGE)
       return
     }
 
@@ -391,8 +403,9 @@ export default function SignupPage() {
                       className="w-full rounded-2xl border border-sand/10 bg-white py-3 pl-12 pr-4 text-base text-sand shadow-sm outline-none transition focus:border-[#123BFF] focus:ring-4 focus:ring-[#123BFF]/10"
                     />
                   </div>
-                  <p className="mt-2 text-xs leading-5 text-sand/45">
-                    Use at least {MIN_PASSWORD_LENGTH} characters.
+                  <p className="mt-2 text-xs leading-5 text-sand/50">
+                    Minimum 8 characters with at least one uppercase letter, one lowercase letter,
+                    one number, and one symbol.
                   </p>
                 </div>
 
@@ -420,6 +433,19 @@ export default function SignupPage() {
                       className="w-full rounded-2xl border border-sand/10 bg-white py-3 pl-12 pr-4 text-base text-sand shadow-sm outline-none transition focus:border-[#123BFF] focus:ring-4 focus:ring-[#123BFF]/10"
                     />
                   </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-[#123BFF]/15 bg-[#EAF7FF] p-4">
+                <div className="flex gap-3">
+                  <ShieldCheck
+                    className="mt-0.5 h-5 w-5 shrink-0 text-[#123BFF]"
+                    aria-hidden="true"
+                  />
+                  <p className="text-sm leading-7 text-sand/70">
+                    Passwords must include uppercase and lowercase letters, digits, and symbols.
+                    Activation links remain valid for 24 hours.
+                  </p>
                 </div>
               </div>
 
