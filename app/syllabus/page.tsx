@@ -345,6 +345,18 @@ const learningSteps: LearningStep[] = [
     description:
       'Keep learning current as tools, models, features, risks, and practical recommendations evolve.',
   },
+  {
+    step: '05',
+    title: 'Compare the best tools',
+    description:
+      'Understand which tools are strongest for coding, writing, automation, research, knowledge work, and business productivity.',
+  },
+  {
+    step: '06',
+    title: 'Build repeatable AI habits',
+    description:
+      'Turn individual lessons into dependable working habits that can be reused across personal work, teams, and real business tasks.',
+  },
 ]
 
 const pathwayMilestones: PathwayMilestone[] = [
@@ -1052,6 +1064,20 @@ export default function SyllabusPage() {
                           </div>
                         </div>
                       ))}
+                    </div>
+
+                    <div className="mt-6 rounded-2xl bg-[#EAF7FF] p-5">
+                      <div className="flex items-start gap-3">
+                        <Lightbulb
+                          className="mt-1 h-5 w-5 shrink-0 text-[#123BFF]"
+                          aria-hidden="true"
+                        />
+                        <p className="text-sm leading-7 text-sand/70">
+                          This is what keeps DeepMind Resources live and relevant: updates are not
+                          just noticed, they are turned into clearer lessons, better practice, and
+                          stronger real-world recommendations.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
