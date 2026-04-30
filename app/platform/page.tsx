@@ -136,37 +136,37 @@ const platformPillars: PlatformPillar[] = [
 const platformLoopSteps: PlatformLoopStep[] = [
   {
     step: '01',
-    title: 'AI update',
+    title: 'Signal detected',
     description:
-      'Important model releases, tool changes, workflow shifts, platform updates, and emerging AI capabilities are identified for practical learning impact.',
+      'A meaningful model release, protocol shift, tool update, API change, or agent capability is identified for training impact.',
     icon: Radar,
   },
   {
     step: '02',
-    title: 'Verified meaning',
+    title: 'Impact mapped',
     description:
-      'The change is checked for usefulness, risk, affected workflows, learner relevance, and whether it should change existing guidance.',
+      'The change is filtered for business relevance, workflow impact, tool fit, operational risk, and whether existing guidance needs a system update.',
     icon: SearchCheck,
   },
   {
     step: '03',
-    title: 'Practical lesson',
+    title: 'Training updated',
     description:
-      'Useful changes become clearer explanations, updated learning guidance, tool comparisons, business notes, or new skill modules.',
+      'The learning path is refreshed with verified guidance, technical context, role-based implications, and production workflow examples.',
     icon: BookOpenCheck,
   },
   {
     step: '04',
-    title: 'Sandbox task',
+    title: 'Sandbox assigned',
     description:
-      'Learners practise the skill through guided prompts, workflow exercises, tool-use tasks, validation checks, or business scenarios.',
+      'The update becomes a verified sandbox task: prompt pattern, agent workflow, GraphRAG scenario, tool comparison, or validation drill.',
     icon: Code2,
   },
   {
     step: '05',
-    title: 'Skill gain',
+    title: 'Competency gained',
     description:
-      'Progress becomes practical: better judgement, stronger prompts, clearer workflows, safer review habits, and more confident AI use.',
+      'The team leaves with usable capability: sharper judgement, stronger workflows, better tool selection, and production-ready AI habits.',
     icon: Target,
   },
 ]
@@ -218,39 +218,39 @@ const capabilityLayers: CapabilityLayer[] = [
 
 const audiencePaths: AudiencePath[] = [
   {
-    title: 'Individual learners',
+    title: 'Business teams',
     description:
-      'A practical route for people who want to understand AI properly, build confidence, and avoid being overwhelmed by fast-moving tools.',
-    icon: GraduationCap,
-    outcomes: [
-      'Start with clear foundations',
-      'Build stronger prompt habits',
-      'Practise with guided tasks',
-      'Stay current as AI changes',
-    ],
-  },
-  {
-    title: 'Professionals and builders',
-    description:
-      'A deeper path for people using AI in real work, including tool choice, workflow design, automation, retrieval, agents, and review systems.',
-    icon: Route,
-    outcomes: [
-      'Compare tools by use case',
-      'Design repeatable workflows',
-      'Understand agentic systems',
-      'Improve output quality and checks',
-    ],
-  },
-  {
-    title: 'Teams and businesses',
-    description:
-      'A professional training layer for organisations that need shared AI standards, practical adoption, safer usage, and business-ready skills.',
+      'For organisations that need workforce training to stay current while models, tools, workflows, and adoption risks keep shifting.',
     icon: BriefcaseBusiness,
     outcomes: [
-      'Train staff by role and workflow',
-      'Reduce tool confusion and wasted spend',
-      'Build review and governance habits',
-      'Refresh skills after important AI changes',
+      'Role-based workflow training',
+      'Verified sandbox practice',
+      'Current tool guidance',
+      'Repeatable review habits',
+    ],
+  },
+  {
+    title: 'Operators and builders',
+    description:
+      'For people turning AI into systems: agents, GraphRAG, internal knowledge, automation, tool calling, and production workflow design.',
+    icon: Route,
+    outcomes: [
+      'Agentic orchestration',
+      'GraphRAG deployment patterns',
+      'Workflow automation logic',
+      'Production-ready evaluation',
+    ],
+  },
+  {
+    title: 'Individual professionals',
+    description:
+      'For ambitious learners who need more than awareness: practical AI competency, tool judgement, and current skills for modern work.',
+    icon: GraduationCap,
+    outcomes: [
+      'AI competency path',
+      'Tool selection judgement',
+      'Sandbox task practice',
+      'Release-aware refreshers',
     ],
   },
 ]
@@ -373,7 +373,7 @@ export default function PlatformPage() {
               </h1>
 
               <p className="mt-6 max-w-3xl text-base leading-8 text-sand/70 sm:text-lg">
-                DeepMind Resources is the real-time operating system for AI competency. We distill the chaos of shifting models and protocols into a deterministic learning path for your team. From Agentic Orchestration to GraphRAG deployment, we turn global AI breakthroughs into production-ready skills and verified sandbox tasksÃ¢â‚¬â€ensuring your business stays ahead of the curve, not just in the queue.
+                DeepMind Resources is the real-time operating system for AI competency. We distill the chaos of shifting models and protocols into a deterministic learning path for your team. From Agentic Orchestration to GraphRAG deployment, we turn global AI breakthroughs into production-ready skills and verified sandbox tasksÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Âensuring your business stays ahead of the curve, not just in the queue.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -539,9 +539,9 @@ export default function PlatformPage() {
 
           <section id="how-it-works" className="py-8" aria-labelledby="loop-title">
             <div className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
-              <div className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
-                <div>
-                  <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+              <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-stretch">
+                <div className="flex h-full flex-col">
+                  <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
                     <Workflow className="h-4 w-4" aria-hidden="true" />
                     How it works
                   </span>
@@ -554,9 +554,10 @@ export default function PlatformPage() {
                   </h2>
 
                   <p className="mt-4 text-base leading-8 text-sand/65">
-                    Normal AI courses age quickly. DeepMind Resources is designed around an update
-                    loop that can turn meaningful changes into clearer guidance, lesson refreshes,
-                    sandbox tasks, and stronger tool recommendations.
+                    DeepMind Resources turns frontier AI movement into a repeatable training
+                    pipeline. Model shifts, tool releases, protocol changes, and workflow patterns
+                    are distilled into verified guidance, updated lessons, and sandbox tasks your
+                    team can actually practise.
                   </p>
 
                   <div className="mt-6 rounded-2xl bg-[#EAF7FF] p-5">
@@ -566,8 +567,51 @@ export default function PlatformPage() {
                         aria-hidden="true"
                       />
                       <p className="text-sm leading-7 text-sand/70">
-                        The aim is not to publish every AI headline. The aim is to identify what
-                        genuinely changes what people should learn, practise, or use at work.
+                        The aim is not to publish every AI headline. The aim is to decide what
+                        genuinely changes the way your team should learn, build, review, deploy, or
+                        select AI tools.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 grid flex-1 gap-3">
+                    <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                      <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                        Signal capture
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-sand/65">
+                        We separate meaningful AI shifts from noise: model behaviour, agent
+                        capability, retrieval patterns, tool releases, and workflow risk.
+                      </p>
+                    </div>
+
+                    <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                      <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                        Training translation
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-sand/65">
+                        The change is converted into role-based learning, production examples,
+                        updated tool intelligence, and clear operational next steps.
+                      </p>
+                    </div>
+
+                    <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                      <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                        Sandbox verification
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-sand/65">
+                        Teams test the new capability in verified sandbox tasks before it reaches
+                        production workflows, customer data, or business-critical decisions.
+                      </p>
+                    </div>
+
+                    <div className="rounded-2xl bg-[#123BFF] p-4 text-white shadow-sm">
+                      <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/75">
+                        Output
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-white/85">
+                        Updated training, clearer tool choices, stronger workflow judgement, and a
+                        workforce that moves ahead of the curve, not just in the queue.
                       </p>
                     </div>
                   </div>
@@ -659,9 +703,9 @@ export default function PlatformPage() {
 
           <section className="py-8" aria-labelledby="audiences-title">
             <div className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
-              <div className="grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
-                <div>
-                  <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+              <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-stretch">
+                <div className="flex h-full flex-col">
+                  <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
                     <Target className="h-4 w-4" aria-hidden="true" />
                     Who it serves
                   </span>
@@ -674,9 +718,52 @@ export default function PlatformPage() {
                   </h2>
 
                   <p className="mt-4 text-base leading-8 text-sand/65">
-                    DeepMind Resources is shaped for people learning AI, professionals applying it
-                    in real work, and businesses that need shared training standards across teams.
+                    DeepMind Resources serves the people responsible for turning AI change into
+                    usable capability: business teams, technical operators, builders, and
+                    professionals who need current skills instead of passive AI awareness.
                   </p>
+
+                  <div className="mt-6 grid flex-1 gap-3">
+                    <div className="rounded-2xl bg-[#EAF7FF] p-4">
+                      <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                        Business outcome
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-sand/70">
+                        Keep your workforce current as AI tools, model capabilities, workflow
+                        patterns, and adoption risks change.
+                      </p>
+                    </div>
+
+                    <div className="rounded-2xl bg-[#EAF7FF] p-4">
+                      <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                        Training outcome
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-sand/70">
+                        Convert frontier AI movement into deterministic learning paths, role-based
+                        modules, and production-ready skill development.
+                      </p>
+                    </div>
+
+                    <div className="rounded-2xl bg-[#EAF7FF] p-4">
+                      <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                        Practice outcome
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-sand/70">
+                        Move from guidance into verified sandbox tasks for prompts, agents,
+                        GraphRAG, tool selection, review, and workflow automation.
+                      </p>
+                    </div>
+
+                    <div className="rounded-2xl border border-[#123BFF]/20 bg-white p-4 shadow-sm">
+                      <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                        Strategic outcome
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-sand/70">
+                        Build teams that can evaluate tools, adapt workflows, and act on AI change
+                        before competitors are still waiting for the next explainer.
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="grid gap-4">
