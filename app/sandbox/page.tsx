@@ -1,5 +1,6 @@
 ﻿import type { Metadata } from 'next'
 import Link from 'next/link'
+import { SandboxGuideAgent } from '@/components/sandbox/sandbox-guide-agent'
 import {
   ArrowRight,
   BadgeCheck,
@@ -247,6 +248,8 @@ export default function SandboxPage() {
           </div>
         </header>
 
+        <SandboxGuideAgent />
+
         <section className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
           <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
             <div>
@@ -427,3 +430,4 @@ export default function SandboxPage() {
     </main>
   )
 }
+
