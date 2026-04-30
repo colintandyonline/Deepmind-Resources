@@ -318,7 +318,7 @@ export default function HomePage() {
                   </span>
 
                   <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand sm:text-3xl">
-                    AI update â†’ verified meaning â†’ practical skill actions.
+                    AI update Ã¢â€ â€™ verified meaning Ã¢â€ â€™ practical skill actions.
                   </h2>
 
                   <p className="mt-3 max-w-3xl text-sm leading-7 text-sand/65 sm:text-base">
@@ -439,10 +439,14 @@ export default function HomePage() {
           </section>
 
           <footer className="mt-12 border-t border-sand/10 pt-8 pb-8 lg:mt-16">
-            <div className="glass-card rounded-2xl border border-sand/10 bg-white/80 p-6 shadow-sm sm:p-8">
-              <div className="grid gap-8 lg:grid-cols-[auto_1fr_auto] lg:items-center">
+            <div className="rounded-[2rem] border border-sand/10 bg-white/85 p-6 shadow-sm backdrop-blur sm:p-8 lg:p-10">
+              <div className="grid gap-8 lg:grid-cols-[auto_1fr_auto] lg:items-start">
                 <div className="flex justify-center lg:justify-start">
-                  <div className="relative h-28 w-28 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-sand/10 sm:h-32 sm:w-32">
+                  <Link
+                    href="/"
+                    aria-label="DeepMind Resources home"
+                    className="relative h-28 w-28 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-sand/10 transition hover:ring-[#123BFF]/30 sm:h-32 sm:w-32"
+                  >
                     <Image
                       src="/brand/deepmind-resources-logo.png"
                       alt="DeepMind Resources logo"
@@ -451,7 +455,7 @@ export default function HomePage() {
                       className="object-contain p-2"
                       priority={false}
                     />
-                  </div>
+                  </Link>
                 </div>
 
                 <div className="text-center lg:text-left">
@@ -462,6 +466,7 @@ export default function HomePage() {
                   <h2 className="mt-4 text-2xl font-bold tracking-tight text-sand">
                     DeepMind Resources
                   </h2>
+
                   <p className="mt-3 max-w-2xl text-sm leading-7 text-sand/60 sm:text-base">
                     A living AI training and tool-intelligence platform that turns verified AI
                     updates into practical lessons, sandbox tasks, and business-ready learning
@@ -478,9 +483,12 @@ export default function HomePage() {
                     >
                       AI Syllabus
                     </Link>
-                    <span className="rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold text-[#123BFF] shadow-sm">
+                    <a
+                      href="#sandbox"
+                      className="rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
+                    >
                       Agentic Sandbox
-                    </span>
+                    </a>
                     <Link
                       href="/business-ai-training"
                       className="rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
@@ -490,32 +498,50 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="grid gap-3 text-center text-sm sm:grid-cols-3 lg:grid-cols-1 lg:text-right">
+                <nav aria-label="Footer navigation" className="grid gap-3 text-center text-sm sm:grid-cols-2 lg:grid-cols-1 lg:text-right">
+                  <Link
+                    href="/"
+                    className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
+                  >
+                    Home
+                  </Link>
+                  <Link
+                    href="/platform"
+                    className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
+                  >
+                    Platform
+                  </Link>
                   <Link
                     href="/syllabus"
                     className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
                   >
-                    Academy
+                    Syllabus
                   </Link>
-                  <a
-                    href="#sandbox"
-                    className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
-                  >
-                    Sandbox
-                  </a>
                   <Link
                     href="/business-ai-training"
                     className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
                   >
                     Business Training
                   </Link>
-                </div>
+                  <Link
+                    href="/privacy"
+                    className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
+                  >
+                    Privacy
+                  </Link>
+                  <Link
+                    href="/terms"
+                    className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
+                  >
+                    Terms
+                  </Link>
+                </nav>
               </div>
 
               <div className="mt-8 rounded-2xl bg-[#123BFF] px-5 py-4 text-white shadow-sm">
                 <div className="flex flex-col gap-3 text-center text-xs sm:flex-row sm:items-center sm:justify-between sm:text-left">
-                  <p>Â© 2026 DeepMind Resources. Built for verified AI skill gain.</p>
-                  <p>AI update â†’ verified meaning â†’ practical lesson â†’ sandbox task.</p>
+                  <p>© 2026 DeepMind Resources. Built for verified AI skill gain.</p>
+                  <p>AI update → verified meaning → practical lesson → sandbox task.</p>
                 </div>
               </div>
             </div>
