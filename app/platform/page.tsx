@@ -369,13 +369,11 @@ export default function PlatformPage() {
               </span>
 
               <h1 className="mt-6 max-w-5xl text-4xl font-bold tracking-tight text-sand sm:text-5xl lg:text-6xl">
-                Professional AI training that stays useful as AI changes.
+                Future-Proof Your Workforce at the Speed of AI.
               </h1>
 
               <p className="mt-6 max-w-3xl text-base leading-8 text-sand/70 sm:text-lg">
-                DeepMind Resources combines structured AI learning, tool intelligence, sandbox
-                practice, and release-aware refreshers so individuals and teams can build practical
-                AI skills instead of relying on stale course material or hype-led tool advice.
+                DeepMind Resources is the real-time operating system for AI competency. We distill the chaos of shifting models and protocols into a deterministic learning path for your team. From Agentic Orchestration to GraphRAG deployment, we turn global AI breakthroughs into production-ready skills and verified sandbox tasks—ensuring your business stays ahead of the curve, not just in the queue.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -420,7 +418,7 @@ export default function PlatformPage() {
                       Core platform loop
                     </p>
                     <h2 className="mt-1 text-xl font-bold text-sand">
-                      AI update → verified meaning → practical lesson → sandbox task → skill gain
+                      AI update â†’ verified meaning â†’ practical lesson â†’ sandbox task â†’ skill gain
                     </h2>
                   </div>
                 </div>
