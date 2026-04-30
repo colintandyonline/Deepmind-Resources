@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import {
@@ -181,8 +181,8 @@ export default async function AccountPage() {
               </h1>
 
               <p className="mt-4 max-w-3xl text-base leading-8 text-sand/65">
-                Your account is the control layer for profile details, secure access, business
-                workspace settings, subscriptions, and future AI competency progress.
+                Update your profile, confirm your account identity, manage your communication
+                preferences, and keep your learning workspace ready for DeepMind Resources access.
               </p>
             </div>
 
@@ -211,8 +211,8 @@ export default async function AccountPage() {
                 </h2>
 
                 <p className="mt-3 text-sm leading-7 text-sand/65">
-                  Keep your profile details current so DeepMind Resources can shape the account
-                  experience around your individual or business training context.
+                  Keep your profile details current so your account reflects how you use DeepMind
+                  Resources as an individual learner or business user.
                 </p>
               </div>
 
@@ -265,7 +265,7 @@ export default async function AccountPage() {
                   className="mt-2 w-full rounded-2xl border border-sand/10 bg-white px-4 py-3 text-base text-sand shadow-sm outline-none transition focus:border-[#123BFF] focus:ring-4 focus:ring-[#123BFF]/10"
                 />
                 <p className="mt-2 text-xs leading-5 text-sand/45">
-                  This is the name used across your DeepMind Resources workspace.
+                  This is the name shown inside your DeepMind Resources workspace.
                 </p>
               </div>
 
@@ -325,7 +325,7 @@ export default async function AccountPage() {
                     Receive product and training updates
                   </span>
                   <span className="mt-1 block text-sm leading-6 text-sand/65">
-                    Get release-aware learning updates, product notes, and future training alerts.
+                    Get DeepMind Resources learning updates, product notes, and training alerts.
                     Account security emails will still be sent when needed.
                   </span>
                 </span>
@@ -398,20 +398,20 @@ export default async function AccountPage() {
               </h2>
 
               <p className="mt-3 text-sm leading-7 text-sand/65">
-                Your workspace will connect learning paths, subscriptions, course progress,
-                achievements, and future business team access as the platform expands.
+                Your workspace keeps your profile, account type, learning context, and business
+                details in one clear place.
               </p>
 
               <div className="mt-6 rounded-3xl bg-[#123BFF] p-5 text-white shadow-sm">
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/75">
-                  Operating layer
+                  Account hub
                 </p>
                 <h3 className="mt-3 text-xl font-bold tracking-tight">
-                  Account settings stay here, not scattered across the sidebar.
+                  Keep your account details accurate and ready to use.
                 </h3>
                 <p className="mt-3 text-sm leading-7 text-white/82">
-                  Profile, security, email preferences, business details, team access, and billing
-                  will be organised inside this account area as each system is added.
+                  Use this page to maintain the profile and workspace details DeepMind Resources
+                  uses for your account experience.
                 </p>
               </div>
             </article>
@@ -425,8 +425,8 @@ export default async function AccountPage() {
             </span>
             <h2 className="mt-5 text-xl font-bold tracking-tight text-sand">Security</h2>
             <p className="mt-3 text-sm leading-7 text-sand/65">
-              Password changes and sensitive account actions will live here. Reset links remain
-              reserved for recovery and verification.
+              Your password and sign-in access are handled securely through DeepMind Resources
+              authentication. Use the reset-password flow if you need to recover access.
             </p>
           </article>
 
@@ -434,10 +434,10 @@ export default async function AccountPage() {
             <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
               <CreditCard className="h-6 w-6" aria-hidden="true" />
             </span>
-            <h2 className="mt-5 text-xl font-bold tracking-tight text-sand">Subscription</h2>
+            <h2 className="mt-5 text-xl font-bold tracking-tight text-sand">Plan and access</h2>
             <p className="mt-3 text-sm leading-7 text-sand/65">
-              Billing, access level, subscription status, and plan management will connect here
-              once monetisation is added.
+              Your account type helps determine the learning, sandbox, and business workspace
+              experience available to you.
             </p>
           </article>
 
@@ -445,10 +445,10 @@ export default async function AccountPage() {
             <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
               <Users className="h-6 w-6" aria-hidden="true" />
             </span>
-            <h2 className="mt-5 text-xl font-bold tracking-tight text-sand">Team access</h2>
+            <h2 className="mt-5 text-xl font-bold tracking-tight text-sand">Business details</h2>
             <p className="mt-3 text-sm leading-7 text-sand/65">
-              Business users later gain company profile controls, team members, permissions, and
-              training-management settings.
+              Business users can keep company and role information current so DeepMind Resources
+              can support team-ready AI training and workspace context.
             </p>
           </article>
         </section>
@@ -458,17 +458,17 @@ export default async function AccountPage() {
             <div>
               <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
                 <Layers className="h-4 w-4" aria-hidden="true" />
-                Future account layers
+                Account support
               </span>
 
               <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand">
-                Built to support courses, levels, achievements, and subscriptions.
+                Need help with your DeepMind Resources account?
               </h2>
 
               <p className="mt-4 max-w-3xl text-base leading-8 text-sand/65">
-                The account page is the foundation for the next product layer. Dashboard data,
-                course completions, skill levels, sandbox records, business team access, and
-                subscription status should connect back to this central account structure.
+                For account access, profile questions, business workspace support, or privacy
+                requests, contact the right DeepMind Resources inbox and we will route your request
+                clearly.
               </p>
             </div>
 
@@ -477,7 +477,7 @@ export default async function AccountPage() {
                 <div className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#123BFF]" />
                   <p className="text-sm leading-7 text-sand/70">
-                    Profile and security settings stay inside Account.
+                    Account and learning support: support@deepmindresources.pro
                   </p>
                 </div>
               </div>
@@ -486,7 +486,7 @@ export default async function AccountPage() {
                 <div className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#123BFF]" />
                   <p className="text-sm leading-7 text-sand/70">
-                    Dashboard becomes the live learning and progress workspace.
+                    Business training enquiries: business@deepmindresources.pro
                   </p>
                 </div>
               </div>
@@ -495,7 +495,7 @@ export default async function AccountPage() {
                 <div className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#123BFF]" />
                   <p className="text-sm leading-7 text-sand/70">
-                    Business users later gain team, company, and training-management settings.
+                    Privacy and data requests: privacy@deepmindresources.pro
                   </p>
                 </div>
               </div>
