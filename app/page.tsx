@@ -1,10 +1,22 @@
+import type { LucideIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight, BookOpenCheck, BriefcaseBusiness, Code2 } from 'lucide-react'
+import {
+  ArrowRight,
+  BarChart3,
+  BookOpenCheck,
+  BrainCircuit,
+  BriefcaseBusiness,
+  CheckCircle2,
+  Code2,
+  Database,
+  Radar,
+  Route,
+  Sparkles,
+  Workflow,
+} from 'lucide-react'
 import { Sidebar } from '@/components/platform/sidebar'
 import { HeroSection } from '@/components/platform/hero-section'
-import { LearningPath } from '@/components/platform/learning-path'
-import { LiveFeed } from '@/components/platform/live-feed'
 import { CodeSandbox } from '@/components/platform/code-sandbox'
 import { ContentCardGrid, type LessonModule } from '@/components/platform/content-card'
 
@@ -49,7 +61,7 @@ const featuredModules: LessonModule[] = [
     title: 'Memory Systems & RAG',
     description: 'Add long-term memory and retrieval-augmented generation to your agents.',
     duration: '2h 30min',
-    status: 'locked',
+    status: 'available',
     category: 'Advanced',
   },
   {
@@ -57,8 +69,118 @@ const featuredModules: LessonModule[] = [
     title: 'Multi-Agent Orchestration',
     description: 'Design and coordinate systems of multiple specialized AI agents.',
     duration: '3h 00min',
-    status: 'locked',
+    status: 'available',
     category: 'Expert',
+  },
+]
+
+type PathwayStage = {
+  title: string
+  description: string
+  label: string
+  icon: LucideIcon
+}
+
+type IntelligenceSignal = {
+  title: string
+  description: string
+  label: string
+  icon: LucideIcon
+}
+
+const pathwayStages: PathwayStage[] = [
+  {
+    title: 'AI Fundamentals',
+    description: 'Understand what modern AI can do and where human judgement still matters.',
+    label: 'Core',
+    icon: BrainCircuit,
+  },
+  {
+    title: 'Prompt Engineering',
+    description: 'Give clearer instructions, improve weak outputs, and build reusable prompt patterns.',
+    label: 'Core',
+    icon: Sparkles,
+  },
+  {
+    title: 'Tool Intelligence',
+    description: 'Choose the right AI tools for coding, research, writing, automation, and knowledge work.',
+    label: 'Tools',
+    icon: Radar,
+  },
+  {
+    title: 'Workflow Design',
+    description: 'Turn one-off AI use into repeatable processes with review and quality control.',
+    label: 'Workflow',
+    icon: Workflow,
+  },
+  {
+    title: 'RAG & Knowledge Systems',
+    description: 'Use internal documents, retrieval patterns, and source-backed knowledge workflows.',
+    label: 'Knowledge',
+    icon: Database,
+  },
+  {
+    title: 'Business Productivity',
+    description: 'Apply AI to admin, operations, marketing, sales, support, reporting, and planning.',
+    label: 'Business',
+    icon: BriefcaseBusiness,
+  },
+  {
+    title: 'Data & Decision Support',
+    description: 'Use AI for analysis, summaries, spreadsheets, competitor research, and decision support.',
+    label: 'Analysis',
+    icon: BarChart3,
+  },
+  {
+    title: 'Agentic Systems',
+    description: 'Build practical understanding of tool calling, task chains, automation, and agent workflows.',
+    label: 'Agents',
+    icon: Route,
+  },
+]
+
+const intelligenceSignals: IntelligenceSignal[] = [
+  {
+    title: 'AI release reviewed',
+    description:
+      'A major model, product, or platform change is checked for practical learning impact.',
+    label: 'Track',
+    icon: Radar,
+  },
+  {
+    title: 'Practical meaning mapped',
+    description:
+      'The update is translated into what matters, who should care, and what work it affects.',
+    label: 'Meaning',
+    icon: BrainCircuit,
+  },
+  {
+    title: 'Lesson guidance refreshed',
+    description:
+      'Relevant learning paths are updated so members are not working from stale tool advice.',
+    label: 'Lesson',
+    icon: BookOpenCheck,
+  },
+  {
+    title: 'Sandbox task created',
+    description:
+      'The change becomes a practical exercise, workflow simulation, or tool comparison task.',
+    label: 'Practice',
+    icon: Code2,
+  },
+  {
+    title: 'Business workflow applied',
+    description:
+      'The same intelligence becomes guidance for productivity, support, operations, and automation.',
+    label: 'Apply',
+    icon: BriefcaseBusiness,
+  },
+  {
+    title: 'Recommendations improved',
+    description:
+      'Tool comparisons and learning advice improve as stronger real-world workflows emerge.',
+    label: 'Improve',
+    icon: CheckCircle2,
   },
 ]
 
@@ -74,16 +196,12 @@ export default function HomePage() {
         aria-hidden="true"
       />
 
-      {/* Sidebar */}
       <Sidebar />
 
-      {/* Main Content */}
       <main className="relative z-10 min-h-screen pt-16 md:pl-64 md:pt-0">
-        <div className="w-full max-w-7xl mx-auto px-4 py-6 sm:px-6 sm:py-8">
-          {/* Hero Section */}
+        <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
           <HeroSection />
 
-          {/* Business CTA */}
           <section className="mt-8 lg:mt-12">
             <div className="rounded-3xl border border-sand/10 bg-[#123BFF] p-6 text-white shadow-sm sm:p-8 lg:p-10">
               <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
@@ -115,22 +233,162 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* Dashboard Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8 lg:mt-12">
-            {/* Learning Path - Takes 1 column */}
-            <div className="lg:col-span-1">
-              <LearningPath />
+          <section className="mt-8 grid grid-cols-1 gap-6 lg:mt-12 lg:grid-cols-3 lg:items-stretch">
+            <div className="flex h-full flex-col rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm lg:col-span-1">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                    <Route className="h-4 w-4" aria-hidden="true" />
+                    Learning pathway
+                  </span>
+
+                  <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand">
+                    Practical AI capability map
+                  </h2>
+                </div>
+
+                <span className="rounded-2xl bg-[#EAF7FF] px-4 py-3 text-sm font-bold text-[#123BFF]">
+                  8 stages
+                </span>
+              </div>
+
+              <div className="mt-5 h-2 overflow-hidden rounded-full bg-sand/10">
+                <div className="h-full w-full rounded-full bg-[#123BFF]" />
+              </div>
+
+              <div className="mt-5 flex-1 overflow-hidden">
+                <div className="mt-5 overflow-y-auto pr-2" style={{ height: "63rem" }}>
+                  <div className="space-y-4">
+                    {pathwayStages.map((stage, index) => {
+                      const Icon = stage.icon
+
+                      return (
+                        <div key={stage.title} className="relative pl-16">
+                          {index !== pathwayStages.length - 1 ? (
+                            <span className="absolute left-[1.35rem] top-12 h-[calc(100%+0.75rem)] w-px bg-[#123BFF]/30" />
+                          ) : null}
+
+                          <span className="absolute left-0 top-0 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#123BFF]/20 bg-[#EAF7FF] text-[#123BFF]">
+                            <Icon className="h-5 w-5" aria-hidden="true" />
+                          </span>
+
+                          <div className="rounded-3xl border border-sand/10 bg-white p-4 shadow-sm">
+                            <div className="flex items-start justify-between gap-4">
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <h3 className="text-lg font-bold text-sand">{stage.title}</h3>
+                                  <CheckCircle2
+                                    className="h-5 w-5 text-[#123BFF]"
+                                    aria-hidden="true"
+                                  />
+                                </div>
+
+                                <p className="mt-1 text-sm leading-6 text-sand/60">
+                                  {stage.description}
+                                </p>
+                              </div>
+
+                              <span className="rounded-2xl bg-[#EAF7FF] px-3 py-2 text-xs font-bold uppercase tracking-[0.12em] text-[#123BFF]">
+                                {stage.label}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              <Link
+                href="/syllabus"
+                className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
+              >
+                View full syllabus
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
             </div>
 
-            {/* Live Feed - Takes 2 columns */}
-            <div className="lg:col-span-2">
-              <LiveFeed />
-            </div>
-          </div>
+            <div className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm lg:col-span-2">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                    <Sparkles className="h-4 w-4" aria-hidden="true" />
+                    Live AI Intelligence
+                  </span>
 
-          {/* Featured Modules Section */}
+                  <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand sm:text-3xl">
+                    AI update → verified meaning → practical skill actions.
+                  </h2>
+
+                  <p className="mt-3 max-w-3xl text-sm leading-7 text-sand/65 sm:text-base">
+                    DeepMind Resources turns important AI changes into clearer lessons, sandbox
+                    tasks, tool comparisons, and business-ready workflow guidance.
+                  </p>
+                </div>
+
+                <span className="w-fit rounded-2xl bg-[#EAF7FF] px-4 py-3 text-sm font-bold text-[#123BFF]">
+                  Active
+                </span>
+              </div>
+
+              <div className="mt-6 grid gap-4 sm:grid-cols-3">
+                <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                  <p className="text-2xl font-bold text-[#123BFF]">Live</p>
+                  <p className="mt-1 text-sm leading-6 text-sand/60">release-aware learning</p>
+                </div>
+                <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                  <p className="text-2xl font-bold text-[#123BFF]">8</p>
+                  <p className="mt-1 text-sm leading-6 text-sand/60">capability areas tracked</p>
+                </div>
+                <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                  <p className="text-2xl font-bold text-[#123BFF]">Real</p>
+                  <p className="mt-1 text-sm leading-6 text-sand/60">workflows, not demos</p>
+                </div>
+              </div>
+
+              <div className="mt-6 grid gap-4">
+                {intelligenceSignals.map((signal, index) => {
+                  const Icon = signal.icon
+
+                  return (
+                    <article
+                      key={signal.title}
+                      className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
+                    >
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="flex gap-4">
+                          <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
+                            <Icon className="h-5 w-5" aria-hidden="true" />
+                          </span>
+
+                          <div>
+                            <div className="flex flex-wrap items-center gap-3">
+                              <span className="inline-flex h-8 w-8 items-center justify-center rounded-2xl bg-[#123BFF] text-xs font-bold text-white shadow-sm">
+                                {String(index + 1).padStart(2, '0')}
+                              </span>
+                              <h3 className="text-lg font-bold text-sand">{signal.title}</h3>
+                            </div>
+
+                            <p className="mt-3 text-sm leading-7 text-sand/65">
+                              {signal.description}
+                            </p>
+                          </div>
+                        </div>
+
+                        <span className="w-fit rounded-full bg-[#EAF7FF] px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                          {signal.label}
+                        </span>
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
+            </div>
+          </section>
+
           <section id="learning" className="mt-10 lg:mt-12">
-            <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-end sm:justify-between">
+            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
                   <BookOpenCheck className="h-4 w-4" aria-hidden="true" />
@@ -140,20 +398,23 @@ export default function HomePage() {
                 <h2 className="mt-4 text-3xl font-bold tracking-tight text-sand">
                   Continue Learning
                 </h2>
-                <p className="text-sand/55 mt-2">
+                <p className="mt-2 text-sand/55">
                   Pick up where you left off or start a new module
                 </p>
               </div>
-              <button className="w-fit rounded-2xl border border-sand/10 bg-white px-4 py-2 text-sm font-bold text-signal-green shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#0A63FF]">
-                View All Modules
-              </button>
+              <Link
+                href="/syllabus"
+                className="inline-flex w-fit items-center justify-center gap-2 rounded-2xl border border-sand/10 bg-white px-4 py-2 text-sm font-bold text-[#123BFF] shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#0A63FF]"
+              >
+                View Full Syllabus
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
             </div>
             <ContentCardGrid modules={featuredModules} />
           </section>
 
-          {/* Code Sandbox Section */}
           <section id="sandbox" className="mt-10 lg:mt-12">
-            <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-end sm:justify-between">
+            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
                   <Code2 className="h-4 w-4" aria-hidden="true" />
@@ -163,13 +424,13 @@ export default function HomePage() {
                 <h2 className="mt-4 text-3xl font-bold tracking-tight text-sand">
                   Agentic Sandbox
                 </h2>
-                <p className="text-sand/55 mt-2">
+                <p className="mt-2 text-sand/55">
                   Practice building AI agents in a live environment
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <span className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#123BFF] text-white text-sm font-bold shadow-sm">
-                  <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                <span className="flex items-center gap-1.5 rounded-full bg-[#123BFF] px-4 py-2 text-sm font-bold text-white shadow-sm">
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-white" />
                   Live
                 </span>
               </div>
@@ -177,8 +438,7 @@ export default function HomePage() {
             <CodeSandbox />
           </section>
 
-          {/* Footer */}
-          <footer className="mt-12 pb-8 border-t border-sand/10 pt-8 lg:mt-16">
+          <footer className="mt-12 border-t border-sand/10 pt-8 pb-8 lg:mt-16">
             <div className="glass-card rounded-2xl border border-sand/10 bg-white/80 p-6 shadow-sm sm:p-8">
               <div className="grid gap-8 lg:grid-cols-[auto_1fr_auto] lg:items-center">
                 <div className="flex justify-center lg:justify-start">
@@ -212,6 +472,12 @@ export default function HomePage() {
                     <span className="rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold text-[#123BFF] shadow-sm">
                       Live AI Intelligence
                     </span>
+                    <Link
+                      href="/syllabus"
+                      className="rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
+                    >
+                      AI Syllabus
+                    </Link>
                     <span className="rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold text-[#123BFF] shadow-sm">
                       Agentic Sandbox
                     </span>
@@ -225,12 +491,12 @@ export default function HomePage() {
                 </div>
 
                 <div className="grid gap-3 text-center text-sm sm:grid-cols-3 lg:grid-cols-1 lg:text-right">
-                  <a
-                    href="#learning"
+                  <Link
+                    href="/syllabus"
                     className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
                   >
                     Academy
-                  </a>
+                  </Link>
                   <a
                     href="#sandbox"
                     className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
