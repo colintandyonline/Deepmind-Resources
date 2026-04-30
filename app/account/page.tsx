@@ -92,6 +92,16 @@ function formatAccountType(value: string | null) {
   return 'Individual'
 }
 
+function formatTimezone(value: string | null) {
+  if (!value) {
+    return 'Not selected yet'
+  }
+
+  const option = timezoneOptions.find((timezoneOption) => timezoneOption.value === value)
+
+  return option?.label ?? value
+}
+
 async function updateAccountProfile(formData: FormData) {
   'use server'
 
@@ -528,6 +538,15 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
                     {currentLevel || 'Not selected yet'}
                   </p>
                 </div>
+
+                <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                    Timezone
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-sand">
+                    {formatTimezone(timezone)}
+                  </p>
+                </div>
               </div>
             </article>
 
@@ -669,4 +688,5 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
     </main>
   )
 }
+
 
