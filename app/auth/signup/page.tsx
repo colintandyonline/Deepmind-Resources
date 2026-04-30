@@ -4,12 +4,16 @@ import { useEffect, useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import {
   ArrowRight,
+  Brain,
   BriefcaseBusiness,
+  CheckCircle2,
   GraduationCap,
   LockKeyhole,
   Mail,
+  Radar,
   ShieldCheck,
   Sparkles,
+  Workflow,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -110,71 +114,103 @@ export default function SignupPage() {
 
     if (data.session && typeof window !== 'undefined') {
       setStatus('sent')
-      setMessage('Account created. Redirecting to your dashboard...')
+      setMessage('Account created. Opening your dashboard...')
       window.location.href = '/dashboard'
       return
     }
 
     setStatus('sent')
     setMessage(
-      'Account created. Check your email to verify your account, then sign in with your password.'
+      'Account created. Check your email to activate your DeepMind Resources workspace.'
     )
   }
 
   return (
-    <main className="min-h-screen bg-obsidian px-4 py-10 text-sand sm:px-6 lg:px-8">
-      <div className="mx-auto flex min-h-[calc(100vh-5rem)] w-full max-w-6xl items-center justify-center">
-        <div className="grid w-full gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-          <section className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
-              <Sparkles className="h-4 w-4" aria-hidden="true" />
-              Join DeepMind Resources
-            </span>
+    <main className="relative min-h-screen overflow-hidden bg-obsidian px-4 py-8 text-sand sm:px-6 lg:px-8">
+      <div
+        className="pointer-events-none fixed inset-0 z-0"
+        style={{
+          background:
+            'radial-gradient(circle at top right, rgba(69, 201, 255, 0.24), transparent 34rem), radial-gradient(circle at top left, rgba(18, 59, 255, 0.14), transparent 30rem), linear-gradient(180deg, #F4FBFF 0%, #EAF7FF 48%, #F4FBFF 100%)',
+        }}
+        aria-hidden="true"
+      />
 
-            <h1 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl lg:text-5xl">
-              Create your AI competency account
-            </h1>
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-7xl items-center justify-center">
+        <div className="grid w-full gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-stretch">
+          <section className="rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
+            <div className="flex items-start justify-between gap-4">
+              <Link href="/" className="inline-flex items-center gap-3">
+                <span className="inline-flex h-13 w-13 items-center justify-center rounded-2xl bg-[#123BFF] p-2 shadow-sm">
+                  <img
+                    src="/brand/deepmind-resources-emblem.png"
+                    alt="DeepMind Resources"
+                    className="h-9 w-9 rounded-xl object-contain"
+                  />
+                </span>
+                <span className="text-base font-bold tracking-tight text-sand">
+                  DeepMind Resources
+                </span>
+              </Link>
 
-            <p className="mt-4 max-w-2xl text-base leading-8 text-sand/65">
-              Create your account with email and password access. DeepMind Resources is built for
-              structured AI learning, verified sandbox tasks, and tool intelligence that stays
-              useful as AI changes.
-            </p>
+              <span className="hidden rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF] sm:inline-flex">
+                Secure signup
+              </span>
+            </div>
 
-            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+            <div className="mt-8">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                <Sparkles className="h-4 w-4" aria-hidden="true" />
+                Join DeepMind Resources
+              </span>
+
+              <h1 className="mt-5 max-w-2xl text-4xl font-bold tracking-tight text-sand sm:text-5xl">
+                Activate your AI competency workspace.
+              </h1>
+
+              <p className="mt-4 max-w-2xl text-base leading-8 text-sand/65">
+                Create your workspace for structured AI training, verified sandbox practice, and
+                release-aware guidance built to keep your skills current as models, tools, and
+                workflows change.
+              </p>
+            </div>
+
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <button
                 type="button"
                 onClick={() => setAccountType('individual')}
-                className={`rounded-2xl border p-4 text-left shadow-sm transition ${
+                className={`rounded-3xl border p-5 text-left shadow-sm transition ${
                   accountType === 'individual'
                     ? 'border-[#123BFF] bg-[#EAF7FF]'
                     : 'border-sand/10 bg-white hover:border-[#123BFF]/30'
                 }`}
               >
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#123BFF] text-white">
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#123BFF] text-white">
                   <GraduationCap className="h-5 w-5" aria-hidden="true" />
                 </span>
-                <span className="mt-4 block text-sm font-bold text-sand">Individual</span>
-                <span className="mt-1 block text-sm leading-6 text-sand/60">
-                  Build AI competency, practise skills, and track your progress.
+                <span className="mt-5 block text-base font-bold text-sand">Individual</span>
+                <span className="mt-2 block text-sm leading-7 text-sand/60">
+                  Build practical AI competency through structured learning, tool judgement, and
+                  sandbox-ready practice.
                 </span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setAccountType('business')}
-                className={`rounded-2xl border p-4 text-left shadow-sm transition ${
+                className={`rounded-3xl border p-5 text-left shadow-sm transition ${
                   accountType === 'business'
                     ? 'border-[#123BFF] bg-[#EAF7FF]'
                     : 'border-sand/10 bg-white hover:border-[#123BFF]/30'
                 }`}
               >
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#123BFF] text-white">
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#123BFF] text-white">
                   <BriefcaseBusiness className="h-5 w-5" aria-hidden="true" />
                 </span>
-                <span className="mt-4 block text-sm font-bold text-sand">Business</span>
-                <span className="mt-1 block text-sm leading-6 text-sand/60">
-                  Start shaping current AI training and tool guidance for your team.
+                <span className="mt-5 block text-base font-bold text-sand">Business</span>
+                <span className="mt-2 block text-sm leading-7 text-sand/60">
+                  Start shaping a current AI training layer for teams, workflows, tool selection,
+                  and production-ready adoption.
                 </span>
               </button>
             </div>
@@ -329,9 +365,9 @@ export default function SignupPage() {
               <button
                 type="submit"
                 disabled={status === 'loading'}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF] disabled:cursor-not-allowed disabled:opacity-70"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-3.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF] disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {status === 'loading' ? 'Creating account...' : 'Create account'}
+                {status === 'loading' ? 'Creating workspace...' : 'Create workspace'}
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </button>
 
@@ -348,52 +384,98 @@ export default function SignupPage() {
               ) : null}
             </form>
 
-            <div className="mt-6 border-t border-sand/10 pt-5 text-sm text-sand/55">
-              Already have an account?{' '}
+            <div className="mt-6 flex flex-col gap-3 border-t border-sand/10 pt-5 text-sm text-sand/55 sm:flex-row sm:items-center sm:justify-between">
+              <span>Already have a workspace?</span>
               <Link href="/auth/login" className="font-bold text-[#123BFF] hover:text-[#0A63FF]">
                 Sign in
               </Link>
             </div>
           </section>
 
-          <aside className="rounded-3xl border border-sand/10 bg-white/80 p-6 shadow-sm sm:p-8">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
-              <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-              Built for current AI skills
-            </span>
+          <aside className="flex flex-col rounded-[2rem] border border-sand/10 bg-white/88 p-6 shadow-sm sm:p-8 lg:p-10">
+            <div className="flex items-start justify-between gap-4">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+                Built for current AI skills
+              </span>
 
-            <div className="mt-6 space-y-6">
-              <div>
-                <h2 className="text-xl font-bold text-sand">Create a secure workspace</h2>
-                <p className="mt-2 text-sm leading-7 text-sand/65">
-                  Your account gives you password-based access to DeepMind Resources, with email
-                  links reserved for verification and recovery flows.
-                </p>
+              <a href="https://deepmindresources.pro" className="shrink-0">
+                <img
+                  src="/brand/deepmind-resources-emblem.png"
+                  alt="DeepMind Resources"
+                  className="h-14 w-14 rounded-2xl object-contain shadow-sm"
+                />
+              </a>
+            </div>
+
+            <div className="mt-8 rounded-[1.5rem] bg-[#123BFF] p-6 text-white shadow-sm">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/75">
+                Operating layer
+              </p>
+              <h2 className="mt-3 text-2xl font-bold tracking-tight">
+                Start with a workspace designed for AI competency.
+              </h2>
+              <p className="mt-4 text-sm leading-7 text-white/82">
+                DeepMind Resources is engineered to turn AI change into structured learning,
+                verified sandbox tasks, and production-ready skill development for individuals and
+                teams.
+              </p>
+            </div>
+
+            <div className="mt-6 grid gap-4">
+              <div className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm">
+                <div className="flex gap-4">
+                  <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
+                    <Radar className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h3 className="text-lg font-bold text-sand">Release-aware training</h3>
+                    <p className="mt-2 text-sm leading-7 text-sand/65">
+                      Keep your skill set aligned with meaningful model, tool, and workflow shifts.
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <h2 className="text-xl font-bold text-sand">Build AI competency</h2>
-                <p className="mt-2 text-sm leading-7 text-sand/65">
-                  The platform is being shaped around practical training, verified sandbox tasks,
-                  tool intelligence, and release-aware learning.
-                </p>
+              <div className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm">
+                <div className="flex gap-4">
+                  <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
+                    <Workflow className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h3 className="text-lg font-bold text-sand">Workflow-first competency</h3>
+                    <p className="mt-2 text-sm leading-7 text-sand/65">
+                      Learn AI through practical use cases: prompts, tools, retrieval, agents,
+                      automation, validation, and review.
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <h2 className="text-xl font-bold text-sand">Support individual and business use</h2>
-                <p className="mt-2 text-sm leading-7 text-sand/65">
-                  Choose an individual account for personal learning or a business account for
-                  team-focused AI training and workflow adoption.
-                </p>
+              <div className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm">
+                <div className="flex gap-4">
+                  <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
+                    <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h3 className="text-lg font-bold text-sand">Secure account recovery</h3>
+                    <p className="mt-2 text-sm leading-7 text-sand/65">
+                      Email links are used for verification and password recovery. Day-to-day access
+                      happens securely on-site with your password.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="mt-8 rounded-2xl border border-sand/10 bg-[#EAF7FF] p-5">
-              <p className="text-sm font-bold text-sand">Email links still matter.</p>
-              <p className="mt-2 text-sm leading-7 text-sand/65">
-                Password reset, account recovery, and future account-security actions will use
-                secure email links. Normal login will happen on-site with email and password.
-              </p>
+            <div className="mt-auto pt-6">
+              <div className="rounded-3xl border border-[#123BFF]/20 bg-[#EAF7FF] p-5">
+                <p className="text-sm font-bold text-sand">Business accounts are supported.</p>
+                <p className="mt-2 text-sm leading-7 text-sand/65">
+                  Select Business to prepare a team-focused workspace for professional AI training,
+                  tool intelligence, and workflow adoption.
+                </p>
+              </div>
             </div>
           </aside>
         </div>
