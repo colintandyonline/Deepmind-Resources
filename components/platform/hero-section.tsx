@@ -1,6 +1,7 @@
 ﻿'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { ArrowRight, Zap, Users, Award } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -75,26 +76,32 @@ export function HeroSection() {
           </p>
 
           <p className="text-base sm:text-lg text-sand/55 max-w-3xl mx-auto mb-10 text-pretty leading-relaxed">
-            DeepMindResources cuts through hype, compares AI tools for real scenarios, and turns
+            DeepMind Resources cuts through hype, compares AI tools for real scenarios, and turns
             trusted updates into practical sandbox training for individuals, teams, and businesses.
           </p>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
             <Button
+              asChild
               size="lg"
               className="bg-signal-green text-primary-foreground hover:bg-signal-green/90 font-semibold px-8 group shadow-sm"
             >
-              Start Learning
-              <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <Link href="/auth/signup">
+                Start Learning
+                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </Button>
 
             <Button
+              asChild
               size="lg"
               variant="outline"
               className="border-sand/20 text-sand hover:bg-sand/5 hover:border-signal-green/30 font-semibold px-8 bg-white/60"
             >
-              View Live Curriculum
+              <Link href="/auth/signup?intent=curriculum">
+                View Live Curriculum
+              </Link>
             </Button>
           </div>
 
