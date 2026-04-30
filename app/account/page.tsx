@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 import {
   ArrowRight,
   BadgeCheck,
@@ -24,6 +25,22 @@ function readString(source: ProfileRecord | undefined, key: string) {
   return typeof value === 'string' && value.trim() ? value.trim() : null
 }
 
+function readBoolean(source: ProfileRecord | undefined, key: string) {
+  const value = source?.[key]
+
+  return typeof value === 'boolean' ? value : null
+}
+
+function cleanFormString(value: FormDataEntryValue | null) {
+  if (typeof value !== 'string') {
+    return null
+  }
+
+  const trimmed = value.trim()
+
+  return trimmed ? trimmed : null
+}
+
 function formatAccountType(value: string | null) {
   if (value === 'business') {
     return 'Business'
@@ -34,6 +51,51 @@ function formatAccountType(value: string | null) {
   }
 
   return 'Individual'
+}
+
+async function updateAccountProfile(formData: FormData) {
+  'use server'
+
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    redirect('/auth/login')
+  }
+
+  const firstName = cleanFormString(formData.get('first_name'))
+  const lastName = cleanFormString(formData.get('last_name'))
+  const displayName = cleanFormString(formData.get('display_name'))
+  const jobTitle = cleanFormString(formData.get('job_title'))
+  const companyName = cleanFormString(formData.get('company_name'))
+  const timezone = cleanFormString(formData.get('timezone'))
+  const marketingEmailOptIn = formData.get('marketing_email_opt_in') === 'on'
+
+  const { error } = await supabase
+    .from('user_profiles')
+    .update({
+      first_name: firstName,
+      last_name: lastName,
+      display_name: displayName,
+      job_title: jobTitle,
+      company_name: companyName,
+      timezone,
+      marketing_email_opt_in: marketingEmailOptIn,
+      onboarding_status: 'profile_complete',
+      onboarding_completed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', user.id)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/account')
+  redirect('/account')
 }
 
 async function signOut() {
@@ -80,7 +142,10 @@ export default async function AccountPage() {
     readString(profileRecord, 'company_name') ?? readString(metadata, 'company_name')
 
   const jobTitle = readString(profileRecord, 'job_title') ?? readString(metadata, 'job_title')
+  const timezone = readString(profileRecord, 'timezone')
+  const marketingEmailOptIn = readBoolean(profileRecord, 'marketing_email_opt_in') ?? true
 
+  const currentLevel = readString(profileRecord, 'current_level') ?? 'AI Beginner'
   const email = user.email ?? 'No email found'
   const emailConfirmed = Boolean(user.email_confirmed_at)
 
@@ -132,13 +197,13 @@ export default async function AccountPage() {
           </div>
         </header>
 
-        <section className="mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+        <section className="mt-8 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
           <article className="rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
                   <BadgeCheck className="h-4 w-4" aria-hidden="true" />
-                  Profile identity
+                  Profile settings
                 </span>
 
                 <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand">
@@ -146,8 +211,8 @@ export default async function AccountPage() {
                 </h2>
 
                 <p className="mt-3 text-sm leading-7 text-sand/65">
-                  These details identify your DeepMind Resources workspace and help shape the
-                  account experience for individual or business training.
+                  Keep your profile details current so DeepMind Resources can shape the account
+                  experience around your individual or business training context.
                 </p>
               </div>
 
@@ -156,93 +221,201 @@ export default async function AccountPage() {
               </span>
             </div>
 
-            <div className="mt-6 grid gap-3">
-              <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                  Name
-                </p>
-                <p className="mt-2 text-sm font-semibold text-sand">
-                  {displayName || 'Name not set'}
-                </p>
-              </div>
+            <form action={updateAccountProfile} className="mt-7 space-y-5">
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="first_name" className="block text-sm font-semibold text-sand">
+                    First name
+                  </label>
+                  <input
+                    id="first_name"
+                    name="first_name"
+                    type="text"
+                    autoComplete="given-name"
+                    defaultValue={firstName ?? ''}
+                    className="mt-2 w-full rounded-2xl border border-sand/10 bg-white px-4 py-3 text-base text-sand shadow-sm outline-none transition focus:border-[#123BFF] focus:ring-4 focus:ring-[#123BFF]/10"
+                  />
+                </div>
 
-              <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                  Email
-                </p>
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <p className="text-sm font-semibold text-sand">{email}</p>
-                  <span
-                    className={`rounded-full px-3 py-1 text-xs font-bold ${
-                      emailConfirmed
-                        ? 'bg-[#EAF7FF] text-[#123BFF]'
-                        : 'bg-amber-50 text-amber-700'
-                    }`}
-                  >
-                    {emailConfirmed ? 'Verified' : 'Verification pending'}
-                  </span>
+                <div>
+                  <label htmlFor="last_name" className="block text-sm font-semibold text-sand">
+                    Last name
+                  </label>
+                  <input
+                    id="last_name"
+                    name="last_name"
+                    type="text"
+                    autoComplete="family-name"
+                    defaultValue={lastName ?? ''}
+                    className="mt-2 w-full rounded-2xl border border-sand/10 bg-white px-4 py-3 text-base text-sand shadow-sm outline-none transition focus:border-[#123BFF] focus:ring-4 focus:ring-[#123BFF]/10"
+                  />
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                  Account type
-                </p>
-                <p className="mt-2 text-sm font-semibold text-sand">
-                  {formatAccountType(accountType)}
+              <div>
+                <label htmlFor="display_name" className="block text-sm font-semibold text-sand">
+                  Display name
+                </label>
+                <input
+                  id="display_name"
+                  name="display_name"
+                  type="text"
+                  autoComplete="name"
+                  defaultValue={displayName ?? ''}
+                  className="mt-2 w-full rounded-2xl border border-sand/10 bg-white px-4 py-3 text-base text-sand shadow-sm outline-none transition focus:border-[#123BFF] focus:ring-4 focus:ring-[#123BFF]/10"
+                />
+                <p className="mt-2 text-xs leading-5 text-sand/45">
+                  This is the name used across your DeepMind Resources workspace.
                 </p>
               </div>
-            </div>
+
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="company_name" className="block text-sm font-semibold text-sand">
+                    Company name
+                  </label>
+                  <input
+                    id="company_name"
+                    name="company_name"
+                    type="text"
+                    autoComplete="organization"
+                    defaultValue={companyName ?? ''}
+                    className="mt-2 w-full rounded-2xl border border-sand/10 bg-white px-4 py-3 text-base text-sand shadow-sm outline-none transition focus:border-[#123BFF] focus:ring-4 focus:ring-[#123BFF]/10"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="job_title" className="block text-sm font-semibold text-sand">
+                    Job title
+                  </label>
+                  <input
+                    id="job_title"
+                    name="job_title"
+                    type="text"
+                    autoComplete="organization-title"
+                    defaultValue={jobTitle ?? ''}
+                    className="mt-2 w-full rounded-2xl border border-sand/10 bg-white px-4 py-3 text-base text-sand shadow-sm outline-none transition focus:border-[#123BFF] focus:ring-4 focus:ring-[#123BFF]/10"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="timezone" className="block text-sm font-semibold text-sand">
+                  Timezone
+                </label>
+                <input
+                  id="timezone"
+                  name="timezone"
+                  type="text"
+                  placeholder="Europe/London"
+                  defaultValue={timezone ?? ''}
+                  className="mt-2 w-full rounded-2xl border border-sand/10 bg-white px-4 py-3 text-base text-sand shadow-sm outline-none transition placeholder:text-sand/35 focus:border-[#123BFF] focus:ring-4 focus:ring-[#123BFF]/10"
+                />
+              </div>
+
+              <label className="flex items-start gap-3 rounded-2xl border border-sand/10 bg-[#EAF7FF] p-4">
+                <input
+                  type="checkbox"
+                  name="marketing_email_opt_in"
+                  defaultChecked={marketingEmailOptIn}
+                  className="mt-1 h-4 w-4 rounded border-sand/20 text-[#123BFF]"
+                />
+                <span>
+                  <span className="block text-sm font-bold text-sand">
+                    Receive product and training updates
+                  </span>
+                  <span className="mt-1 block text-sm leading-6 text-sand/65">
+                    Get release-aware learning updates, product notes, and future training alerts.
+                    Account security emails will still be sent when needed.
+                  </span>
+                </span>
+              </label>
+
+              <button
+                type="submit"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-3.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF] sm:w-auto"
+              >
+                Save account details
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </button>
+            </form>
           </article>
 
-          <article className="rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
-              <BriefcaseBusiness className="h-4 w-4" aria-hidden="true" />
-              Workspace
-            </span>
+          <aside className="space-y-6">
+            <article className="rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                <Mail className="h-4 w-4" aria-hidden="true" />
+                Account identity
+              </span>
 
-            <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand">
-              {accountType === 'business'
-                ? 'Business workspace'
-                : 'Individual AI competency workspace'}
-            </h2>
+              <div className="mt-6 grid gap-3">
+                <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                    Email
+                  </p>
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <p className="text-sm font-semibold text-sand">{email}</p>
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-bold ${
+                        emailConfirmed
+                          ? 'bg-[#EAF7FF] text-[#123BFF]'
+                          : 'bg-amber-50 text-amber-700'
+                      }`}
+                    >
+                      {emailConfirmed ? 'Verified' : 'Verification pending'}
+                    </span>
+                  </div>
+                </div>
 
-            <p className="mt-3 text-sm leading-7 text-sand/65">
-              This workspace will connect your profile, learning path, account settings,
-              subscriptions, team access, and future course progress as the platform expands.
-            </p>
+                <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                    Account type
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-sand">
+                    {formatAccountType(accountType)}
+                  </p>
+                </div>
 
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                  Company
+                <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                    Current level
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-sand">{currentLevel}</p>
+                </div>
+              </div>
+            </article>
+
+            <article className="rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                <BriefcaseBusiness className="h-4 w-4" aria-hidden="true" />
+                Workspace
+              </span>
+
+              <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand">
+                {accountType === 'business'
+                  ? 'Business workspace'
+                  : 'Individual AI competency workspace'}
+              </h2>
+
+              <p className="mt-3 text-sm leading-7 text-sand/65">
+                Your workspace will connect learning paths, subscriptions, course progress,
+                achievements, and future business team access as the platform expands.
+              </p>
+
+              <div className="mt-6 rounded-3xl bg-[#123BFF] p-5 text-white shadow-sm">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/75">
+                  Operating layer
                 </p>
-                <p className="mt-2 text-sm font-semibold text-sand">
-                  {companyName || 'Not set'}
+                <h3 className="mt-3 text-xl font-bold tracking-tight">
+                  Account settings stay here, not scattered across the sidebar.
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-white/82">
+                  Profile, security, email preferences, business details, team access, and billing
+                  will be organised inside this account area as each system is added.
                 </p>
               </div>
-
-              <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                  Role
-                </p>
-                <p className="mt-2 text-sm font-semibold text-sand">{jobTitle || 'Not set'}</p>
-              </div>
-            </div>
-
-            <div className="mt-6 rounded-3xl bg-[#123BFF] p-5 text-white shadow-sm">
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/75">
-                Operating layer
-              </p>
-              <h3 className="mt-3 text-xl font-bold tracking-tight">
-                Account settings will live here, not scattered across the sidebar.
-              </h3>
-              <p className="mt-3 text-sm leading-7 text-white/82">
-                Profile, security, email preferences, business details, team access, and billing
-                will be organised inside this account area as each system is added.
-              </p>
-            </div>
-          </article>
+            </article>
+          </aside>
         </section>
 
         <section className="mt-8 grid gap-6 lg:grid-cols-3">
@@ -252,19 +425,8 @@ export default async function AccountPage() {
             </span>
             <h2 className="mt-5 text-xl font-bold tracking-tight text-sand">Security</h2>
             <p className="mt-3 text-sm leading-7 text-sand/65">
-              Password reset and future change-password controls belong here. Secure email links
-              remain reserved for recovery and sensitive account actions.
-            </p>
-          </article>
-
-          <article className="rounded-3xl border border-sand/10 bg-white/92 p-6 shadow-sm">
-            <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
-              <Mail className="h-6 w-6" aria-hidden="true" />
-            </span>
-            <h2 className="mt-5 text-xl font-bold tracking-tight text-sand">Email preferences</h2>
-            <p className="mt-3 text-sm leading-7 text-sand/65">
-              Product updates, training alerts, account security emails, and future release-aware
-              learning notifications will be managed from this account area.
+              Password changes and sensitive account actions will live here. Reset links remain
+              reserved for recovery and verification.
             </p>
           </article>
 
@@ -278,6 +440,17 @@ export default async function AccountPage() {
               once monetisation is added.
             </p>
           </article>
+
+          <article className="rounded-3xl border border-sand/10 bg-white/92 p-6 shadow-sm">
+            <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
+              <Users className="h-6 w-6" aria-hidden="true" />
+            </span>
+            <h2 className="mt-5 text-xl font-bold tracking-tight text-sand">Team access</h2>
+            <p className="mt-3 text-sm leading-7 text-sand/65">
+              Business users later gain company profile controls, team members, permissions, and
+              training-management settings.
+            </p>
+          </article>
         </section>
 
         <section className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
@@ -289,7 +462,7 @@ export default async function AccountPage() {
               </span>
 
               <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand">
-                Built to support courses, teams, levels, achievements, and subscriptions.
+                Built to support courses, levels, achievements, and subscriptions.
               </h2>
 
               <p className="mt-4 max-w-3xl text-base leading-8 text-sand/65">
@@ -323,15 +496,6 @@ export default async function AccountPage() {
                   <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#123BFF]" />
                   <p className="text-sm leading-7 text-sand/70">
                     Business users later gain team, company, and training-management settings.
-                  </p>
-                </div>
-              </div>
-
-              <div className="rounded-2xl bg-[#EAF7FF] p-4">
-                <div className="flex items-start gap-3">
-                  <Users className="mt-0.5 h-5 w-5 shrink-0 text-[#123BFF]" />
-                  <p className="text-sm leading-7 text-sand/70">
-                    Team access and role controls will be added after the business account model.
                   </p>
                 </div>
               </div>
