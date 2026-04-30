@@ -92,6 +92,25 @@ type LearningStep = {
   description: string
 }
 
+type PathwayMilestone = {
+  title: string
+  subtitle: string
+  xp: string
+  status: 'complete' | 'current' | 'locked'
+  icon: LucideIcon
+}
+
+type OversightStage = {
+  title: string
+  description: string
+  status: 'live' | 'next' | 'planned'
+}
+
+type RefreshStage = {
+  title: string
+  description: string
+}
+
 const syllabusTracks: SyllabusTrack[] = [
   {
     label: 'Foundations',
@@ -325,6 +344,127 @@ const learningSteps: LearningStep[] = [
     title: 'Refresh when AI changes',
     description:
       'Keep learning current as tools, models, features, risks, and practical recommendations evolve.',
+  },
+]
+
+const pathwayMilestones: PathwayMilestone[] = [
+  {
+    title: 'AI Beginner',
+    subtitle: 'Foundations of practical AI use',
+    xp: '+500 XP',
+    status: 'complete',
+    icon: BrainCircuit,
+  },
+  {
+    title: 'Prompt Engineer',
+    subtitle: 'Clear prompting and response shaping',
+    xp: '+750 XP',
+    status: 'complete',
+    icon: WandSparkles,
+  },
+  {
+    title: 'Tool Operator',
+    subtitle: 'Choosing and using the right AI tools',
+    xp: '+900 XP',
+    status: 'current',
+    icon: Radar,
+  },
+  {
+    title: 'Workflow Builder',
+    subtitle: 'Real task flows, automation, and review',
+    xp: '+1250 XP',
+    status: 'locked',
+    icon: Workflow,
+  },
+  {
+    title: 'RAG Designer',
+    subtitle: 'Knowledge systems and retrieval patterns',
+    xp: '+1500 XP',
+    status: 'locked',
+    icon: Database,
+  },
+  {
+    title: 'Business Operator',
+    subtitle: 'Team workflows, governance, and adoption',
+    xp: '+1750 XP',
+    status: 'locked',
+    icon: BriefcaseBusiness,
+  },
+  {
+    title: 'Decision Support',
+    subtitle: 'Analysis, reporting, and AI-assisted planning',
+    xp: '+2000 XP',
+    status: 'locked',
+    icon: BarChart3,
+  },
+  {
+    title: 'Agent Architect',
+    subtitle: 'Agentic systems and orchestration',
+    xp: '+2500 XP',
+    status: 'locked',
+    icon: Route,
+  },
+]
+
+const oversightStages: OversightStage[] = [
+  {
+    title: 'Provider and platform releases',
+    description:
+      'Track major models, tool launches, platform changes, pricing shifts, and API updates that affect real-world use.',
+    status: 'live',
+  },
+  {
+    title: 'Verified meaning',
+    description:
+      'Translate release noise into what actually changed for business productivity, coding, research, automation, and internal knowledge.',
+    status: 'live',
+  },
+  {
+    title: 'Lesson refresh',
+    description:
+      'Update learning modules so members see what the release means, what to test, and what to ignore.',
+    status: 'next',
+  },
+  {
+    title: 'Sandbox task',
+    description:
+      'Turn the update into a practical exercise so learners can try the new capability properly.',
+    status: 'next',
+  },
+  {
+    title: 'Business recommendation',
+    description:
+      'Convert the update into workflow guidance, adoption advice, and role-aware team training.',
+    status: 'planned',
+  },
+  {
+    title: 'Capability expansion',
+    description:
+      'Feed validated improvements back into the syllabus so the platform keeps getting stronger over time.',
+    status: 'planned',
+  },
+]
+
+const refreshStages: RefreshStage[] = [
+  {
+    title: 'AI update',
+    description: 'A tool, model, or platform changes.',
+  },
+  {
+    title: 'Verified meaning',
+    description: 'The practical impact is explained clearly.',
+  },
+  {
+    title: 'Lesson update',
+    description: 'The relevant module is refreshed.',
+  },
+  {
+    title: 'Sandbox task',
+    description: 'Learners test the change in practice.',
+  },
+  {
+    title: 'Workflow guidance',
+    description: 'Business use advice is refined.',
   },
 ]
 
@@ -564,6 +704,110 @@ export default function SyllabusPage() {
                       </p>
                     </div>
                   </div>
+
+                  <div className="mt-6 rounded-[1.75rem] border border-sand/10 bg-white p-5 shadow-sm">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                          Learning pathway overview
+                        </p>
+                        <h3 className="mt-2 text-xl font-bold text-sand">
+                          Scroll the full pathway
+                        </h3>
+                      </div>
+                      <span className="rounded-2xl bg-[#EAF7FF] px-4 py-3 text-sm font-bold text-[#123BFF]">
+                        1,250 XP
+                      </span>
+                    </div>
+
+                    <div className="mt-5 h-2 overflow-hidden rounded-full bg-sand/10">
+                      <div className="h-full w-1/3 rounded-full bg-[#123BFF]" />
+                    </div>
+
+                    <div className="mt-5 max-h-[26rem] overflow-y-auto pr-2">
+                      <div className="space-y-4">
+                        {pathwayMilestones.map((milestone, index) => {
+                          const Icon = milestone.icon
+                          const isComplete = milestone.status === 'complete'
+                          const isCurrent = milestone.status === 'current'
+                          const isLocked = milestone.status === 'locked'
+
+                          return (
+                            <div key={milestone.title} className="relative pl-16">
+                              {index !== pathwayMilestones.length - 1 ? (
+                                <span
+                                  className={`absolute left-[1.35rem] top-12 h-[calc(100%+0.75rem)] w-px ${
+                                    isLocked ? 'bg-sand/10' : 'bg-[#123BFF]'
+                                  }`}
+                                />
+                              ) : null}
+
+                              <span
+                                className={`absolute left-0 top-0 inline-flex h-11 w-11 items-center justify-center rounded-2xl border ${
+                                  isLocked
+                                    ? 'border-sand/10 bg-sand/5 text-sand/30'
+                                    : 'border-[#123BFF]/20 bg-[#EAF7FF] text-[#123BFF]'
+                                }`}
+                              >
+                                <Icon className="h-5 w-5" aria-hidden="true" />
+                              </span>
+
+                              <div
+                                className={`rounded-3xl border p-4 shadow-sm ${
+                                  isCurrent
+                                    ? 'border-[#123BFF]/30 bg-[#F5F9FF]'
+                                    : isLocked
+                                      ? 'border-sand/10 bg-white/60'
+                                      : 'border-sand/10 bg-white'
+                                }`}
+                              >
+                                <div className="flex items-start justify-between gap-4">
+                                  <div>
+                                    <div className="flex items-center gap-2">
+                                      <h4
+                                        className={`text-lg font-bold ${
+                                          isLocked ? 'text-sand/35' : 'text-sand'
+                                        }`}
+                                      >
+                                        {milestone.title}
+                                      </h4>
+                                      {isComplete ? (
+                                        <CheckCircle2
+                                          className="h-5 w-5 text-[#123BFF]"
+                                          aria-hidden="true"
+                                        />
+                                      ) : null}
+                                      {isCurrent ? (
+                                        <span className="h-4 w-4 rounded-full border-2 border-[#123BFF]" />
+                                      ) : null}
+                                    </div>
+
+                                    <p
+                                      className={`mt-1 text-sm ${
+                                        isLocked ? 'text-sand/30' : 'text-sand/60'
+                                      }`}
+                                    >
+                                      {milestone.subtitle}
+                                    </p>
+                                  </div>
+
+                                  <span
+                                    className={`rounded-2xl px-3 py-2 text-sm font-bold ${
+                                      isLocked
+                                        ? 'bg-sand/5 text-sand/30'
+                                        : 'bg-[#EAF7FF] text-[#123BFF]'
+                                    }`}
+                                  >
+                                    {milestone.xp}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -701,6 +945,60 @@ export default function SyllabusPage() {
                       </p>
                     </div>
                   </div>
+
+                  <div className="mt-6 rounded-[1.75rem] border border-sand/10 bg-white p-5 shadow-sm">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                          Release-to-learning workflow
+                        </p>
+                        <h3 className="mt-2 text-xl font-bold text-sand">
+                          Oversight map
+                        </h3>
+                      </div>
+                      <span className="rounded-2xl bg-[#EAF7FF] px-4 py-3 text-sm font-bold text-[#123BFF]">
+                        Live
+                      </span>
+                    </div>
+
+                    <div className="mt-5 max-h-[28rem] overflow-y-auto pr-2">
+                      <div className="space-y-4">
+                        {oversightStages.map((stage, index) => (
+                          <div
+                            key={stage.title}
+                            className="rounded-3xl border border-sand/10 bg-white p-4 shadow-sm"
+                          >
+                            <div className="flex items-start justify-between gap-4">
+                              <div>
+                                <div className="flex items-center gap-3">
+                                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-[#123BFF] text-sm font-bold text-white shadow-sm">
+                                    {String(index + 1).padStart(2, '0')}
+                                  </span>
+                                  <h4 className="text-base font-bold text-sand">{stage.title}</h4>
+                                </div>
+
+                                <p className="mt-3 text-sm leading-7 text-sand/65">
+                                  {stage.description}
+                                </p>
+                              </div>
+
+                              <span
+                                className={`rounded-full px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] ${
+                                  stage.status === 'live'
+                                    ? 'bg-[#123BFF] text-white'
+                                    : stage.status === 'next'
+                                      ? 'bg-[#EAF7FF] text-[#123BFF]'
+                                      : 'bg-sand/5 text-sand/55'
+                                }`}
+                              >
+                                {stage.status}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -761,6 +1059,36 @@ export default function SyllabusPage() {
                     AI learning works best when learners understand the concept, connect it to real
                     work, practise it safely, and then refresh when the tools change.
                   </p>
+
+                  <div className="mt-6 rounded-[1.75rem] border border-sand/10 bg-white p-5 shadow-sm">
+                    <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                      Refresh flow
+                    </p>
+                    <h3 className="mt-2 text-xl font-bold text-sand">
+                      How learning stays current
+                    </h3>
+
+                    <div className="mt-5 space-y-4">
+                      {refreshStages.map((stage, index) => (
+                        <div key={stage.title} className="relative pl-14">
+                          {index !== refreshStages.length - 1 ? (
+                            <span className="absolute left-[1rem] top-10 h-[calc(100%+0.5rem)] w-px bg-[#123BFF]/30" />
+                          ) : null}
+
+                          <span className="absolute left-0 top-0 inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#123BFF] text-xs font-bold text-white shadow-sm">
+                            {index + 1}
+                          </span>
+
+                          <div className="rounded-2xl border border-sand/10 bg-[#F9FCFF] p-4">
+                            <h4 className="text-sm font-bold text-sand">{stage.title}</h4>
+                            <p className="mt-1 text-sm leading-6 text-sand/60">
+                              {stage.description}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="grid gap-4">
