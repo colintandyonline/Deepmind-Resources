@@ -63,7 +63,7 @@ export function ContentCard({ module, onClick }: ContentCardProps) {
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
-        <span className="text-xs font-mono text-signal-green/80 uppercase tracking-wider">
+        <span className="inline-flex items-center rounded-full bg-[#123BFF] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-white shadow-sm">
           {module.category}
         </span>
         <div
