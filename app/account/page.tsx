@@ -141,7 +141,7 @@ async function updateAccountProfile(formData: FormData) {
     current_level: currentLevel,
     timezone,
     marketing_email_opt_in: marketingEmailOptIn,
-    onboarding_status: 'profile_complete',
+    onboarding_status: 'complete',
     onboarding_completed_at: now,
     updated_at: now,
   }
@@ -162,7 +162,7 @@ async function updateAccountProfile(formData: FormData) {
       company_name: companyName,
       account_type: accountType,
       marketing_email_opt_in: marketingEmailOptIn,
-      onboarding_status: 'profile_complete',
+      onboarding_status: 'complete',
       onboarding_completed_at: now,
       updated_at: now,
     }
@@ -669,3 +669,4 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
     </main>
   )
 }
+
