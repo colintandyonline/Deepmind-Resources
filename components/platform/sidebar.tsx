@@ -102,6 +102,18 @@ export function Sidebar() {
     </Link>
   )
 
+  const renderSectionLabel = (label: string, isCollapsedLayout: boolean) => {
+    if (isCollapsedLayout) {
+      return null
+    }
+
+    return (
+      <span className="inline-flex rounded-full bg-[#123BFF] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white shadow-sm">
+        {label}
+      </span>
+    )
+  }
+
   const renderNavItem = (item: NavItem, isCollapsedLayout: boolean, closeOnClick = false) => {
     const isActive = isNavItemActive(item.href)
 
@@ -136,34 +148,63 @@ export function Sidebar() {
     )
   }
 
+  const renderBottomNavItem = (
+    item: NavItem,
+    isCollapsedLayout: boolean,
+    closeOnClick = false
+  ) => {
+    const isActive = isNavItemActive(item.href)
+
+    return (
+      <Link
+        key={item.label}
+        href={item.href}
+        onClick={() => closeOnClick && setIsMobileOpen(false)}
+        className={cn(
+          'flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200',
+          isActive ? 'bg-white text-[#123BFF]' : 'text-white/85 hover:bg-white/10 hover:text-white'
+        )}
+      >
+        <item.icon
+          className={cn(
+            'w-5 h-5 shrink-0',
+            isActive ? 'text-[#123BFF]' : 'text-white/75'
+          )}
+        />
+        {!isCollapsedLayout && <span className="font-semibold">{item.label}</span>}
+      </Link>
+    )
+  }
+
   const renderNavigation = (isCollapsedLayout: boolean, closeOnClick = false) => (
     <>
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         <div className={cn('mb-4', !isCollapsedLayout && 'px-2')}>
-          {!isCollapsedLayout && (
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Main
-            </span>
-          )}
+          {renderSectionLabel('Main', isCollapsedLayout)}
         </div>
 
         {mainNavItems.map((item) => renderNavItem(item, isCollapsedLayout, closeOnClick))}
 
         {/* Learning Paths Section */}
         <div className={cn('pt-6 mb-4', !isCollapsedLayout && 'px-2')}>
-          {!isCollapsedLayout && (
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Learning Paths
-            </span>
-          )}
+          {renderSectionLabel('Learning Paths', isCollapsedLayout)}
         </div>
 
         {learningPaths.map((item) => renderNavItem(item, isCollapsedLayout, closeOnClick))}
       </nav>
 
-      {/* Bottom Section */}
-      <div className="px-3 py-4 border-t border-sidebar-border space-y-1">
-        {bottomNavItems.map((item) => renderNavItem(item, isCollapsedLayout, closeOnClick))}
+      {/* Bottom Account/Auth Section */}
+      <div className="px-3 py-4 border-t border-sidebar-border">
+        <div
+          className={cn(
+            'space-y-1 rounded-2xl bg-[#123BFF] p-2 shadow-sm',
+            isCollapsedLayout && 'rounded-xl p-1.5'
+          )}
+        >
+          {bottomNavItems.map((item) =>
+            renderBottomNavItem(item, isCollapsedLayout, closeOnClick)
+          )}
+        </div>
       </div>
     </>
   )
