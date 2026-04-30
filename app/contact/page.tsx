@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 import {
@@ -94,7 +95,7 @@ export default function ContactPage() {
       <main className="relative z-10 min-h-screen pt-16 md:pl-64 md:pt-0">
         <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <header className="rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
-            <div className="grid gap-8 lg:grid-cols-[1fr_0.85fr] lg:items-center">
+            <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-center">
               <div>
                 <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
                   <MessageSquare className="h-4 w-4" aria-hidden="true" />
@@ -112,18 +113,33 @@ export default function ContactPage() {
                 </p>
               </div>
 
-              <div className="rounded-[1.5rem] bg-[#123BFF] p-6 text-white shadow-sm">
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/75">
-                  Receiving layer active
-                </p>
-                <h2 className="mt-3 text-2xl font-bold tracking-tight">
-                  Email is now routed through the platform.
-                </h2>
-                <p className="mt-4 text-sm leading-7 text-white/82">
-                  Messages sent to DeepMind Resources contact addresses are received through the
-                  verified domain and stored for review inside the platform infrastructure.
-                </p>
-              </div>
+              <aside className="space-y-5">
+                <div className="rounded-[1.5rem] border border-sand/10 bg-white p-5 shadow-sm">
+                  <Image
+                    src="/brand/deepmind-resources-banner.png"
+                    alt="DeepMind Resources"
+                    width={1200}
+                    height={630}
+                    priority
+                    sizes="(max-width: 768px) 100vw, 520px"
+                    className="h-auto w-full object-contain"
+                  />
+                </div>
+
+                <div className="rounded-[1.5rem] bg-[#123BFF] p-6 text-white shadow-sm">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/75">
+                    Professional contact routes
+                  </p>
+                  <h2 className="mt-3 text-2xl font-bold tracking-tight">
+                    The right message reaches the right workspace.
+                  </h2>
+                  <p className="mt-4 text-sm leading-7 text-white/82">
+                    General enquiries, business training, account support, and privacy requests
+                    each have a dedicated DeepMind Resources address so conversations stay clear,
+                    traceable, and aligned with the right area of the platform.
+                  </p>
+                </div>
+              </aside>
             </div>
           </header>
 
