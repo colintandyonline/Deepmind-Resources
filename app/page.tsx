@@ -14,7 +14,19 @@ import {
   Route,
   Sparkles,
   Workflow,
-} from 'lucide-react'
+} from 'lucid
+                  <Link
+                    href="/privacy"
+                    className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
+                  >
+                    Privacy
+                  </Link>
+                  <Link
+                    href="/terms"
+                    className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
+                  >
+                    Terms
+                  </Link>e-react'
 import { Sidebar } from '@/components/platform/sidebar'
 import { HeroSection } from '@/components/platform/hero-section'
 import { CodeSandbox } from '@/components/platform/code-sandbox'
@@ -318,7 +330,7 @@ export default function HomePage() {
                   </span>
 
                   <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand sm:text-3xl">
-                    AI update → verified meaning → practical skill actions.
+                    AI update â†’ verified meaning â†’ practical skill actions.
                   </h2>
 
                   <p className="mt-3 max-w-3xl text-sm leading-7 text-sand/65 sm:text-base">
@@ -514,8 +526,8 @@ export default function HomePage() {
 
               <div className="mt-8 rounded-2xl bg-[#123BFF] px-5 py-4 text-white shadow-sm">
                 <div className="flex flex-col gap-3 text-center text-xs sm:flex-row sm:items-center sm:justify-between sm:text-left">
-                  <p>© 2026 DeepMind Resources. Built for verified AI skill gain.</p>
-                  <p>AI update → verified meaning → practical lesson → sandbox task.</p>
+                  <p>Â© 2026 DeepMind Resources. Built for verified AI skill gain.</p>
+                  <p>AI update â†’ verified meaning â†’ practical lesson â†’ sandbox task.</p>
                 </div>
               </div>
             </div>
