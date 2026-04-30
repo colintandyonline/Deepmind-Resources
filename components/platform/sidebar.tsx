@@ -1,13 +1,14 @@
-'use client'
+﻿'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import type { ElementType } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import {
   Home,
   BookOpen,
   Code,
   Activity,
-  Settings,
   User,
   ChevronLeft,
   ChevronRight,
@@ -17,19 +18,21 @@ import {
   Layers,
   Menu,
   X,
+  LogIn,
+  UserPlus,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { createClient } from '@/lib/supabase/client'
 
 interface NavItem {
-  icon: React.ElementType
+  icon: ElementType
   label: string
   href: string
-  isActive?: boolean
   badge?: string
 }
 
 const mainNavItems: NavItem[] = [
-  { icon: Home, label: 'Dashboard', href: '/', isActive: true },
+  { icon: Home, label: 'Home', href: '/' },
   { icon: Layers, label: 'Platform', href: '/platform' },
   { icon: BookOpen, label: 'Syllabus', href: '/syllabus' },
   { icon: Code, label: 'Sandbox', href: '/sandbox', badge: 'LIVE' },
@@ -44,8 +47,46 @@ const learningPaths: NavItem[] = [
 ]
 
 export function Sidebar() {
+  const pathname = usePathname()
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  useEffect(() => {
+    const supabase = createClient()
+
+    supabase.auth.getSession().then(({ data }) => {
+      setIsLoggedIn(Boolean(data.session))
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(Boolean(session))
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [])
+
+  const bottomNavItems: NavItem[] = isLoggedIn
+    ? [
+        { icon: Activity, label: 'Dashboard', href: '/dashboard' },
+        { icon: User, label: 'Account', href: '/account' },
+      ]
+    : [
+        { icon: LogIn, label: 'Sign in', href: '/auth/login' },
+        { icon: UserPlus, label: 'Create account', href: '/auth/signup' },
+      ]
+
+  const isNavItemActive = (href: string) => {
+    if (href === '/') {
+      return pathname === '/'
+    }
+
+    return pathname === href || pathname.startsWith(`${href}/`)
+  }
 
   const renderLogo = (showText: boolean) => (
     <Link href="/" className="flex items-center gap-3" onClick={() => setIsMobileOpen(false)}>
@@ -61,6 +102,40 @@ export function Sidebar() {
     </Link>
   )
 
+  const renderNavItem = (item: NavItem, isCollapsedLayout: boolean, closeOnClick = false) => {
+    const isActive = isNavItemActive(item.href)
+
+    return (
+      <Link
+        key={item.label}
+        href={item.href}
+        onClick={() => closeOnClick && setIsMobileOpen(false)}
+        className={cn(
+          'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200',
+          'hover:bg-sidebar-accent group',
+          isActive ? 'bg-sidebar-accent text-signal-green' : 'text-sand/70 hover:text-sand'
+        )}
+      >
+        <item.icon
+          className={cn(
+            'w-5 h-5 shrink-0',
+            isActive ? 'text-signal-green' : 'text-sand/50 group-hover:text-sand/80'
+          )}
+        />
+        {!isCollapsedLayout && (
+          <>
+            <span className="font-medium">{item.label}</span>
+            {item.badge && (
+              <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded bg-signal-green/20 text-signal-green animate-pulse-signal">
+                {item.badge}
+              </span>
+            )}
+          </>
+        )}
+      </Link>
+    )
+  }
+
   const renderNavigation = (isCollapsedLayout: boolean, closeOnClick = false) => (
     <>
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
@@ -72,37 +147,7 @@ export function Sidebar() {
           )}
         </div>
 
-        {mainNavItems.map((item) => (
-          <Link
-            key={item.label}
-            href={item.href}
-            onClick={() => closeOnClick && setIsMobileOpen(false)}
-            className={cn(
-              'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200',
-              'hover:bg-sidebar-accent group',
-              item.isActive
-                ? 'bg-sidebar-accent text-signal-green'
-                : 'text-sand/70 hover:text-sand'
-            )}
-          >
-            <item.icon
-              className={cn(
-                'w-5 h-5 shrink-0',
-                item.isActive ? 'text-signal-green' : 'text-sand/50 group-hover:text-sand/80'
-              )}
-            />
-            {!isCollapsedLayout && (
-              <>
-                <span className="font-medium">{item.label}</span>
-                {item.badge && (
-                  <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded bg-signal-green/20 text-signal-green animate-pulse-signal">
-                    {item.badge}
-                  </span>
-                )}
-              </>
-            )}
-          </Link>
-        ))}
+        {mainNavItems.map((item) => renderNavItem(item, isCollapsedLayout, closeOnClick))}
 
         {/* Learning Paths Section */}
         <div className={cn('pt-6 mb-4', !isCollapsedLayout && 'px-2')}>
@@ -113,41 +158,12 @@ export function Sidebar() {
           )}
         </div>
 
-        {learningPaths.map((item) => (
-          <Link
-            key={item.label}
-            href={item.href}
-            onClick={() => closeOnClick && setIsMobileOpen(false)}
-            className={cn(
-              'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200',
-              'hover:bg-sidebar-accent group',
-              'text-sand/70 hover:text-sand'
-            )}
-          >
-            <item.icon className="w-5 h-5 shrink-0 text-sand/50 group-hover:text-signal-green" />
-            {!isCollapsedLayout && <span className="font-medium">{item.label}</span>}
-          </Link>
-        ))}
+        {learningPaths.map((item) => renderNavItem(item, isCollapsedLayout, closeOnClick))}
       </nav>
 
       {/* Bottom Section */}
       <div className="px-3 py-4 border-t border-sidebar-border space-y-1">
-        <Link
-          href="/settings"
-          onClick={() => closeOnClick && setIsMobileOpen(false)}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sand/70 hover:text-sand hover:bg-sidebar-accent transition-all"
-        >
-          <Settings className="w-5 h-5 shrink-0 text-sand/50" />
-          {!isCollapsedLayout && <span className="font-medium">Settings</span>}
-        </Link>
-        <Link
-          href="/profile"
-          onClick={() => closeOnClick && setIsMobileOpen(false)}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sand/70 hover:text-sand hover:bg-sidebar-accent transition-all"
-        >
-          <User className="w-5 h-5 shrink-0 text-sand/50" />
-          {!isCollapsedLayout && <span className="font-medium">Profile</span>}
-        </Link>
+        {bottomNavItems.map((item) => renderNavItem(item, isCollapsedLayout, closeOnClick))}
       </div>
     </>
   )
