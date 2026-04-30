@@ -1,5 +1,6 @@
 ﻿import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { Brain, Code2, GraduationCap, Radar, Sparkles, TrendingUp } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 
 async function signOut() {
@@ -22,24 +23,34 @@ export default async function DashboardPage() {
     redirect('/auth/login')
   }
 
+  const firstName =
+    typeof user.user_metadata?.first_name === 'string' && user.user_metadata.first_name.trim()
+      ? user.user_metadata.first_name.trim()
+      : null
+
+  const displayName = firstName ?? 'there'
+
   return (
     <main className="min-h-screen bg-obsidian px-4 py-8 text-sand sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-7xl">
         <header className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="max-w-4xl">
-              <span className="inline-flex rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
-                Member dashboard
-              </span>
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                  <Brain className="h-4 w-4" aria-hidden="true" />
+                  Member dashboard
+                </span>
+              </div>
 
               <h1 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl lg:text-5xl">
                 Your AI learning workspace
               </h1>
 
               <p className="mt-4 max-w-3xl text-base leading-8 text-sand/65">
-                Welcome back{user.email ? `, ${user.email}` : ''}. Continue building practical AI
-                skills with structured learning, sandbox practice, verified tool intelligence, and
-                update-aware training designed to stay useful as AI changes.
+                Welcome back, {displayName}. Continue building practical AI skills with structured
+                learning, sandbox practice, verified tool intelligence, and update-aware training
+                designed to stay useful as AI changes.
               </p>
             </div>
 
@@ -56,9 +67,15 @@ export default async function DashboardPage() {
 
         <section className="mt-8 grid gap-6 lg:grid-cols-3">
           <article className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-7">
-            <span className="inline-flex rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
-              Academy
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
+                <GraduationCap className="h-6 w-6" aria-hidden="true" />
+              </span>
+
+              <span className="inline-flex rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                Academy
+              </span>
+            </div>
 
             <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand">
               Learn AI step by step
@@ -71,9 +88,15 @@ export default async function DashboardPage() {
           </article>
 
           <article className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-7">
-            <span className="inline-flex rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
-              Sandbox
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
+                <Code2 className="h-6 w-6" aria-hidden="true" />
+              </span>
+
+              <span className="inline-flex rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                Sandbox
+              </span>
+            </div>
 
             <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand">
               Practise with real tasks
@@ -86,9 +109,15 @@ export default async function DashboardPage() {
           </article>
 
           <article className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-7">
-            <span className="inline-flex rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
-              Intelligence
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
+                <Radar className="h-6 w-6" aria-hidden="true" />
+              </span>
+
+              <span className="inline-flex rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                Intelligence
+              </span>
+            </div>
 
             <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand">
               Stay current as AI changes
@@ -104,7 +133,8 @@ export default async function DashboardPage() {
         <section className="mt-8 rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
           <div className="grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-start">
             <div>
-              <span className="inline-flex rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                <TrendingUp className="h-4 w-4" aria-hidden="true" />
                 Your progress
               </span>
 
@@ -120,7 +150,13 @@ export default async function DashboardPage() {
             </div>
 
             <div className="rounded-2xl border border-sand/10 bg-[#EAF7FF] p-5">
-              <h3 className="text-lg font-bold text-sand">What your workspace is for</h3>
+              <div className="flex items-center gap-3">
+                <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-[#123BFF] shadow-sm">
+                  <Sparkles className="h-5 w-5" aria-hidden="true" />
+                </span>
+
+                <h3 className="text-lg font-bold text-sand">What your workspace is for</h3>
+              </div>
 
               <ul className="mt-4 space-y-3 text-sm leading-7 text-sand/65">
                 <li>Follow structured AI learning paths.</li>
