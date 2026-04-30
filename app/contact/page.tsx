@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 import {
@@ -18,7 +17,7 @@ import { Sidebar } from '@/components/platform/sidebar'
 export const metadata: Metadata = {
   title: 'Contact | DeepMind Resources',
   description:
-    'Contact DeepMind Resources for general enquiries, business AI training, account support, privacy requests, and workspace questions.',
+    'Contact DeepMind Resources for general enquiries, business intelligence, system support, privacy requests, and workspace questions.',
   alternates: {
     canonical: '/contact',
   },
@@ -35,47 +34,69 @@ type ContactRoute = {
 
 const contactRoutes: ContactRoute[] = [
   {
-    title: 'General enquiries',
+    title: 'General Enquiries',
     email: 'hello@deepmindresources.pro',
     description:
-      'For platform questions, partnership conversations, product feedback, or anything that does not fit a specialist route.',
+      'For broad system information, platform direction, partnership conversations, and high-level guidance on the DeepMind Resources operating layer.',
     label: 'General',
     icon: Mail,
     subject: 'DeepMind%20Resources%20general%20enquiry',
   },
   {
-    title: 'Business AI training',
+    title: 'Business Intelligence',
     email: 'business@deepmindresources.pro',
     description:
-      'For team training, business AI adoption, workflow enablement, professional upskilling, and future enterprise workspace questions.',
+      'Dedicated to enterprise-scale AI training, team-wide competency deployments, business workflow adoption, and professional upskilling strategy.',
     label: 'Business',
     icon: BriefcaseBusiness,
-    subject: 'DeepMind%20Resources%20business%20training%20enquiry',
+    subject: 'DeepMind%20Resources%20business%20intelligence%20enquiry',
   },
   {
-    title: 'Account support',
+    title: 'System Support',
     email: 'support@deepmindresources.pro',
     description:
-      'For login issues, account access, password recovery questions, workspace problems, or support with your DeepMind Resources account.',
+      'Technical assistance for account synchronization, workspace settings, login access, password recovery, and sandbox performance questions.',
     label: 'Support',
     icon: LifeBuoy,
-    subject: 'DeepMind%20Resources%20account%20support',
+    subject: 'DeepMind%20Resources%20system%20support',
   },
   {
-    title: 'Privacy and deletion requests',
+    title: 'Data Protocols',
     email: 'privacy@deepmindresources.pro',
     description:
-      'For privacy questions, account data requests, deletion requests, policy questions, or anything connected to your personal data.',
+      'Formal requests regarding privacy, identity protection, account data, deletion requests, and future skill-trace management.',
     label: 'Privacy',
     icon: ShieldCheck,
-    subject: 'DeepMind%20Resources%20privacy%20request',
+    subject: 'DeepMind%20Resources%20data%20protocol%20request',
   },
 ]
 
 const guidanceItems = [
-  'Use the email route that best matches your request so it can be reviewed in the right context.',
-  'Include the email address linked to your account if your message is about login, support, privacy, or deletion.',
-  'For business enquiries, include the organisation name, team size, and the AI workflows you want training to support.',
+  'Use the email route that best matches your request so it can be reviewed in the correct operational context.',
+  'Include the email address linked to your account if your message concerns login, support, privacy, or deletion.',
+  'For enterprise enquiries, include your organisation name, team size, current AI stack, and the workflows you want training to support.',
+]
+
+const protocolItems = [
+  {
+    title: 'General Enquiries',
+    description: 'For broad system information and high-level platform guidance.',
+  },
+  {
+    title: 'Business Intelligence',
+    description:
+      'Dedicated to enterprise-scale AI training and team-wide competency deployments.',
+  },
+  {
+    title: 'System Support',
+    description:
+      'Technical assistance for account synchronization, workspace settings, and sandbox performance.',
+  },
+  {
+    title: 'Data Protocols',
+    description:
+      'Formal requests regarding privacy, identity protection, and skill-trace management.',
+  },
 ]
 
 export default function ContactPage() {
@@ -103,41 +124,37 @@ export default function ContactPage() {
                 </span>
 
                 <h1 className="mt-5 max-w-4xl text-4xl font-bold tracking-tight text-sand sm:text-5xl lg:text-6xl">
-                  Reach the right route for your AI competency workspace.
+                  Direct Your Query to the Correct Protocol.
                 </h1>
 
                 <p className="mt-5 max-w-3xl text-base leading-8 text-sand/65">
-                  Contact DeepMind Resources for platform questions, business AI training,
-                  account support, privacy requests, or workspace guidance. Every published route
-                  uses the verified deepmindresources.pro domain.
+                  Ensure your communication reaches the intended workspace by selecting the
+                  appropriate routing channel. DeepMind Resources provides dedicated pathways for
+                  platform architecture, enterprise training, and system support—maintaining a
+                  deterministic and traceable record for every interaction.
                 </p>
               </div>
 
-              <aside className="space-y-5">
-                <div className="rounded-[1.5rem] border border-sand/10 bg-white p-5 shadow-sm">
-                  <Image
-                    src="/brand/deepmind-resources-banner.png"
-                    alt="DeepMind Resources"
-                    width={1200}
-                    height={630}
-                    priority
-                    sizes="(max-width: 768px) 100vw, 520px"
-                    className="h-auto w-full object-contain"
-                  />
-                </div>
+              <aside className="rounded-[1.5rem] bg-[#123BFF] p-6 text-white shadow-sm sm:p-8">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/75">
+                  Professional Communication Routes
+                </p>
+                <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
+                  The Right Message for the Right Workspace.
+                </h2>
+                <p className="mt-4 text-sm leading-7 text-white/82">
+                  To ensure clarity and alignment with our platform’s core architecture, we utilize
+                  specialized addresses. Select the route that corresponds to your specific
+                  requirement:
+                </p>
 
-                <div className="rounded-[1.5rem] bg-[#123BFF] p-6 text-white shadow-sm">
-                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/75">
-                    Professional contact routes
-                  </p>
-                  <h2 className="mt-3 text-2xl font-bold tracking-tight">
-                    The right message reaches the right workspace.
-                  </h2>
-                  <p className="mt-4 text-sm leading-7 text-white/82">
-                    General enquiries, business training, account support, and privacy requests
-                    each have a dedicated DeepMind Resources address so conversations stay clear,
-                    traceable, and aligned with the right area of the platform.
-                  </p>
+                <div className="mt-6 grid gap-3">
+                  {protocolItems.map((item) => (
+                    <div key={item.title} className="rounded-2xl bg-white/10 p-4">
+                      <h3 className="text-sm font-bold text-white">{item.title}</h3>
+                      <p className="mt-1 text-sm leading-6 text-white/76">{item.description}</p>
+                    </div>
+                  ))}
                 </div>
               </aside>
             </div>
@@ -186,11 +203,11 @@ export default function ContactPage() {
             <article className="rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8">
               <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
                 <Clock3 className="h-4 w-4" aria-hidden="true" />
-                What to include
+                Submission Guidance
               </span>
 
               <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand">
-                Help us route your request cleanly.
+                Give the protocol enough context to route cleanly.
               </h2>
 
               <div className="mt-6 grid gap-3">
@@ -209,7 +226,7 @@ export default function ContactPage() {
             <article className="rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8">
               <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
                 <FileText className="h-4 w-4" aria-hidden="true" />
-                Policy routes
+                Policy Routes
               </span>
 
               <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand">
