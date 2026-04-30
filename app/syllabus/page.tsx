@@ -51,7 +51,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'AI Syllabus | DeepMind Resources',
     description:
-      'A practical AI syllabus for learning foundations, prompts, tool intelligence, agents, workflows, sandbox tasks, business productivity, RAG, and AI safety.',
+      'A practical AI syllabus for learning foundations, prompts, tool intelligence, agentic AI systems, sandbox practice, business productivity, RAG, workflow automation, tool comparison, and AI safety.',
     url: 'https://deepmindresources.pro/syllabus',
     siteName: 'DeepMind Resources',
     type: 'website',
@@ -109,6 +109,12 @@ type RefreshStage = {
   title: string
   description: string
   label: string
+}
+
+type CapabilityHighlight = {
+  title: string
+  description: string
+  icon: LucideIcon
 }
 
 const syllabusTracks: SyllabusTrack[] = [
@@ -485,6 +491,33 @@ const refreshStages: RefreshStage[] = [
     description:
       'Tool comparisons and training guidance improve as the platform learns which tools and workflows are strongest for each scenario.',
     label: 'Improve',
+  },
+]
+
+const capabilityHighlights: CapabilityHighlight[] = [
+  {
+    title: 'Learn the right tool for the job',
+    description:
+      'Members learn where different models, assistants, research tools, and automation tools are genuinely useful.',
+    icon: SearchCheck,
+  },
+  {
+    title: 'Build stronger workflow judgement',
+    description:
+      'Lessons connect AI use to research, drafting, analysis, internal knowledge, operations, and business productivity.',
+    icon: Workflow,
+  },
+  {
+    title: 'Stay current as AI changes',
+    description:
+      'Release-aware learning keeps modules, recommendations, and sandbox tasks aligned with what matters now.',
+    icon: Radar,
+  },
+  {
+    title: 'Develop safer AI habits',
+    description:
+      'Validation, review steps, privacy awareness, and practical risk thinking are built into the learning approach.',
+    icon: ShieldCheck,
   },
 ]
 
@@ -941,34 +974,71 @@ export default function SyllabusPage() {
                       </span>
                     </div>
 
-                    <div className="mt-5 max-h-[34rem] overflow-y-auto pr-2">
-                      <div className="space-y-4">
-                        {oversightStages.map((stage, index) => (
-                          <div
-                            key={stage.title}
-                            className="rounded-3xl border border-sand/10 bg-white p-4 shadow-sm"
-                          >
-                            <div className="flex items-start justify-between gap-4">
-                              <div>
-                                <div className="flex items-center gap-3">
-                                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-[#123BFF] text-sm font-bold text-white shadow-sm">
-                                    {String(index + 1).padStart(2, '0')}
-                                  </span>
-                                  <h4 className="text-base font-bold text-sand">{stage.title}</h4>
-                                </div>
-
-                                <p className="mt-3 text-sm leading-7 text-sand/65">
-                                  {stage.description}
-                                </p>
+                    <div className="mt-5 space-y-4">
+                      {oversightStages.map((stage, index) => (
+                        <div
+                          key={stage.title}
+                          className="rounded-3xl border border-sand/10 bg-white p-4 shadow-sm"
+                        >
+                          <div className="flex items-start justify-between gap-4">
+                            <div>
+                              <div className="flex items-center gap-3">
+                                <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-[#123BFF] text-sm font-bold text-white shadow-sm">
+                                  {String(index + 1).padStart(2, '0')}
+                                </span>
+                                <h4 className="text-base font-bold text-sand">{stage.title}</h4>
                               </div>
 
-                              <span className="rounded-full bg-[#EAF7FF] px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                                {stage.label}
-                              </span>
+                              <p className="mt-3 text-sm leading-7 text-sand/65">
+                                {stage.description}
+                              </p>
                             </div>
+
+                            <span className="rounded-full bg-[#EAF7FF] px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                              {stage.label}
+                            </span>
                           </div>
-                        ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-6 rounded-[1.75rem] border border-sand/10 bg-white p-5 shadow-sm">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                          What members gain
+                        </p>
+                        <h3 className="mt-2 text-xl font-bold text-sand">
+                          Real skills for real AI work
+                        </h3>
                       </div>
+                      <span className="rounded-2xl bg-[#EAF7FF] px-4 py-3 text-sm font-bold text-[#123BFF]">
+                        Practical
+                      </span>
+                    </div>
+
+                    <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                      {capabilityHighlights.map((highlight) => {
+                        const Icon = highlight.icon
+
+                        return (
+                          <div
+                            key={highlight.title}
+                            className="rounded-2xl border border-sand/10 bg-[#F9FCFF] p-4"
+                          >
+                            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
+                              <Icon className="h-5 w-5" aria-hidden="true" />
+                            </span>
+                            <h4 className="mt-4 text-base font-bold text-sand">
+                              {highlight.title}
+                            </h4>
+                            <p className="mt-2 text-sm leading-7 text-sand/65">
+                              {highlight.description}
+                            </p>
+                          </div>
+                        )
+                      })}
                     </div>
                   </div>
                 </div>
