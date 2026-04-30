@@ -758,8 +758,8 @@ export default function SyllabusPage() {
                     </div>
                   </div>
 
-                  <div className="mt-6 rounded-[1.75rem] border border-sand/10 bg-white p-5 shadow-sm">
-                    <div className="flex items-center justify-between gap-4">
+                  <div className="mt-6 rounded-[1.75rem] border border-sand/10 bg-white p-4 shadow-sm sm:p-5">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
                           Learning pathway overview
@@ -777,26 +777,26 @@ export default function SyllabusPage() {
                       <div className="h-full w-full rounded-full bg-[#123BFF]" />
                     </div>
 
-                    <div className="mt-5 max-h-[30rem] overflow-y-auto pr-2">
+                    <div className="mt-5 max-h-[24rem] overflow-y-auto pr-2 sm:max-h-[30rem]">
                       <div className="space-y-4">
                         {pathwayMilestones.map((milestone, index) => {
                           const Icon = milestone.icon
 
                           return (
-                            <div key={milestone.title} className="relative pl-16">
+                            <div key={milestone.title} className="relative pl-12 sm:pl-16">
                               {index !== pathwayMilestones.length - 1 ? (
-                                <span className="absolute left-[1.35rem] top-12 h-[calc(100%+0.75rem)] w-px bg-[#123BFF]/30" />
+                                <span className="absolute left-[1.1rem] top-10 h-[calc(100%+0.75rem)] w-px bg-[#123BFF]/30 sm:left-[1.35rem] sm:top-12" />
                               ) : null}
 
-                              <span className="absolute left-0 top-0 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#123BFF]/20 bg-[#EAF7FF] text-[#123BFF]">
+                              <span className="absolute left-0 top-0 inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-[#123BFF]/20 bg-[#EAF7FF] text-[#123BFF] sm:h-11 sm:w-11">
                                 <Icon className="h-5 w-5" aria-hidden="true" />
                               </span>
 
-                              <div className="rounded-3xl border border-sand/10 bg-white p-4 shadow-sm">
-                                <div className="flex items-start justify-between gap-4">
+                              <div className="rounded-3xl border border-sand/10 bg-white p-3 shadow-sm sm:p-4">
+                                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
                                   <div>
                                     <div className="flex items-center gap-2">
-                                      <h4 className="text-lg font-bold text-sand">
+                                      <h4 className="text-base font-bold text-sand sm:text-lg">
                                         {milestone.title}
                                       </h4>
                                       <CheckCircle2
@@ -810,7 +810,7 @@ export default function SyllabusPage() {
                                     </p>
                                   </div>
 
-                                  <span className="rounded-2xl bg-[#EAF7FF] px-3 py-2 text-xs font-bold uppercase tracking-[0.12em] text-[#123BFF]">
+                                  <span className="w-fit rounded-2xl bg-[#EAF7FF] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[#123BFF] sm:text-xs">
                                     {milestone.label}
                                   </span>
                                 </div>
