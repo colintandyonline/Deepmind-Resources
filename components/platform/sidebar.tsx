@@ -30,6 +30,7 @@ interface NavItem {
 
 const mainNavItems: NavItem[] = [
   { icon: Home, label: 'Dashboard', href: '/', isActive: true },
+  { icon: Layers, label: 'Platform', href: '/platform' },
   { icon: BookOpen, label: 'Syllabus', href: '/syllabus' },
   { icon: Code, label: 'Sandbox', href: '/sandbox', badge: 'LIVE' },
   { icon: Activity, label: 'Progress', href: '/progress' },
