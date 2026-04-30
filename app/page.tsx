@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { BriefcaseBusiness, ArrowRight } from 'lucide-react'
+import { ArrowRight, BookOpenCheck, BriefcaseBusiness, Code2 } from 'lucide-react'
 import { Sidebar } from '@/components/platform/sidebar'
 import { HeroSection } from '@/components/platform/hero-section'
 import { LearningPath } from '@/components/platform/learning-path'
@@ -64,12 +64,21 @@ const featuredModules: LessonModule[] = [
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-obsidian">
+    <div className="relative min-h-screen overflow-hidden bg-obsidian text-sand">
+      <div
+        className="pointer-events-none fixed inset-0 z-0"
+        style={{
+          background:
+            'radial-gradient(circle at top right, rgba(69, 201, 255, 0.24), transparent 34rem), radial-gradient(circle at top left, rgba(18, 59, 255, 0.14), transparent 30rem), radial-gradient(circle at 50% 32rem, rgba(69, 201, 255, 0.16), transparent 36rem), linear-gradient(180deg, #F4FBFF 0%, #EAF7FF 46%, #F4FBFF 100%)',
+        }}
+        aria-hidden="true"
+      />
+
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main Content */}
-      <main className="min-h-screen pt-16 md:pl-64 md:pt-0">
+      <main className="relative z-10 min-h-screen pt-16 md:pl-64 md:pt-0">
         <div className="w-full max-w-7xl mx-auto px-4 py-6 sm:px-6 sm:py-8">
           {/* Hero Section */}
           <HeroSection />
@@ -120,15 +129,22 @@ export default function HomePage() {
           </div>
 
           {/* Featured Modules Section */}
-          <section className="mt-10 lg:mt-12">
-            <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-center sm:justify-between">
+          <section id="learning" className="mt-10 lg:mt-12">
+            <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <h2 className="text-2xl font-bold text-sand">Continue Learning</h2>
-                <p className="text-sand/50 mt-1">
+                <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                  <BookOpenCheck className="h-4 w-4" aria-hidden="true" />
+                  Academy Modules
+                </span>
+
+                <h2 className="mt-4 text-3xl font-bold tracking-tight text-sand">
+                  Continue Learning
+                </h2>
+                <p className="text-sand/55 mt-2">
                   Pick up where you left off or start a new module
                 </p>
               </div>
-              <button className="w-fit text-sm text-signal-green hover:text-signal-green/80 font-medium transition-colors">
+              <button className="w-fit rounded-2xl border border-sand/10 bg-white px-4 py-2 text-sm font-bold text-signal-green shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#0A63FF]">
                 View All Modules
               </button>
             </div>
@@ -136,17 +152,24 @@ export default function HomePage() {
           </section>
 
           {/* Code Sandbox Section */}
-          <section className="mt-10 lg:mt-12">
-            <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-center sm:justify-between">
+          <section id="sandbox" className="mt-10 lg:mt-12">
+            <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <h2 className="text-2xl font-bold text-sand">Agentic Sandbox</h2>
-                <p className="text-sand/50 mt-1">
+                <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                  <Code2 className="h-4 w-4" aria-hidden="true" />
+                  Live Sandbox
+                </span>
+
+                <h2 className="mt-4 text-3xl font-bold tracking-tight text-sand">
+                  Agentic Sandbox
+                </h2>
+                <p className="text-sand/55 mt-2">
                   Practice building AI agents in a live environment
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-signal-green/10 text-signal-green text-sm font-medium">
-                  <span className="w-2 h-2 rounded-full bg-signal-green animate-pulse" />
+                <span className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#123BFF] text-white text-sm font-bold shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
                   Live
                 </span>
               </div>
@@ -175,7 +198,7 @@ export default function HomePage() {
                   <p className="font-mono text-xs uppercase tracking-[0.22em] text-signal-green">
                     Verified AI learning intelligence
                   </p>
-                  <h2 className="mt-3 text-2xl font-bold text-sand">
+                  <h2 className="mt-3 text-2xl font-bold tracking-tight text-sand">
                     DeepMind Resources
                   </h2>
                   <p className="mt-3 max-w-2xl text-sm leading-7 text-sand/60 sm:text-base">
