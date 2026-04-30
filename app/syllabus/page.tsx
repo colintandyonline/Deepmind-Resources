@@ -1003,44 +1003,7 @@ export default function SyllabusPage() {
                     </div>
                   </div>
 
-                  <div className="mt-6 rounded-[1.75rem] border border-sand/10 bg-white p-5 shadow-sm">
-                    <div className="flex items-center justify-between gap-4">
-                      <div>
-                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                          What members gain
-                        </p>
-                        <h3 className="mt-2 text-xl font-bold text-sand">
-                          Real skills for real AI work
-                        </h3>
-                      </div>
-                      <span className="rounded-2xl bg-[#EAF7FF] px-4 py-3 text-sm font-bold text-[#123BFF]">
-                        Practical
-                      </span>
-                    </div>
 
-                    <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                      {capabilityHighlights.map((highlight) => {
-                        const Icon = highlight.icon
-
-                        return (
-                          <div
-                            key={highlight.title}
-                            className="rounded-2xl border border-sand/10 bg-[#F9FCFF] p-4"
-                          >
-                            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
-                              <Icon className="h-5 w-5" aria-hidden="true" />
-                            </span>
-                            <h4 className="mt-4 text-base font-bold text-sand">
-                              {highlight.title}
-                            </h4>
-                            <p className="mt-2 text-sm leading-7 text-sand/65">
-                              {highlight.description}
-                            </p>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -1077,6 +1040,57 @@ export default function SyllabusPage() {
                     )
                   })}
                 </div>
+              </div>
+            </div>
+          </section>
+
+
+          <section className="py-8" aria-labelledby="member-gains-title">
+            <div className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                    <Sparkles className="h-4 w-4" aria-hidden="true" />
+                    What members gain
+                  </span>
+
+                  <h2
+                    id="member-gains-title"
+                    className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl"
+                  >
+                    Real skills for real AI work.
+                  </h2>
+
+                  <p className="mt-4 max-w-3xl text-base leading-8 text-sand/65">
+                    Members build practical AI judgement they can use across tools, workflows,
+                    teams, and real business tasks.
+                  </p>
+                </div>
+
+                <span className="w-fit rounded-2xl bg-[#EAF7FF] px-4 py-3 text-sm font-bold text-[#123BFF]">
+                  Practical
+                </span>
+              </div>
+
+              <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {capabilityHighlights.map((highlight) => {
+                  const Icon = highlight.icon
+
+                  return (
+                    <article
+                      key={highlight.title}
+                      className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
+                    >
+                      <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
+                        <Icon className="h-6 w-6" aria-hidden="true" />
+                      </span>
+                      <h3 className="mt-5 text-xl font-bold text-sand">{highlight.title}</h3>
+                      <p className="mt-3 text-sm leading-7 text-sand/65">
+                        {highlight.description}
+                      </p>
+                    </article>
+                  )
+                })}
               </div>
             </div>
           </section>
