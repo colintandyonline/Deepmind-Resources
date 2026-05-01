@@ -250,6 +250,7 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
   const currentLevel = readString(profileRecord, 'current_level')
   const email = user.email ?? 'No email found'
   const emailConfirmed = Boolean(user.email_confirmed_at)
+  const isBrainAdmin = user.email?.trim().toLowerCase() === 'colintandy@gmail.com'
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-obsidian px-4 py-8 text-sand sm:px-6 lg:px-8">
@@ -677,6 +678,15 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
 
+          {isBrainAdmin ? (
+            <Link
+              href="/brain"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#123BFF]/20 bg-[#EAF7FF] px-5 py-3 text-sm font-bold text-[#123BFF] shadow-sm transition hover:border-[#123BFF]/40 hover:bg-white"
+            >
+              Open Master Brain
+            </Link>
+          ) : null}
+
           <Link
             href="/"
             className="inline-flex items-center justify-center gap-2 rounded-2xl border border-sand/10 bg-white px-5 py-3 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
@@ -688,5 +698,6 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
     </main>
   )
 }
+
 
 
