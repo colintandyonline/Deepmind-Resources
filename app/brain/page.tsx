@@ -38,6 +38,11 @@ type LatestBrainRecord = {
   id: string
   title: string
   record_type: string
+  summary: string
+  practical_meaning: string | null
+  business_relevance: string | null
+  uncertainty_notes: string | null
+  structured_content: Record<string, unknown> | null
   validation_status: string
   publication_status: string
   updated_at: string
@@ -248,6 +253,27 @@ function formatLabel(value: string) {
     .join(' ')
 }
 
+function getStructuredString(content: Record<string, unknown> | null, key: string) {
+  if (!content) {
+    return null
+  }
+
+  const value = content[key]
+
+  return typeof value === 'string' && value.trim() ? value.trim() : null
+}
+
+function splitParagraphs(value: string | null) {
+  if (!value) {
+    return []
+  }
+
+  return value
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+}
+
 export default async function BrainPage({ searchParams }: BrainPageProps) {
   const resolvedSearchParams = await searchParams
   const sourceStatus = resolvedSearchParams?.source ?? null
@@ -287,7 +313,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
 
   const { data: latestBrainRecords, error: latestBrainRecordsError } = await supabase
     .from('master_brain_records')
-    .select('id, title, record_type, validation_status, publication_status, updated_at')
+    .select('id, title, record_type, summary, practical_meaning, business_relevance, uncertainty_notes, structured_content, validation_status, publication_status, updated_at')
     .order('updated_at', { ascending: false })
     .limit(5)
 
@@ -604,9 +630,13 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                     <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
                       {formatLabel(record.record_type)}
                     </p>
+
                     <h3 className="mt-2 text-lg font-bold tracking-tight text-sand">
                       {record.title}
                     </h3>
+
+                    <p className="mt-3 text-sm leading-7 text-sand/65">{record.summary}</p>
+
                     <div className="mt-4 flex flex-wrap gap-2">
                       <span className="rounded-full bg-[#EAF7FF] px-3 py-1 text-xs font-bold text-[#123BFF]">
                         {formatLabel(record.validation_status)}
@@ -615,6 +645,85 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                         {formatLabel(record.publication_status)}
                       </span>
                     </div>
+
+                    {splitParagraphs(record.practical_meaning).length > 0 ? (
+                      <div className="mt-5 rounded-2xl bg-[#EAF7FF] p-4">
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                          Practical meaning
+                        </p>
+                        <div className="mt-2 grid gap-2">
+                          {splitParagraphs(record.practical_meaning).map((paragraph) => (
+                            <p key={paragraph} className="text-sm leading-7 text-sand/65">
+                              {paragraph}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {getStructuredString(record.structured_content, 'business_impact') ||
+                    record.business_relevance ||
+                    getStructuredString(record.structured_content, 'lesson_impact') ||
+                    getStructuredString(record.structured_content, 'sandbox_impact') ? (
+                      <div className="mt-5 grid gap-3">
+                        {getStructuredString(record.structured_content, 'business_impact') ||
+                        record.business_relevance ? (
+                          <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                              Business impact
+                            </p>
+                            <p className="mt-2 text-sm leading-7 text-sand/65">
+                              {getStructuredString(record.structured_content, 'business_impact') ||
+                                record.business_relevance}
+                            </p>
+                          </div>
+                        ) : null}
+
+                        {getStructuredString(record.structured_content, 'lesson_impact') ? (
+                          <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                              Lesson impact
+                            </p>
+                            <p className="mt-2 text-sm leading-7 text-sand/65">
+                              {getStructuredString(record.structured_content, 'lesson_impact')}
+                            </p>
+                          </div>
+                        ) : null}
+
+                        {getStructuredString(record.structured_content, 'sandbox_impact') ? (
+                          <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                              Sandbox impact
+                            </p>
+                            <p className="mt-2 text-sm leading-7 text-sand/65">
+                              {getStructuredString(record.structured_content, 'sandbox_impact')}
+                            </p>
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : null}
+
+                    {getStructuredString(record.structured_content, 'source_note') ? (
+                      <div className="mt-5 rounded-2xl bg-[#F7FBFF] p-4">
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                          Source note
+                        </p>
+                        <p className="mt-2 text-sm leading-7 text-sand/65">
+                          {getStructuredString(record.structured_content, 'source_note')}
+                        </p>
+                      </div>
+                    ) : null}
+
+                    {record.uncertainty_notes ? (
+                      <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-amber-900">
+                          Review note
+                        </p>
+                        <p className="mt-2 text-sm leading-7 text-amber-900">
+                          {record.uncertainty_notes}
+                        </p>
+                      </div>
+                    ) : null}
                   </div>
                 ))
               ) : (
@@ -843,6 +952,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     </main>
   )
 }
+
 
 
 
