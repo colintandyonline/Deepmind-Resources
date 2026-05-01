@@ -857,39 +857,37 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                       className="group rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
                     >
                       <summary className="cursor-pointer list-none">
-                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                          <div>
-                            <div className="flex flex-wrap gap-2">
-                              <span className={getPillClass(record.record_type)}>
-                                {formatLabel(record.record_type)}
-                              </span>
-                              <span className={getPillClass(record.validation_status)}>
-                                {formatLabel(record.validation_status)}
-                              </span>
-                              <span className={getPillClass(record.publication_status)}>
-                                {formatLabel(record.publication_status)}
-                              </span>
-                            </div>
+                        <div>
+                          <div className="flex flex-wrap gap-2">
+                            <span className={getPillClass(record.record_type)}>
+                              {formatLabel(record.record_type)}
+                            </span>
+                            <span className={getPillClass(record.validation_status)}>
+                              {formatLabel(record.validation_status)}
+                            </span>
+                            <span className={getPillClass(record.publication_status)}>
+                              {formatLabel(record.publication_status)}
+                            </span>
 
-                            <h3 className="mt-4 text-lg font-bold tracking-tight text-sand">
-                              {record.title}
-                            </h3>
-
-                            <p className="mt-3 text-sm leading-7 text-sand/65">
-                              {record.summary}
-                            </p>
+                            {!isMostRecent ? (
+                              <span className="inline-flex items-center justify-center rounded-full bg-[#EAF7FF] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-[#123BFF] transition group-open:bg-[#123BFF] group-open:text-white">
+                                <span className="group-open:hidden">Open</span>
+                                <span className="hidden group-open:inline">Close</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center justify-center rounded-full bg-[#ECFDF5] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-[#047857]">
+                                Most recent
+                              </span>
+                            )}
                           </div>
 
-                          {!isMostRecent ? (
-                            <span className="inline-flex shrink-0 items-center justify-center rounded-full bg-[#EAF7FF] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-[#123BFF] transition group-open:bg-[#123BFF] group-open:text-white">
-                              <span className="group-open:hidden">Open</span>
-                              <span className="hidden group-open:inline">Close</span>
-                            </span>
-                          ) : (
-                            <span className="inline-flex shrink-0 items-center justify-center rounded-full bg-[#ECFDF5] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-[#047857]">
-                              Most recent
-                            </span>
-                          )}
+                          <h3 className="mt-4 text-lg font-bold tracking-tight text-sand">
+                            {record.title}
+                          </h3>
+
+                          <p className="mt-3 text-sm leading-7 text-sand/65">
+                            {record.summary}
+                          </p>
                         </div>
                       </summary>
 
@@ -1195,6 +1193,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     </main>
   )
 }
+
 
 
 
