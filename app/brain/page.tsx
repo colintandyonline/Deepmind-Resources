@@ -20,6 +20,7 @@ import {
   Workflow,
 } from 'lucide-react'
 import { BrainSourceCreateForm } from '@/components/brain/brain-source-create-form'
+import { CheckFeedButton } from '@/components/brain/check-feed-button'
 import { ArchiveFindingButton } from '@/components/brain/archive-finding-button'
 import { ApproveFindingButton } from '@/components/brain/approve-finding-button'
 import { RestoreFindingButton } from '@/components/brain/restore-finding-button'
@@ -731,6 +732,8 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                       </p>
                     </div>
                   ) : null}
+
+                  <CheckFeedButton feedId={feed.id} feedType={feed.feed_type} />
                 </article>
               ))
             ) : (
@@ -1386,6 +1389,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     </main>
   )
 }
+
 
 
 
