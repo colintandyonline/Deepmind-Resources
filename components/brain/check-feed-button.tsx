@@ -47,7 +47,7 @@ function formatCheckFeedError(error: string | undefined, detail?: string | null)
   }
 
   if (error === 'unsupported_feed_type') {
-    return 'This feed type is registered, but manual checking is not wired for it yet.'
+    return 'This feed type is registered, but automatic checking is not wired for it yet.'
   }
 
   if (error === 'feed_fetch_failed') {
@@ -70,7 +70,47 @@ function formatCheckFeedError(error: string | undefined, detail?: string | null)
 }
 
 function canCheckFeedType(feedType: string) {
-  return feedType === 'rss' || feedType === 'atom' || feedType === 'github_releases'
+  return (
+    feedType === 'rss' ||
+    feedType === 'atom' ||
+    feedType === 'github_releases' ||
+    feedType === 'changelog_page'
+  )
+}
+
+function getIdleMessage(feedType: string) {
+  if (feedType === 'changelog_page') {
+    return 'Checking changelog page and saving the top detected update signals.'
+  }
+
+  return 'Checking feed and saving new source signals.'
+}
+
+function getButtonLabel(feedType: string, status: CheckFeedStatus, isSupported: boolean) {
+  if (!isSupported) {
+    return 'Manual scout only'
+  }
+
+  if (status === 'checking') {
+    return feedType === 'changelog_page' ? 'Checking top updates' : 'Checking feed'
+  }
+
+  return feedType === 'changelog_page' ? 'Check top 10 updates' : 'Check feed now'
+}
+
+function getSuccessMessage(feedType: string, result: CheckFeedResponse) {
+  const createdCount = result.createdCount ?? 0
+  const duplicateCount = result.duplicateCount ?? 0
+
+  if (feedType === 'changelog_page') {
+    return `Changelog checked. ${createdCount} top update signal${
+      createdCount === 1 ? '' : 's'
+    } saved. ${duplicateCount} duplicate${duplicateCount === 1 ? '' : 's'} skipped.`
+  }
+
+  return `Feed checked. ${createdCount} new signal${
+    createdCount === 1 ? '' : 's'
+  } saved. ${duplicateCount} duplicate${duplicateCount === 1 ? '' : 's'} skipped.`
 }
 
 export function CheckFeedButton({ feedId, feedType }: CheckFeedButtonProps) {
@@ -82,7 +122,7 @@ export function CheckFeedButton({ feedId, feedType }: CheckFeedButtonProps) {
 
   async function checkFeed() {
     setStatus('checking')
-    setMessage('Checking feed and saving new source signals.')
+    setMessage(getIdleMessage(feedType))
 
     try {
       const response = await fetch('/api/brain/check-feed', {
@@ -104,13 +144,7 @@ export function CheckFeedButton({ feedId, feedType }: CheckFeedButtonProps) {
       }
 
       setStatus('success')
-      setMessage(
-        `Feed checked. ${result.createdCount ?? 0} new signal${
-          result.createdCount === 1 ? '' : 's'
-        } saved. ${result.duplicateCount ?? 0} duplicate${
-          result.duplicateCount === 1 ? '' : 's'
-        } skipped.`,
-      )
+      setMessage(getSuccessMessage(feedType, result))
 
       router.refresh()
     } catch {
@@ -127,11 +161,7 @@ export function CheckFeedButton({ feedId, feedType }: CheckFeedButtonProps) {
         disabled={!isSupported || status === 'checking'}
         className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF] disabled:cursor-not-allowed disabled:bg-[#123BFF]/45 sm:w-auto"
       >
-        {!isSupported
-          ? 'Manual scout only'
-          : status === 'checking'
-            ? 'Checking feed'
-            : 'Check feed now'}
+        {getButtonLabel(feedType, status, isSupported)}
         {status === 'checking' ? (
           <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
         ) : (
@@ -141,8 +171,13 @@ export function CheckFeedButton({ feedId, feedType }: CheckFeedButtonProps) {
 
       {!isSupported ? (
         <p className="mt-3 text-xs font-semibold leading-6 text-sand/55">
-          Changelog pages stay registered here, but they should be checked with Source Scout until
-          page polling is wired safely.
+          This source stays registered here, but it should be checked with Source Scout until
+          automatic polling is wired safely.
+        </p>
+      ) : feedType === 'changelog_page' ? (
+        <p className="mt-3 text-xs font-semibold leading-6 text-sand/55">
+          This checks the source page for the top detected update links or headings and saves them
+          as reviewable source signals.
         </p>
       ) : null}
 

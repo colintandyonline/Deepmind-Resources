@@ -56,8 +56,21 @@ function decodeXml(value: string) {
     .replaceAll('&apos;', "'")
 }
 
-function stripTags(value: string) {
+function decodeHtml(value: string) {
   return decodeXml(value)
+    .replaceAll('&nbsp;', ' ')
+    .replaceAll('&mdash;', '—')
+    .replaceAll('&ndash;', '–')
+    .replaceAll('&rsquo;', "'")
+    .replaceAll('&lsquo;', "'")
+    .replaceAll('&rdquo;', '"')
+    .replaceAll('&ldquo;', '"')
+}
+
+function stripTags(value: string) {
+  return decodeHtml(value)
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
     .replace(/<[^>]*>/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
@@ -65,6 +78,14 @@ function stripTags(value: string) {
 
 function createContentHash(value: string) {
   return createHash('sha256').update(value).digest('hex')
+}
+
+function createAbsoluteUrl(baseUrl: string, maybeUrl: string) {
+  try {
+    return new URL(maybeUrl, baseUrl).toString()
+  } catch {
+    return baseUrl
+  }
 }
 
 function getTagValue(xml: string, tagName: string) {
@@ -168,6 +189,126 @@ function parseXmlFeed(xml: string) {
     .filter(Boolean) as ParsedFeedItem[]
 }
 
+function parseChangelogPage(html: string, pageUrl: string) {
+  const cleanedHtml = html
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+
+  const candidates: ParsedFeedItem[] = []
+  const seenUrls = new Set<string>()
+  const linkMatches = cleanedHtml.matchAll(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)
+
+  for (const match of linkMatches) {
+    const href = cleanString(match[1])
+    const label = stripTags(match[2] ?? '')
+
+    if (!href || !label) {
+      continue
+    }
+
+    if (
+      href.startsWith('mailto:') ||
+      href.startsWith('tel:') ||
+      href.startsWith('#') ||
+      label.length < 8
+    ) {
+      continue
+    }
+
+    const itemUrl = createAbsoluteUrl(pageUrl, href)
+
+    if (seenUrls.has(itemUrl)) {
+      continue
+    }
+
+    const lowerLabel = label.toLowerCase()
+
+    const looksLikeUpdate =
+      lowerLabel.includes('release') ||
+      lowerLabel.includes('changelog') ||
+      lowerLabel.includes('update') ||
+      lowerLabel.includes('model') ||
+      lowerLabel.includes('api') ||
+      lowerLabel.includes('sdk') ||
+      lowerLabel.includes('claude') ||
+      lowerLabel.includes('gpt') ||
+      lowerLabel.includes('sonnet') ||
+      lowerLabel.includes('opus') ||
+      lowerLabel.includes('beta') ||
+      /\b20\d{2}\b/.test(label) ||
+      /\b\d{1,2}\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)/i.test(label)
+
+    if (!looksLikeUpdate) {
+      continue
+    }
+
+    seenUrls.add(itemUrl)
+
+    candidates.push({
+      title: label.slice(0, 220),
+      itemUrl,
+      externalId: itemUrl,
+      publishedAt: null,
+      summary: `Detected from changelog page: ${label.slice(0, 260)}`,
+      rawPayload: {
+        parser: 'changelog_page_links',
+        label,
+        href,
+      },
+      contentHash: createContentHash(`${label}\n${itemUrl}`),
+    })
+
+    if (candidates.length >= 10) {
+      break
+    }
+  }
+
+  if (candidates.length >= 10) {
+    return candidates
+  }
+
+  const headingMatches = cleanedHtml.matchAll(/<h[1-4]\b[^>]*>([\s\S]*?)<\/h[1-4]>/gi)
+
+  for (const match of headingMatches) {
+    const heading = stripTags(match[1] ?? '')
+
+    if (!heading || heading.length < 8) {
+      continue
+    }
+
+    const headingUrl = `${pageUrl}#${heading
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 80)}`
+
+    if (seenUrls.has(headingUrl)) {
+      continue
+    }
+
+    seenUrls.add(headingUrl)
+
+    candidates.push({
+      title: heading.slice(0, 220),
+      itemUrl: headingUrl,
+      externalId: headingUrl,
+      publishedAt: null,
+      summary: `Detected heading from changelog page: ${heading.slice(0, 260)}`,
+      rawPayload: {
+        parser: 'changelog_page_headings',
+        heading,
+      },
+      contentHash: createContentHash(`${heading}\n${headingUrl}`),
+    })
+
+    if (candidates.length >= 10) {
+      break
+    }
+  }
+
+  return candidates
+}
+
 function inferSignalType(feed: SourceFeed, title: string, summary: string | null) {
   const haystack = `${title} ${summary ?? ''}`.toLowerCase()
 
@@ -227,6 +368,10 @@ function inferSignalType(feed: SourceFeed, title: string, summary: string | null
     haystack.includes('embedding')
   ) {
     return 'rag_update'
+  }
+
+  if (feed.feed_type === 'changelog_page') {
+    return 'changelog_update'
   }
 
   if (feed.source_type === 'github_repo') {
@@ -333,9 +478,9 @@ export async function POST(request: Request) {
 
   const sourceFeed = feed as SourceFeed
 
-  if (!['rss', 'atom', 'github_releases'].includes(sourceFeed.feed_type)) {
+  if (!['rss', 'atom', 'github_releases', 'changelog_page'].includes(sourceFeed.feed_type)) {
     const unsupportedMessage =
-      'This feed type is registered but not ready for automatic checking yet. Use Source Scout manually for changelog pages.'
+      'This feed type is registered but not ready for automatic checking yet.'
 
     await supabase
       .from('source_feeds')
@@ -360,7 +505,10 @@ export async function POST(request: Request) {
   try {
     response = await fetch(sourceFeed.feed_url, {
       headers: {
-        Accept: 'application/atom+xml, application/rss+xml, application/xml, text/xml',
+        Accept:
+          sourceFeed.feed_type === 'changelog_page'
+            ? 'text/html, application/xhtml+xml'
+            : 'application/atom+xml, application/rss+xml, application/xml, text/xml',
         'User-Agent': 'DeepMindResourcesBrain/1.0',
       },
       cache: 'no-store',
@@ -407,11 +555,17 @@ export async function POST(request: Request) {
     )
   }
 
-  const xml = await response.text()
-  const parsedItems = parseXmlFeed(xml).slice(0, 12)
+  const responseText = await response.text()
+  const parsedItems =
+    sourceFeed.feed_type === 'changelog_page'
+      ? parseChangelogPage(responseText, sourceFeed.feed_url)
+      : parseXmlFeed(responseText).slice(0, 12)
 
   if (parsedItems.length === 0) {
-    const errorMessage = 'No readable RSS or Atom items were found.'
+    const errorMessage =
+      sourceFeed.feed_type === 'changelog_page'
+        ? 'No readable changelog updates were found.'
+        : 'No readable RSS or Atom items were found.'
 
     await supabase
       .from('source_feeds')
