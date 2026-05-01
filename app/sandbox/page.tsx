@@ -267,6 +267,38 @@ export default function SandboxPage() {
                 is built around a scenario, a practical goal, success criteria, and a review
                 checklist so users can practise deliberately.
               </p>
+
+              <div className="mt-7 grid gap-3">
+                <div className="rounded-2xl bg-[#EAF7FF] p-4">
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                    Choose a route
+                  </p>
+                  <p className="mt-2 text-sm leading-7 text-sand/65">
+                    Start with prompt design, workflow mapping, tool calling, RAG, agent structure,
+                    or validation practice.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl bg-[#EAF7FF] p-4">
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                    Work from a scenario
+                  </p>
+                  <p className="mt-2 text-sm leading-7 text-sand/65">
+                    Every exercise begins with a clear situation, safe sample input, and a practical
+                    goal instead of open-ended play.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl bg-[#EAF7FF] p-4">
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                    Review the output
+                  </p>
+                  <p className="mt-2 text-sm leading-7 text-sand/65">
+                    The sandbox helps users check structure, evidence, risk, privacy, assumptions,
+                    and whether the result is ready for real work.
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -359,19 +391,19 @@ export default function SandboxPage() {
 
               <div className="mt-6 rounded-3xl bg-white p-5 shadow-sm">
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF]">
-                  Future account experience
+                  Signed-in workspace
                 </p>
                 <p className="mt-3 text-sm leading-7 text-sand/65">
-                  Signed-in users will eventually see assigned sandbox tasks, saved attempts,
-                  progress status, review feedback, and refreshed tasks when verified AI changes
-                  affect completed work.
+                  Signed-in users will see sandbox tasks as part of a private learning workspace:
+                  assigned practice, saved attempts, progress status, review feedback, and refreshed
+                  tasks when verified AI changes affect completed work.
                 </p>
               </div>
             </aside>
           </div>
         </section>
 
-        <section className="mt-8 rounded-[2rem] bg-[#061B5B] p-6 text-white shadow-sm sm:p-8 lg:p-10">
+        <section className="mt-8 rounded-[2rem] bg-[#123BFF] p-6 text-white shadow-sm sm:p-8 lg:p-10">
           <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-center">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white">
@@ -384,9 +416,9 @@ export default function SandboxPage() {
               </h2>
 
               <p className="mt-4 max-w-3xl text-base leading-8 text-white/75">
-                The public sandbox page explains the practice layer. Full sandbox tasks belong
-                inside the signed-in DeepMind Resources workspace so attempts, progress, and
-                business training context can be protected properly.
+                The public sandbox page shows how guided practice works. Full sandbox tasks belong
+                inside the signed-in DeepMind Resources workspace so attempts, progress, feedback,
+                and business training context stay private to the right account.
               </p>
             </div>
 
@@ -401,8 +433,8 @@ export default function SandboxPage() {
                     Protected practice, public explanation.
                   </h3>
                   <p className="mt-3 text-sm leading-7 text-sand/65">
-                    This page is public. User attempts, progress, team records, and sandbox
-                    submissions should remain inside protected account routes.
+                    Explore the public preview here, then use the signed-in workspace for private
+                    attempts, saved progress, team tasks, and guided sandbox feedback.
                   </p>
 
                   <div className="mt-5 flex flex-col gap-3 sm:flex-row">
@@ -430,4 +462,5 @@ export default function SandboxPage() {
     </main>
   )
 }
+
 

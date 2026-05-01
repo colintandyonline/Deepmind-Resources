@@ -197,18 +197,18 @@ export function SandboxGuideAgent() {
           </h2>
 
           <p className="mt-4 text-base leading-8 text-sand/65">
-            This preview agent guides users through safe demo tasks. It does not save attempts,
-            score private work, or use real business data on the public page. Full agent-guided
-            sandbox usage should stay inside protected account routes.
+            This guide helps users practise with safe example scenarios before entering the full
+            workspace. Signed-in users will later use guided tasks with saved attempts, feedback,
+            progress records, and business-ready practice routes.
           </p>
 
           <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50 p-5">
             <div className="flex gap-3">
               <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" />
               <p className="text-sm leading-7 text-amber-900">
-                Use synthetic examples only. Do not paste customer data, employee data, credentials,
-                confidential company material, private contracts, or sensitive business records into
-                this public preview.
+                Use example or anonymised scenarios only. Keep customer details, employee
+                information, passwords, contracts, financial data, and confidential company material
+                out of this public demo.
               </p>
             </div>
           </div>
@@ -393,9 +393,9 @@ export function SandboxGuideAgent() {
                 <div className="flex gap-3">
                   <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-white" />
                   <p className="text-sm leading-7 text-white/82">
-                    Protected account access will later allow saved attempts, guided scoring,
-                    progress tracking, assigned business tasks, and refreshed sandbox versions when
-                    verified AI changes affect a skill.
+                    Inside the signed-in workspace, guided attempts can become part of your private
+                    progress record, team assignments, feedback history, and refreshed practice tasks
+                    as the platform grows.
                   </p>
                 </div>
               </div>
@@ -406,3 +406,4 @@ export function SandboxGuideAgent() {
     </section>
   )
 }
+
