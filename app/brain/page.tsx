@@ -764,13 +764,50 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
           </div>
         ) : null}
 
-        <AiDiscoveryCreateForm />
+        <details className="mt-8 rounded-[2rem] border border-[#123BFF]/15 bg-[#F7FBFF] p-4 shadow-sm">
+          <summary className="cursor-pointer list-none rounded-2xl bg-white px-4 py-3 shadow-sm">
+            <span className="block text-sm font-bold text-sand">
+              Show/hide add discovery candidate form
+            </span>
+            <span className="mt-1 block text-sm leading-7 text-sand/60">
+              Capture new AI tools, models, platforms, companies, or weak signals before they enter intake.
+            </span>
+          </summary>
 
-        <BrainSourceCreateForm />
+          <div className="mt-4 [&>section]:mt-0">
+            <AiDiscoveryCreateForm />
+          </div>
+        </details>
+
+        <details className="mt-8 rounded-[2rem] border border-[#123BFF]/15 bg-[#F7FBFF] p-4 shadow-sm">
+          <summary className="cursor-pointer list-none rounded-2xl bg-white px-4 py-3 shadow-sm">
+            <span className="block text-sm font-bold text-sand">
+              Show/hide create source form
+            </span>
+            <span className="mt-1 block text-sm leading-7 text-sand/60">
+              Add official documentation, release notes, trusted sources, or weak source-backed signals.
+            </span>
+          </summary>
+
+          <div className="mt-4 [&>section]:mt-0">
+            <BrainSourceCreateForm />
+          </div>
+        </details>
 
         <BrainSourceScoutForm />
 
-        <section className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
+        <details className="mt-8 rounded-[2rem] border border-[#123BFF]/15 bg-[#F7FBFF] p-4 shadow-sm">
+          <summary className="cursor-pointer list-none rounded-2xl bg-white px-4 py-3 shadow-sm">
+            <span className="block text-sm font-bold text-sand">
+              Show/hide AI Discovery Queue
+            </span>
+            <span className="mt-1 block text-sm leading-7 text-sand/60">
+              Discovery summary, candidate tools, model records, platform signals, and source verification status.
+            </span>
+          </summary>
+
+          <div className="mt-4 [&>section]:mt-0">
+        <section className="mt-0 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
               <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
@@ -1079,9 +1116,22 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
             </div>
           </details>
         </section>
+          </div>
+        </details>
 
 
-        <section className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
+        <details className="mt-8 rounded-[2rem] border border-[#123BFF]/15 bg-[#F7FBFF] p-4 shadow-sm">
+          <summary className="cursor-pointer list-none rounded-2xl bg-white px-4 py-3 shadow-sm">
+            <span className="block text-sm font-bold text-sand">
+              Show/hide Trusted Intake Feeds
+            </span>
+            <span className="mt-1 block text-sm leading-7 text-sand/60">
+              Registered source feeds, taxonomy routing, check buttons, polling status, and feed-level errors.
+            </span>
+          </summary>
+
+          <div className="mt-4 [&>section]:mt-0">
+        <section className="mt-0 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
               <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
@@ -1281,6 +1331,8 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
           </div>
           </details>
         </section>
+          </div>
+        </details>
 
 
         <section className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
