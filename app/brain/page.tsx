@@ -687,7 +687,17 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
             </div>
           ) : null}
 
-          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <details open className="mt-8 rounded-3xl border border-[#123BFF]/15 bg-[#F7FBFF] p-4">
+            <summary className="cursor-pointer list-none rounded-2xl bg-white px-4 py-3 shadow-sm">
+              <span className="block text-sm font-bold text-sand">
+                Show/hide trusted feed cards
+              </span>
+              <span className="mt-1 block text-sm leading-7 text-sand/60">
+                Registered source feeds, check buttons, polling status, and feed-level errors.
+              </span>
+            </summary>
+
+          <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {sourceFeeds.length > 0 ? (
               sourceFeeds.map((feed) => (
                 <article
@@ -767,6 +777,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
               </div>
             )}
           </div>
+          </details>
         </section>
 
 
@@ -812,7 +823,17 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
             </div>
           ) : null}
 
-          <div className="mt-8 grid gap-4">
+          <details open className="mt-8 rounded-3xl border border-[#123BFF]/15 bg-[#F7FBFF] p-4">
+            <summary className="cursor-pointer list-none rounded-2xl bg-white px-4 py-3 shadow-sm">
+              <span className="block text-sm font-bold text-sand">
+                Show/hide source signal cards
+              </span>
+              <span className="mt-1 block text-sm leading-7 text-sand/60">
+                Detected feed items, review statuses, and signal action controls.
+              </span>
+            </summary>
+
+          <div className="mt-4 grid gap-4">
             {sourceFeedItems.length > 0 ? (
               sourceFeedItems.map((item) => (
                 <article
@@ -910,6 +931,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
               </div>
             )}
           </div>
+          </details>
         </section>
 
         <section className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
