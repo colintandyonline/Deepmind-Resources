@@ -18,6 +18,7 @@ import {
   Sparkles,
   Workflow,
 } from 'lucide-react'
+import { BrainSourceCreateForm } from '@/components/brain/brain-source-create-form'
 import { createClient } from '@/lib/supabase/server'
 
 const BRAIN_ADMIN_EMAIL = 'colintandy@gmail.com'
@@ -38,6 +39,12 @@ type LatestBrainRecord = {
   validation_status: string
   publication_status: string
   updated_at: string
+}
+
+type BrainPageProps = {
+  searchParams?: Promise<{
+    source?: string
+  }>
 }
 
 export const metadata: Metadata = {
@@ -227,7 +234,10 @@ function formatLabel(value: string) {
     .join(' ')
 }
 
-export default async function BrainPage() {
+export default async function BrainPage({ searchParams }: BrainPageProps) {
+  const resolvedSearchParams = await searchParams
+  const sourceStatus = resolvedSearchParams?.source ?? null
+
   const supabase = await createClient()
 
   const {
@@ -362,6 +372,26 @@ export default async function BrainPage() {
             </aside>
           </div>
         </header>
+
+        {sourceStatus === 'created' ? (
+          <div className="mt-6 rounded-3xl border border-emerald-200 bg-emerald-50 p-5 text-sm font-semibold leading-7 text-emerald-800 shadow-sm">
+            Source record created. It is stored privately in the Brain source layer.
+          </div>
+        ) : null}
+
+        {sourceStatus === 'missing-title' ? (
+          <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50 p-5 text-sm font-semibold leading-7 text-amber-800 shadow-sm">
+            Source title is required before a source can be added to the Brain.
+          </div>
+        ) : null}
+
+        {sourceStatus === 'error' ? (
+          <div className="mt-6 rounded-3xl border border-red-200 bg-red-50 p-5 text-sm font-semibold leading-7 text-red-800 shadow-sm">
+            Source record could not be created. Check the Brain source table schema and admin-only RLS policy.
+          </div>
+        ) : null}
+
+        <BrainSourceCreateForm />
 
         <section className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -691,3 +721,4 @@ export default async function BrainPage() {
     </main>
   )
 }
+
