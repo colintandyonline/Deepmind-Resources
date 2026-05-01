@@ -20,6 +20,7 @@ import {
   Workflow,
 } from 'lucide-react'
 import { BrainSourceCreateForm } from '@/components/brain/brain-source-create-form'
+import { AiDiscoveryCreateForm } from '@/components/brain/ai-discovery-create-form'
 import { CheckFeedButton } from '@/components/brain/check-feed-button'
 import { SourceSignalActionButton } from '@/components/brain/source-signal-action-button'
 import { SourceSignalScoutButton } from '@/components/brain/source-signal-scout-button'
@@ -692,6 +693,26 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
             Source record could not be created. Check the Brain source table schema and admin-only RLS policy.
           </div>
         ) : null}
+
+        {resolvedSearchParams?.discovery === 'created' ? (
+          <div className="mt-6 rounded-3xl border border-emerald-200 bg-emerald-50 p-5 text-sm font-semibold leading-7 text-emerald-800 shadow-sm">
+            Discovery candidate created. It is now waiting in the AI Discovery Queue.
+          </div>
+        ) : null}
+
+        {resolvedSearchParams?.discovery === 'missing-provider' ? (
+          <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50 p-5 text-sm font-semibold leading-7 text-amber-800 shadow-sm">
+            Provider name is required before a discovery candidate can be added.
+          </div>
+        ) : null}
+
+        {resolvedSearchParams?.discovery === 'error' ? (
+          <div className="mt-6 rounded-3xl border border-red-200 bg-red-50 p-5 text-sm font-semibold leading-7 text-red-800 shadow-sm">
+            Discovery candidate could not be created. Check the AI discovery table schema and admin-only RLS policy.
+          </div>
+        ) : null}
+
+        <AiDiscoveryCreateForm />
 
         <BrainSourceCreateForm />
 
