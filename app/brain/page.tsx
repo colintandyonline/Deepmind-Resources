@@ -394,6 +394,8 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
 
         <BrainSourceCreateForm />
 
+        <BrainSourceScoutForm />
+
         <section className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
@@ -722,5 +724,6 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     </main>
   )
 }
+
 
 
