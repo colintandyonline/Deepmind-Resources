@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import { BrainSourceCreateForm } from '@/components/brain/brain-source-create-form'
 import { CheckFeedButton } from '@/components/brain/check-feed-button'
+import { SourceSignalActionButton } from '@/components/brain/source-signal-action-button'
 import { ArchiveFindingButton } from '@/components/brain/archive-finding-button'
 import { ApproveFindingButton } from '@/components/brain/approve-finding-button'
 import { RestoreFindingButton } from '@/components/brain/restore-finding-button'
@@ -874,15 +875,27 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                           'No summary was supplied by the feed. Open the source item before scouting or reviewing this signal.'}
                       </p>
 
-                      <a
-                        href={item.item_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="mt-5 inline-flex items-center gap-2 rounded-2xl border border-[#123BFF]/15 bg-[#EAF7FF] px-4 py-3 text-sm font-bold text-[#123BFF] transition hover:border-[#123BFF]/35 hover:bg-[#DDF1FF]"
-                      >
-                        Open source item
-                        <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                      </a>
+                      <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start">
+                        <a
+                          href={item.item_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-[#123BFF]/15 bg-[#EAF7FF] px-4 py-3 text-sm font-bold text-[#123BFF] transition hover:border-[#123BFF]/35 hover:bg-[#DDF1FF] sm:w-auto"
+                        >
+                          Open source item
+                          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                        </a>
+
+                        {['archived', 'duplicate', 'ignored'].includes(item.review_status) ? (
+                          <SourceSignalActionButton signalId={item.id} action="restore" />
+                        ) : (
+                          <>
+                            <SourceSignalActionButton signalId={item.id} action="archive" />
+                            <SourceSignalActionButton signalId={item.id} action="duplicate" />
+                            <SourceSignalActionButton signalId={item.id} action="ignore" />
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </article>
