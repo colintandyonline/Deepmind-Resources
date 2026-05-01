@@ -331,6 +331,72 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
   const totalBrainRows = liveCounts.reduce((total, item) => total + item.count, 0)
   const readErrors = liveCounts.filter((item) => item.hasError).length
 
+  const [
+    activeFindingsResult,
+    archivedFindingsResult,
+    failedAgentRunsResult,
+    verifiedBrainRecordsResult,
+  ] = await Promise.all([
+    supabase
+      .from('agent_findings')
+      .select('id', {
+        count: 'exact',
+        head: true,
+      })
+      .in('validation_status', ['unverified_signal', 'needs_review'])
+      .is('related_master_brain_record_id', null),
+    supabase
+      .from('agent_findings')
+      .select('id', {
+        count: 'exact',
+        head: true,
+      })
+      .eq('validation_status', 'archived'),
+    supabase
+      .from('agent_runs')
+      .select('id', {
+        count: 'exact',
+        head: true,
+      })
+      .eq('status', 'failed'),
+    supabase
+      .from('master_brain_records')
+      .select('id', {
+        count: 'exact',
+        head: true,
+      })
+      .eq('validation_status', 'verified'),
+  ])
+
+  const brainHealthCards = [
+    {
+      label: 'Active review queue',
+      count: activeFindingsResult.count ?? 0,
+      description: 'Unresolved Scout findings waiting for approve, archive, or further review.',
+      hasError: Boolean(activeFindingsResult.error),
+    },
+    {
+      label: 'Verified Brain records',
+      count: verifiedBrainRecordsResult.count ?? 0,
+      description: 'Approved intelligence records available for internal learning decisions.',
+      hasError: Boolean(verifiedBrainRecordsResult.error),
+    },
+    {
+      label: 'Archived findings',
+      count: archivedFindingsResult.count ?? 0,
+      description: 'Retained Scout findings removed from the active review queue.',
+      hasError: Boolean(archivedFindingsResult.error),
+    },
+    {
+      label: 'Failed agent runs',
+      count: failedAgentRunsResult.count ?? 0,
+      description: 'Agent runs that need review before the Scout workflow is trusted at scale.',
+      hasError: Boolean(failedAgentRunsResult.error),
+    },
+  ]
+
+  const brainHealthReadErrors = brainHealthCards.filter((item) => item.hasError).length
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-obsidian px-4 py-8 text-sand sm:px-6 lg:px-8">
       <div
@@ -444,6 +510,70 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
         <BrainSourceCreateForm />
 
         <BrainSourceScoutForm />
+
+        <section className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+                Brain Health Summary
+              </span>
+
+              <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
+                Operational health at a glance.
+              </h2>
+
+              <p className="mt-4 text-base leading-8 text-sand/65">
+                This summary separates active review work from historical records, archived
+                findings, verified intelligence, and failed agent activity.
+              </p>
+            </div>
+
+            <div className="rounded-3xl bg-[#EAF7FF] p-5 shadow-sm lg:max-w-md">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF]">
+                Queue rule
+              </p>
+              <p className="mt-3 text-sm leading-7 text-sand/65">
+                Active review should stay small. Useful findings become Brain records; weak,
+                duplicated, or low-priority findings are archived for audit history.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {brainHealthCards.map((item) => (
+              <article
+                key={item.label}
+                className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
+              >
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                  {item.label}
+                </p>
+
+                <p className="mt-3 text-4xl font-bold tracking-tight text-sand">
+                  {item.hasError ? '—' : formatCount(item.count)}
+                </p>
+
+                <p className="mt-3 text-sm leading-7 text-sand/65">
+                  {item.hasError
+                    ? 'This health check could not be read. Check schema cache or RLS policy.'
+                    : item.description}
+                </p>
+              </article>
+            ))}
+          </div>
+
+          {brainHealthReadErrors > 0 ? (
+            <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50 p-5">
+              <p className="text-sm font-bold text-amber-900">
+                One or more Brain health checks need attention.
+              </p>
+              <p className="mt-2 text-sm leading-7 text-amber-800">
+                The Brain is still available, but one health metric could not be read from Supabase.
+              </p>
+            </div>
+          ) : null}
+        </section>
 
         <section className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -965,6 +1095,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     </main>
   )
 }
+
 
 
 
