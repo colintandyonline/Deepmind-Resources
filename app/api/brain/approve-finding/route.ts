@@ -114,6 +114,48 @@ function getPayloadString(payload: Record<string, unknown> | null, key: string) 
   return typeof value === 'string' && value.trim() ? value.trim() : null
 }
 
+async function archiveRelatedSourceSignal(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  sourceUrl: string | null,
+) {
+  if (!sourceUrl) {
+    return {
+      archived: false,
+      error: null as string | null,
+    }
+  }
+
+  const sourceSignalColumns = ['item_url', 'canonical_url', 'external_id'] as const
+  let archived = false
+
+  for (const column of sourceSignalColumns) {
+    const { data, error } = await supabase
+      .from('source_feed_items')
+      .update({
+        relevance_status: 'archived',
+        review_status: 'archived',
+      })
+      .eq(column, sourceUrl)
+      .select('id')
+
+    if (error) {
+      return {
+        archived,
+        error: error.message,
+      }
+    }
+
+    if (data && data.length > 0) {
+      archived = true
+    }
+  }
+
+  return {
+    archived,
+    error: null as string | null,
+  }
+}
+
 async function checkBrainAdmin(): Promise<BrainAdminCheck> {
   const supabase = await createClient()
 
@@ -212,12 +254,19 @@ export async function POST(request: Request) {
   }
 
   const agentFinding = finding as AgentFinding
+  const sourceSignalUrl = getPayloadString(agentFinding.raw_payload, 'source_url')
 
   if (agentFinding.related_master_brain_record_id) {
+    const sourceSignalArchiveResult = await archiveRelatedSourceSignal(supabase, sourceSignalUrl)
+
+    revalidatePath('/brain')
+
     return NextResponse.json({
       ok: true,
       alreadyApproved: true,
       masterBrainRecordId: agentFinding.related_master_brain_record_id,
+      sourceSignalArchived: sourceSignalArchiveResult.archived,
+      sourceSignalArchiveError: sourceSignalArchiveResult.error,
     })
   }
 
@@ -323,10 +372,14 @@ export async function POST(request: Request) {
     )
   }
 
+  const sourceSignalArchiveResult = await archiveRelatedSourceSignal(supabase, sourceSignalUrl)
+
   revalidatePath('/brain')
 
   return NextResponse.json({
     ok: true,
     masterBrainRecordId: brainRecord.id,
+    sourceSignalArchived: sourceSignalArchiveResult.archived,
+    sourceSignalArchiveError: sourceSignalArchiveResult.error,
   })
 }
