@@ -42,6 +42,17 @@ type LatestBrainRecord = {
   updated_at: string
 }
 
+type LatestAgentFinding = {
+  id: string
+  title: string
+  finding_type: string
+  summary: string
+  confidence_level: string
+  validation_status: string
+  recommended_action: string | null
+  created_at: string
+}
+
 type BrainPageProps = {
   searchParams?: Promise<{
     source?: string
@@ -278,7 +289,14 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     .order('updated_at', { ascending: false })
     .limit(5)
 
+  const { data: latestAgentFindings, error: latestAgentFindingsError } = await supabase
+    .from('agent_findings')
+    .select('id, title, finding_type, summary, confidence_level, validation_status, recommended_action, created_at')
+    .order('created_at', { ascending: false })
+    .limit(6)
+
   const latestRecords = (latestBrainRecords ?? []) as LatestBrainRecord[]
+  const latestFindings = (latestAgentFindings ?? []) as LatestAgentFinding[]
   const totalBrainRows = liveCounts.reduce((total, item) => total + item.count, 0)
   const readErrors = liveCounts.filter((item) => item.hasError).length
 
@@ -456,6 +474,97 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
               )
             })}
           </div>
+        </section>
+
+        <section className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                <Sparkles className="h-4 w-4" aria-hidden="true" />
+                Latest Agent Findings
+              </span>
+
+              <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
+                Review Scout findings before they become Brain records.
+              </h2>
+
+              <p className="mt-4 text-base leading-8 text-sand/65">
+                Agent findings are private candidate signals. They are useful only after review:
+                each one still needs validation, source judgement, and a decision about whether it
+                should affect lessons, sandbox tasks, tool intelligence, or business training.
+              </p>
+            </div>
+
+            <div className="rounded-3xl bg-[#EAF7FF] p-5 shadow-sm lg:max-w-md">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF]">
+                Review rule
+              </p>
+              <p className="mt-3 text-sm leading-7 text-sand/65">
+                Scout output is not published content. It is a candidate queue for human review and
+                later promotion into verified Master Brain records.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8 grid gap-4 lg:grid-cols-2">
+            {latestFindings.length > 0 ? (
+              latestFindings.map((finding) => (
+                <article
+                  key={finding.id}
+                  className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
+                >
+                  <div className="flex flex-wrap gap-2">
+                    <span className="rounded-full bg-[#EAF7FF] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-[#123BFF]">
+                      {formatLabel(finding.finding_type)}
+                    </span>
+                    <span className="rounded-full bg-[#EAF7FF] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-[#123BFF]">
+                      {formatLabel(finding.validation_status)}
+                    </span>
+                    <span className="rounded-full bg-[#EAF7FF] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-[#123BFF]">
+                      {formatLabel(finding.confidence_level)}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-5 text-xl font-bold tracking-tight text-sand">
+                    {finding.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-7 text-sand/65">{finding.summary}</p>
+
+                  {finding.recommended_action ? (
+                    <div className="mt-5 rounded-2xl bg-[#EAF7FF] p-4">
+                      <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                        Recommended action
+                      </p>
+                      <p className="mt-2 text-sm leading-7 text-sand/65">
+                        {finding.recommended_action}
+                      </p>
+                    </div>
+                  ) : null}
+                </article>
+              ))
+            ) : (
+              <div className="rounded-3xl border border-[#123BFF]/15 bg-[#EAF7FF] p-5 lg:col-span-2">
+                <p className="text-sm font-bold text-sand">No Scout findings yet.</p>
+                <p className="mt-3 text-sm leading-7 text-sand/65">
+                  Run the Source Scout against an official source to create private candidate
+                  findings for review.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {latestAgentFindingsError ? (
+            <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50 p-5">
+              <p className="text-sm font-bold text-amber-900">
+                Latest-findings read check needs attention.
+              </p>
+              <p className="mt-2 text-sm leading-7 text-amber-800">
+                The Brain could not read recent agent findings. Check the agent_findings schema or
+                RLS policy.
+              </p>
+            </div>
+          ) : null}
         </section>
 
         <section className="mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
@@ -724,6 +833,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     </main>
   )
 }
+
 
 
 
