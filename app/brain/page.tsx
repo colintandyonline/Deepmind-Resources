@@ -328,7 +328,7 @@ function getPillClass(value: string) {
   }
 
   if (value === 'needs_review' || value === 'unverified_signal') {
-    return `${baseClass} bg-[#EFF6FF] text-[#1D4ED8]`
+    return `${baseClass} bg-[#FFFBEB] text-[#B45309]`
   }
 
   if (value === 'high') {
@@ -1170,6 +1170,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     </main>
   )
 }
+
 
 
 
