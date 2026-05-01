@@ -21,6 +21,7 @@ import {
 import { BrainSourceCreateForm } from '@/components/brain/brain-source-create-form'
 import { ArchiveFindingButton } from '@/components/brain/archive-finding-button'
 import { ApproveFindingButton } from '@/components/brain/approve-finding-button'
+import { RestoreFindingButton } from '@/components/brain/restore-finding-button'
 import { BrainSourceScoutForm } from '@/components/brain/brain-source-scout-form'
 import { createClient } from '@/lib/supabase/server'
 
@@ -64,6 +65,7 @@ type LatestAgentFinding = {
 type BrainPageProps = {
   searchParams?: Promise<{
     source?: string
+    review?: string
   }>
 }
 
@@ -353,6 +355,7 @@ function getPillClass(value: string) {
 export default async function BrainPage({ searchParams }: BrainPageProps) {
   const resolvedSearchParams = await searchParams
   const sourceStatus = resolvedSearchParams?.source ?? null
+  const reviewView = resolvedSearchParams?.review === 'archived' ? 'archived' : 'active'
 
   const supabase = await createClient()
 
@@ -393,13 +396,24 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     .order('updated_at', { ascending: false })
     .limit(5)
 
-  const { data: latestAgentFindings, error: latestAgentFindingsError } = await supabase
+  let latestAgentFindingsQuery = supabase
     .from('agent_findings')
     .select('id, related_master_brain_record_id, title, finding_type, summary, confidence_level, validation_status, recommended_action, created_at')
-    .in('validation_status', ['unverified_signal', 'needs_review'])
     .is('related_master_brain_record_id', null)
     .order('created_at', { ascending: false })
     .limit(6)
+
+  if (reviewView === 'archived') {
+    latestAgentFindingsQuery = latestAgentFindingsQuery.eq('validation_status', 'archived')
+  } else {
+    latestAgentFindingsQuery = latestAgentFindingsQuery.in('validation_status', [
+      'unverified_signal',
+      'needs_review',
+    ])
+  }
+
+  const { data: latestAgentFindings, error: latestAgentFindingsError } =
+    await latestAgentFindingsQuery
 
   const latestRecords = (latestBrainRecords ?? []) as LatestBrainRecord[]
   const latestFindings = (latestAgentFindings ?? []) as LatestAgentFinding[]
@@ -717,29 +731,56 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
             <div className="max-w-3xl">
               <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
                 <Sparkles className="h-4 w-4" aria-hidden="true" />
-                Active Review Queue
+                {reviewView === 'archived' ? 'Archived Findings' : 'Active Review Queue'}
               </span>
 
               <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
-                Review active Scout findings before they become Brain records.
+                {reviewView === 'archived'
+                  ? 'Restore archived Scout findings when they deserve another review.'
+                  : 'Review active Scout findings before they become Brain records.'}
               </h2>
 
               <p className="mt-4 text-base leading-8 text-sand/65">
-                Active Scout findings are private candidate signals. They are useful only after review:
-                each one still needs validation, source judgement, and a decision about whether it
-                should affect lessons, sandbox tasks, tool intelligence, or business training.
+                {reviewView === 'archived'
+                  ? 'Archived findings are retained for database health and audit history. Restore only the items that deserve another review pass.'
+                  : 'Active Scout findings are private candidate signals. They are useful only after review: each one still needs validation, source judgement, and a decision about whether it should affect lessons, sandbox tasks, tool intelligence, or business training.'}
               </p>
             </div>
 
             <div className="rounded-3xl bg-[#EAF7FF] p-5 shadow-sm lg:max-w-md">
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF]">
-                Review rule
+                {reviewView === 'archived' ? 'Archive rule' : 'Review rule'}
               </p>
               <p className="mt-3 text-sm leading-7 text-sand/65">
-                Scout output is not published content. Active findings stay here for human review and
-                later promotion into verified Master Brain records.
+                {reviewView === 'archived'
+                  ? 'Archived findings are hidden from the active queue but can be restored when their practical value becomes clearer.'
+                  : 'Scout output is not published content. Active findings stay here for human review and later promotion into verified Master Brain records.'}
               </p>
             </div>
+          </div>
+
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              href="/brain?review=active"
+              className={`inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] shadow-sm transition ${
+                reviewView === 'active'
+                  ? 'bg-[#123BFF] text-white'
+                  : 'bg-[#EAF7FF] text-[#123BFF] hover:bg-[#123BFF] hover:text-white'
+              }`}
+            >
+              Active review queue
+            </Link>
+
+            <Link
+              href="/brain?review=archived"
+              className={`inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] shadow-sm transition ${
+                reviewView === 'archived'
+                  ? 'bg-[#123BFF] text-white'
+                  : 'bg-[#EAF7FF] text-[#123BFF] hover:bg-[#123BFF] hover:text-white'
+              }`}
+            >
+              Archived findings
+            </Link>
           </div>
 
           <div className="mt-8 grid gap-4 lg:grid-cols-2">
@@ -778,31 +819,38 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                     </div>
                   ) : null}
 
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-                    <ApproveFindingButton
-                      findingId={finding.id}
-                      disabled={
-                        finding.validation_status === 'verified' ||
-                        Boolean(finding.related_master_brain_record_id)
-                      }
-                    />
+                  {reviewView === 'archived' ? (
+                    <RestoreFindingButton findingId={finding.id} />
+                  ) : (
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+                      <ApproveFindingButton
+                        findingId={finding.id}
+                        disabled={
+                          finding.validation_status === 'verified' ||
+                          Boolean(finding.related_master_brain_record_id)
+                        }
+                      />
 
-                    <ArchiveFindingButton
-                      findingId={finding.id}
-                      disabled={
-                        finding.validation_status === 'verified' ||
-                        Boolean(finding.related_master_brain_record_id)
-                      }
-                    />
-                  </div>
+                      <ArchiveFindingButton
+                        findingId={finding.id}
+                        disabled={
+                          finding.validation_status === 'verified' ||
+                          Boolean(finding.related_master_brain_record_id)
+                        }
+                      />
+                    </div>
+                  )}
                 </article>
               ))
             ) : (
               <div className="rounded-3xl border border-[#123BFF]/15 bg-[#EAF7FF] p-5 lg:col-span-2">
-                <p className="text-sm font-bold text-sand">No active Scout findings.</p>
+                <p className="text-sm font-bold text-sand">
+                  {reviewView === 'archived' ? 'No archived Scout findings.' : 'No active Scout findings.'}
+                </p>
                 <p className="mt-3 text-sm leading-7 text-sand/65">
-                  Run the Source Scout against an official source to create private candidate
-                  findings, or review the existing verified and archived history in Supabase.
+                  {reviewView === 'archived'
+                    ? 'Archived findings will appear here after low-priority, duplicated, or weak signals are removed from the active queue.'
+                    : 'Run the Source Scout against an official source to create private candidate findings, or review the existing verified and archived history in Supabase.'}
                 </p>
               </div>
             )}
@@ -1193,6 +1241,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     </main>
   )
 }
+
 
 
 
