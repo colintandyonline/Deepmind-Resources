@@ -840,110 +840,135 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
 
             <div className="mt-7 grid gap-4">
               {latestRecords.length > 0 ? (
-                latestRecords.map((record) => (
-                  <div
-                    key={record.id}
-                    className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
-                  >
-                    <span className={getPillClass(record.record_type)}>
-                      {formatLabel(record.record_type)}
-                    </span>
+                latestRecords.map((record, index) => {
+                  const practicalMeaningParagraphs = splitParagraphs(record.practical_meaning)
+                  const businessImpact =
+                    getStructuredString(record.structured_content, 'business_impact') ||
+                    record.business_relevance
+                  const lessonImpact = getStructuredString(record.structured_content, 'lesson_impact')
+                  const sandboxImpact = getStructuredString(record.structured_content, 'sandbox_impact')
+                  const sourceNote = getStructuredString(record.structured_content, 'source_note')
+                  const isMostRecent = index === 0
 
-                    <h3 className="mt-2 text-lg font-bold tracking-tight text-sand">
-                      {record.title}
-                    </h3>
+                  return (
+                    <details
+                      key={record.id}
+                      open={isMostRecent}
+                      className="group rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
+                    >
+                      <summary className="cursor-pointer list-none">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                          <div>
+                            <div className="flex flex-wrap gap-2">
+                              <span className={getPillClass(record.record_type)}>
+                                {formatLabel(record.record_type)}
+                              </span>
+                              <span className={getPillClass(record.validation_status)}>
+                                {formatLabel(record.validation_status)}
+                              </span>
+                              <span className={getPillClass(record.publication_status)}>
+                                {formatLabel(record.publication_status)}
+                              </span>
+                            </div>
 
-                    <p className="mt-3 text-sm leading-7 text-sand/65">{record.summary}</p>
+                            <h3 className="mt-4 text-lg font-bold tracking-tight text-sand">
+                              {record.title}
+                            </h3>
 
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      <span className={getPillClass(record.validation_status)}>
-                        {formatLabel(record.validation_status)}
-                      </span>
-                      <span className={getPillClass(record.publication_status)}>
-                        {formatLabel(record.publication_status)}
-                      </span>
-                    </div>
-
-                    {splitParagraphs(record.practical_meaning).length > 0 ? (
-                      <div className="mt-5 rounded-2xl bg-[#EAF7FF] p-4">
-                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                          Practical meaning
-                        </p>
-                        <div className="mt-2 grid gap-2">
-                          {splitParagraphs(record.practical_meaning).map((paragraph) => (
-                            <p key={paragraph} className="text-sm leading-7 text-sand/65">
-                              {paragraph}
+                            <p className="mt-3 text-sm leading-7 text-sand/65">
+                              {record.summary}
                             </p>
-                          ))}
+                          </div>
+
+                          {!isMostRecent ? (
+                            <span className="inline-flex shrink-0 items-center justify-center rounded-full bg-[#EAF7FF] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-[#123BFF] transition group-open:bg-[#123BFF] group-open:text-white">
+                              <span className="group-open:hidden">Open</span>
+                              <span className="hidden group-open:inline">Close</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex shrink-0 items-center justify-center rounded-full bg-[#ECFDF5] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-[#047857]">
+                              Most recent
+                            </span>
+                          )}
                         </div>
-                      </div>
-                    ) : null}
+                      </summary>
 
-                    {getStructuredString(record.structured_content, 'business_impact') ||
-                    record.business_relevance ||
-                    getStructuredString(record.structured_content, 'lesson_impact') ||
-                    getStructuredString(record.structured_content, 'sandbox_impact') ? (
-                      <div className="mt-5 grid gap-3">
-                        {getStructuredString(record.structured_content, 'business_impact') ||
-                        record.business_relevance ? (
-                          <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                      <div className="mt-5 border-t border-sand/10 pt-5">
+                        {practicalMeaningParagraphs.length > 0 ? (
+                          <div className="rounded-2xl bg-[#EAF7FF] p-4">
                             <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                              Business impact
+                              Practical meaning
                             </p>
-                            <p className="mt-2 text-sm leading-7 text-sand/65">
-                              {getStructuredString(record.structured_content, 'business_impact') ||
-                                record.business_relevance}
-                            </p>
+                            <div className="mt-2 grid gap-2">
+                              {practicalMeaningParagraphs.map((paragraph) => (
+                                <p key={paragraph} className="text-sm leading-7 text-sand/65">
+                                  {paragraph}
+                                </p>
+                              ))}
+                            </div>
                           </div>
                         ) : null}
 
-                        {getStructuredString(record.structured_content, 'lesson_impact') ? (
-                          <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
-                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                              Lesson impact
-                            </p>
-                            <p className="mt-2 text-sm leading-7 text-sand/65">
-                              {getStructuredString(record.structured_content, 'lesson_impact')}
-                            </p>
+                        {businessImpact || lessonImpact || sandboxImpact ? (
+                          <div className="mt-5 grid gap-3">
+                            {businessImpact ? (
+                              <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                                  Business impact
+                                </p>
+                                <p className="mt-2 text-sm leading-7 text-sand/65">
+                                  {businessImpact}
+                                </p>
+                              </div>
+                            ) : null}
+
+                            {lessonImpact ? (
+                              <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                                  Lesson impact
+                                </p>
+                                <p className="mt-2 text-sm leading-7 text-sand/65">
+                                  {lessonImpact}
+                                </p>
+                              </div>
+                            ) : null}
+
+                            {sandboxImpact ? (
+                              <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                                  Sandbox impact
+                                </p>
+                                <p className="mt-2 text-sm leading-7 text-sand/65">
+                                  {sandboxImpact}
+                                </p>
+                              </div>
+                            ) : null}
                           </div>
                         ) : null}
 
-                        {getStructuredString(record.structured_content, 'sandbox_impact') ? (
-                          <div className="rounded-2xl border border-sand/10 bg-white p-4 shadow-sm">
+                        {sourceNote ? (
+                          <div className="mt-5 rounded-2xl bg-[#F7FBFF] p-4">
                             <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                              Sandbox impact
+                              Source note
                             </p>
-                            <p className="mt-2 text-sm leading-7 text-sand/65">
-                              {getStructuredString(record.structured_content, 'sandbox_impact')}
+                            <p className="mt-2 text-sm leading-7 text-sand/65">{sourceNote}</p>
+                          </div>
+                        ) : null}
+
+                        {record.uncertainty_notes ? (
+                          <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-amber-900">
+                              Review note
+                            </p>
+                            <p className="mt-2 text-sm leading-7 text-amber-900">
+                              {record.uncertainty_notes}
                             </p>
                           </div>
                         ) : null}
                       </div>
-                    ) : null}
-
-                    {getStructuredString(record.structured_content, 'source_note') ? (
-                      <div className="mt-5 rounded-2xl bg-[#F7FBFF] p-4">
-                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                          Source note
-                        </p>
-                        <p className="mt-2 text-sm leading-7 text-sand/65">
-                          {getStructuredString(record.structured_content, 'source_note')}
-                        </p>
-                      </div>
-                    ) : null}
-
-                    {record.uncertainty_notes ? (
-                      <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-amber-900">
-                          Review note
-                        </p>
-                        <p className="mt-2 text-sm leading-7 text-amber-900">
-                          {record.uncertainty_notes}
-                        </p>
-                      </div>
-                    ) : null}
-                  </div>
-                ))
+                    </details>
+                  )
+                })
               ) : (
                 <div className="rounded-3xl border border-[#123BFF]/15 bg-[#EAF7FF] p-5">
                   <p className="text-sm font-bold text-sand">Ready for the first verified record.</p>
@@ -1170,6 +1195,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     </main>
   )
 }
+
 
 
 
