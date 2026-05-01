@@ -371,7 +371,7 @@ function inferSignalType(feed: SourceFeed, title: string, summary: string | null
   }
 
   if (feed.feed_type === 'changelog_page') {
-    return 'changelog_update'
+    return 'documentation_update'
   }
 
   if (feed.source_type === 'github_repo') {
@@ -652,3 +652,4 @@ export async function POST(request: Request) {
     duplicateCount,
   })
 }
+
