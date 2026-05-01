@@ -19,6 +19,7 @@ import {
   Workflow,
 } from 'lucide-react'
 import { BrainSourceCreateForm } from '@/components/brain/brain-source-create-form'
+import { BrainSourceScoutForm } from '@/components/brain/brain-source-scout-form'
 import { createClient } from '@/lib/supabase/server'
 
 const BRAIN_ADMIN_EMAIL = 'colintandy@gmail.com'
@@ -721,4 +722,5 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     </main>
   )
 }
+
 
