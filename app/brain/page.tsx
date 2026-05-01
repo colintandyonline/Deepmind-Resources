@@ -78,6 +78,17 @@ type SourceFeed = {
   last_checked_at: string | null
   last_success_at: string | null
   last_error: string | null
+  source_group: string | null
+  tool_category: string | null
+  product_area: string | null
+  training_department: string | null
+  primary_use_case: string | null
+  audience_level: string | null
+  intake_priority: string | null
+  academy_relevance: string | null
+  business_relevance: string | null
+  sandbox_relevance: string | null
+  taxonomy_notes: string | null
 }
 
 type SourceFeedItem = {
@@ -429,7 +440,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
 
   const { data: latestSourceFeeds, error: latestSourceFeedsError } = await supabase
     .from('source_feeds')
-    .select('id, provider, title, feed_type, source_type, trust_level, status, poll_frequency_minutes, last_checked_at, last_success_at, last_error')
+    .select('id, provider, title, feed_type, source_type, trust_level, status, poll_frequency_minutes, last_checked_at, last_success_at, last_error, source_group, tool_category, product_area, training_department, primary_use_case, audience_level, intake_priority, academy_relevance, business_relevance, sandbox_relevance, taxonomy_notes')
     .order('provider', { ascending: true })
     .order('title', { ascending: true })
     .limit(20)
@@ -715,6 +726,16 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                     <span className={getPillClass(feed.trust_level)}>
                       {formatLabel(feed.trust_level)}
                     </span>
+                    {feed.intake_priority ? (
+                      <span className={getPillClass(feed.intake_priority)}>
+                        {formatLabel(feed.intake_priority)}
+                      </span>
+                    ) : null}
+                    {feed.source_group ? (
+                      <span className={getPillClass(feed.source_group)}>
+                        {formatLabel(feed.source_group)}
+                      </span>
+                    ) : null}
                   </div>
 
                   <p className="mt-5 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
@@ -735,6 +756,50 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                       </p>
                     </div>
 
+                    {feed.tool_category ? (
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                          Tool category
+                        </p>
+                        <p className="mt-1 text-sm leading-7 text-sand/65">
+                          {formatLabel(feed.tool_category)}
+                        </p>
+                      </div>
+                    ) : null}
+
+                    {feed.training_department ? (
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                          Training department
+                        </p>
+                        <p className="mt-1 text-sm leading-7 text-sand/65">
+                          {formatLabel(feed.training_department)}
+                        </p>
+                      </div>
+                    ) : null}
+
+                    {feed.primary_use_case ? (
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                          Primary use case
+                        </p>
+                        <p className="mt-1 text-sm leading-7 text-sand/65">
+                          {formatLabel(feed.primary_use_case)}
+                        </p>
+                      </div>
+                    ) : null}
+
+                    {feed.audience_level ? (
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                          Audience level
+                        </p>
+                        <p className="mt-1 text-sm leading-7 text-sand/65">
+                          {formatLabel(feed.audience_level)}
+                        </p>
+                      </div>
+                    ) : null}
+
                     <div>
                       <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
                         Check rhythm
@@ -750,6 +815,18 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                       </p>
                       <p className="mt-1 text-sm leading-7 text-sand/65">
                         {feed.last_checked_at ? new Date(feed.last_checked_at).toLocaleString('en-GB') : 'Not checked yet'}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                        Academy / business / sandbox relevance
+                      </p>
+                      <p className="mt-1 text-sm leading-7 text-sand/65">
+                        {[feed.academy_relevance, feed.business_relevance, feed.sandbox_relevance]
+                          .filter(Boolean)
+                          .map((value) => formatLabel(value as string))
+                          .join(' / ') || 'Not classified yet'}
                       </p>
                     </div>
                   </div>
