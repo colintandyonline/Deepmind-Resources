@@ -22,6 +22,24 @@ import { createClient } from '@/lib/supabase/server'
 
 const BRAIN_ADMIN_EMAIL = 'colintandy@gmail.com'
 
+type BrainTableName =
+  | 'sources'
+  | 'master_brain_records'
+  | 'master_brain_record_sources'
+  | 'validation_reviews'
+  | 'agent_runs'
+  | 'agent_findings'
+  | 'publication_queue'
+
+type LatestBrainRecord = {
+  id: string
+  title: string
+  record_type: string
+  validation_status: string
+  publication_status: string
+  updated_at: string
+}
+
 export const metadata: Metadata = {
   title: 'Master Brain | DeepMind Resources',
   description:
@@ -65,6 +83,56 @@ const brainPipeline = [
   },
 ]
 
+const brainCountCards: {
+  table: BrainTableName
+  label: string
+  description: string
+  icon: typeof Database
+}[] = [
+  {
+    table: 'sources',
+    label: 'Sources',
+    description: 'Official docs, release notes, changelogs, trusted references, and weak signals.',
+    icon: FileSearch,
+  },
+  {
+    table: 'master_brain_records',
+    label: 'Brain records',
+    description: 'Structured intelligence records with confidence, validation, and skill impact.',
+    icon: BrainCircuit,
+  },
+  {
+    table: 'master_brain_record_sources',
+    label: 'Source links',
+    description: 'Connections between Brain records and supporting, primary, or conflicting sources.',
+    icon: GitBranch,
+  },
+  {
+    table: 'validation_reviews',
+    label: 'Validation reviews',
+    description: 'Review decisions for sources, claims, records, agent findings, and task candidates.',
+    icon: ShieldCheck,
+  },
+  {
+    table: 'agent_runs',
+    label: 'Agent runs',
+    description: 'Execution records for future Scout, Validator, Tool, Lesson, and Sandbox agents.',
+    icon: Sparkles,
+  },
+  {
+    table: 'agent_findings',
+    label: 'Agent findings',
+    description: 'Candidate findings created by agents before validation or publication.',
+    icon: Network,
+  },
+  {
+    table: 'publication_queue',
+    label: 'Publication queue',
+    description: 'Internal review queue for items that may become lessons, sandbox tasks, or updates.',
+    icon: Layers3,
+  },
+]
+
 const recordFields = [
   'Record type',
   'Title and summary',
@@ -85,27 +153,33 @@ const recordFields = [
 const agentRoles = [
   {
     title: 'Scout Agent',
-    description: 'Finds possible AI signals from official sources, documentation, changelogs, repositories, and trusted technical material.',
+    description:
+      'Finds possible AI signals from official sources, documentation, changelogs, repositories, and trusted technical material.',
   },
   {
     title: 'Noise Filter Agent',
-    description: 'Downgrades hype, weak claims, affiliate-style repetition, old tutorials, and low-value signals before they pollute the Brain.',
+    description:
+      'Downgrades hype, weak claims, affiliate-style repetition, old tutorials, and low-value signals before they pollute the Brain.',
   },
   {
     title: 'Validator Agent',
-    description: 'Checks sources, confidence, conflicts, freshness, and whether a claim is strong enough to influence training.',
+    description:
+      'Checks sources, confidence, conflicts, freshness, and whether a claim is strong enough to influence training.',
   },
   {
     title: 'Tool Agent',
-    description: 'Maintains tool capability, limitation, pricing, integration, and use-case records with evidence attached.',
+    description:
+      'Maintains tool capability, limitation, pricing, integration, and use-case records with evidence attached.',
   },
   {
     title: 'Lesson Builder Agent',
-    description: 'Turns verified intelligence into clear lesson changes, new learning material, and practical explanations.',
+    description:
+      'Turns verified intelligence into clear lesson changes, new learning material, and practical explanations.',
   },
   {
     title: 'Sandbox Builder Agent',
-    description: 'Turns verified intelligence into practical tasks, review checklists, model comparisons, validation drills, and workflow exercises.',
+    description:
+      'Turns verified intelligence into practical tasks, review checklists, model comparisons, validation drills, and workflow exercises.',
   },
 ]
 
@@ -113,34 +187,45 @@ const commandZones = [
   {
     title: 'Sources',
     description:
-      'The source layer will hold official docs, changelogs, release notes, GitHub repositories, pricing references, product tests, and trusted technical sources.',
+      'The source layer holds official docs, changelogs, release notes, repositories, pricing references, product tests, and trusted technical sources.',
   },
   {
     title: 'Verified claims',
     description:
-      'Claims will be stored with validation status, confidence, affected tools, affected skills, source links, and uncertainty notes.',
+      'Claims are stored with validation status, confidence, affected tools, affected skills, source links, and uncertainty notes.',
   },
   {
     title: 'Tool intelligence',
     description:
-      'Tool records will connect capabilities and limitations to use cases, comparison pages, lessons, and sandbox practice.',
+      'Tool records connect capabilities and limitations to use cases, comparison pages, lessons, and sandbox practice.',
   },
   {
     title: 'Lesson impact',
     description:
-      'The Brain will flag when a lesson should be updated, created, retired, or checked for stale guidance.',
+      'The Brain flags when a lesson should be updated, created, retired, or checked for stale guidance.',
   },
   {
     title: 'Sandbox impact',
     description:
-      'The Brain will flag when a verified change should become prompt practice, tool-calling work, RAG tasks, agent design, debugging, or validation drills.',
+      'The Brain flags when a verified change should become prompt practice, tool-calling work, RAG tasks, agent design, debugging, or validation drills.',
   },
   {
     title: 'Business impact',
     description:
-      'The Brain will identify staff training implications, tool-spend risks, workflow changes, safety cautions, and business-ready guidance.',
+      'The Brain identifies staff training implications, tool-spend risks, workflow changes, safety cautions, and business-ready guidance.',
   },
 ]
+
+function formatCount(value: number) {
+  return new Intl.NumberFormat('en-GB').format(value)
+}
+
+function formatLabel(value: string) {
+  return value
+    .split('_')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
+}
 
 export default async function BrainPage() {
   const supabase = await createClient()
@@ -158,6 +243,33 @@ export default async function BrainPage() {
   if (adminEmail !== BRAIN_ADMIN_EMAIL) {
     redirect('/account')
   }
+
+  const liveCounts = await Promise.all(
+    brainCountCards.map(async (card) => {
+      const { count, error } = await supabase
+        .from(card.table)
+        .select('id', {
+          count: 'exact',
+          head: true,
+        })
+
+      return {
+        ...card,
+        count: count ?? 0,
+        hasError: Boolean(error),
+      }
+    }),
+  )
+
+  const { data: latestBrainRecords, error: latestBrainRecordsError } = await supabase
+    .from('master_brain_records')
+    .select('id, title, record_type, validation_status, publication_status, updated_at')
+    .order('updated_at', { ascending: false })
+    .limit(5)
+
+  const latestRecords = (latestBrainRecords ?? []) as LatestBrainRecord[]
+  const totalBrainRows = liveCounts.reduce((total, item) => total + item.count, 0)
+  const readErrors = liveCounts.filter((item) => item.hasError).length
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-obsidian px-4 py-8 text-sand sm:px-6 lg:px-8">
@@ -191,9 +303,9 @@ export default async function BrainPage() {
               </h1>
 
               <p className="mt-5 max-w-3xl text-base leading-8 text-sand/65 sm:text-lg">
-                The Master Brain is the private operating layer that will connect AI signals,
-                source records, validation reviews, tool intelligence, lesson updates, sandbox
-                tasks, business training actions, and future agent workflows.
+                The Master Brain is the private operating layer that connects AI signals, source
+                records, validation reviews, tool intelligence, lesson updates, sandbox tasks,
+                business training actions, and future agent workflows.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -217,32 +329,33 @@ export default async function BrainPage() {
             <aside className="rounded-[2rem] bg-[#123BFF] p-6 text-white shadow-sm sm:p-8">
               <span className="inline-flex items-center gap-2 rounded-full bg-white/12 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white">
                 <Route className="h-4 w-4" aria-hidden="true" />
-                Trust layer
+                Live database state
               </span>
 
               <h2 className="mt-5 text-3xl font-bold tracking-tight">
-                The Brain decides what can become training.
+                {formatCount(totalBrainRows)} Brain rows currently stored.
               </h2>
 
               <p className="mt-4 text-sm leading-7 text-white/82">
-                Signals do not become lessons, recommendations, sandbox tasks, or business guidance
-                until they are structured, sourced, validated, and connected to a practical skill.
+                This count comes from the live Supabase Brain tables. Empty counts are expected at
+                this stage because the structure is now ready before real source-backed records are
+                added.
               </p>
 
               <div className="mt-6 grid gap-3">
                 <div className="rounded-2xl bg-white/10 p-4">
-                  <p className="text-sm font-bold text-white">Publication rule</p>
+                  <p className="text-sm font-bold text-white">Access state</p>
                   <p className="mt-1 text-sm leading-6 text-white/75">
-                    Unverified claims stay internal until they have source quality, confidence, and
-                    practical value.
+                    Server-protected and restricted to the configured platform admin account.
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-white/10 p-4">
-                  <p className="text-sm font-bold text-white">Access rule</p>
+                  <p className="text-sm font-bold text-white">Read checks</p>
                   <p className="mt-1 text-sm leading-6 text-white/75">
-                    This route is server-protected and available only to the configured platform
-                    admin account.
+                    {readErrors === 0
+                      ? 'All Brain table count checks returned successfully.'
+                      : `${readErrors} table count check needs attention.`}
                   </p>
                 </div>
               </div>
@@ -251,25 +364,148 @@ export default async function BrainPage() {
         </header>
 
         <section className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
-          <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
-            <div>
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
               <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
-                <GitBranch className="h-4 w-4" aria-hidden="true" />
-                Intelligence pipeline
+                <Database className="h-4 w-4" aria-hidden="true" />
+                Supabase Brain tables
               </span>
 
               <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
-                From signal to skill action.
+                The Brain foundation is live.
               </h2>
 
               <p className="mt-4 text-base leading-8 text-sand/65">
-                The Brain should make every important AI update traceable: where it came from, how
-                reliable it is, what it means, who it affects, and whether it should update lessons,
-                sandbox tasks, tool comparisons, or business training.
+                These cards read from the actual Supabase tables behind the Brain. They should stay
+                empty until real sources, records, reviews, and agent findings are created through
+                controlled workflows.
               </p>
             </div>
 
-            <div className="grid gap-4">
+            <div className="rounded-3xl bg-[#EAF7FF] p-5 shadow-sm lg:max-w-md">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF]">
+                Data rule
+              </p>
+              <p className="mt-3 text-sm leading-7 text-sand/65">
+                No fake seed data. The first Brain records should be source-backed, traceable, and
+                useful enough to influence lessons, sandbox tasks, or tool intelligence.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {liveCounts.map((item) => {
+              const Icon = item.icon
+
+              return (
+                <article
+                  key={item.table}
+                  className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
+                >
+                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
+                    <Icon className="h-6 w-6" aria-hidden="true" />
+                  </span>
+
+                  <p className="mt-5 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                    {item.label}
+                  </p>
+
+                  <p className="mt-2 text-4xl font-bold tracking-tight text-sand">
+                    {item.hasError ? '—' : formatCount(item.count)}
+                  </p>
+
+                  <p className="mt-3 text-sm leading-7 text-sand/65">
+                    {item.hasError
+                      ? 'Unable to read this table count. Check schema cache or RLS policy.'
+                      : item.description}
+                  </p>
+                </article>
+              )
+            })}
+          </div>
+        </section>
+
+        <section className="mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+          <article className="rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+              <BrainCircuit className="h-4 w-4" aria-hidden="true" />
+              Latest Brain records
+            </span>
+
+            <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand">
+              {latestRecords.length > 0 ? 'Most recent records.' : 'No Brain records yet.'}
+            </h2>
+
+            <p className="mt-4 text-base leading-8 text-sand/65">
+              Master Brain records should only be created when a source-backed claim has practical
+              meaning and a clear connection to lessons, sandbox tasks, tool intelligence, or
+              business training.
+            </p>
+
+            <div className="mt-7 grid gap-4">
+              {latestRecords.length > 0 ? (
+                latestRecords.map((record) => (
+                  <div
+                    key={record.id}
+                    className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
+                  >
+                    <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                      {formatLabel(record.record_type)}
+                    </p>
+                    <h3 className="mt-2 text-lg font-bold tracking-tight text-sand">
+                      {record.title}
+                    </h3>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <span className="rounded-full bg-[#EAF7FF] px-3 py-1 text-xs font-bold text-[#123BFF]">
+                        {formatLabel(record.validation_status)}
+                      </span>
+                      <span className="rounded-full bg-[#EAF7FF] px-3 py-1 text-xs font-bold text-[#123BFF]">
+                        {formatLabel(record.publication_status)}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="rounded-3xl border border-[#123BFF]/15 bg-[#EAF7FF] p-5">
+                  <p className="text-sm font-bold text-sand">Ready for the first verified record.</p>
+                  <p className="mt-3 text-sm leading-7 text-sand/65">
+                    Start with a source, classify its quality, extract the claim, then create a
+                    Brain record only when it has practical learning or tool-intelligence value.
+                  </p>
+                </div>
+              )}
+
+              {latestBrainRecordsError ? (
+                <div className="rounded-3xl border border-amber-200 bg-amber-50 p-5">
+                  <p className="text-sm font-bold text-amber-900">
+                    Latest-record read check needs attention.
+                  </p>
+                  <p className="mt-2 text-sm leading-7 text-amber-800">
+                    The page could read table counts, but the latest-record query needs schema or
+                    RLS review.
+                  </p>
+                </div>
+              ) : null}
+            </div>
+          </article>
+
+          <article className="rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+              <GitBranch className="h-4 w-4" aria-hidden="true" />
+              Intelligence pipeline
+            </span>
+
+            <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand">
+              From signal to skill action.
+            </h2>
+
+            <p className="mt-4 text-base leading-8 text-sand/65">
+              The Brain makes every important AI update traceable: where it came from, how reliable
+              it is, what it means, who it affects, and whether it should update lessons, sandbox
+              tasks, tool comparisons, or business training.
+            </p>
+
+            <div className="mt-7 grid gap-4">
               {brainPipeline.map((item, index) => {
                 const Icon = item.icon
 
@@ -297,7 +533,7 @@ export default async function BrainPage() {
                 )
               })}
             </div>
-          </div>
+          </article>
         </section>
 
         <section className="mt-8 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
@@ -312,9 +548,9 @@ export default async function BrainPage() {
             </h2>
 
             <p className="mt-4 text-base leading-8 text-sand/65">
-              The first database version should not store loose notes. Each record needs enough
-              structure to connect sources, confidence, validation, skills, lessons, sandbox tasks,
-              and business implications.
+              The database should not store loose notes. Each record needs enough structure to
+              connect sources, confidence, validation, skills, lessons, sandbox tasks, and business
+              implications.
             </p>
 
             <div className="mt-7 grid gap-3 sm:grid-cols-2">
@@ -343,8 +579,8 @@ export default async function BrainPage() {
             </h2>
 
             <p className="mt-4 text-base leading-8 text-sand/65">
-              This command centre starts as a private planning and control surface. The next step is
-              wiring these zones to Supabase tables and validation workflows.
+              This command centre now has a live Supabase foundation. The next step is adding
+              controlled actions for sources, validation, Brain records, and agent findings.
             </p>
 
             <div className="mt-7 grid gap-4">
@@ -373,9 +609,8 @@ export default async function BrainPage() {
               </h2>
 
               <p className="mt-4 text-base leading-8 text-sand/65">
-                The first Brain route defines the control model before automation. Future agents
-                should create candidate signals, classifications, recommendations, and tasks for
-                review rather than publishing directly.
+                Future agents should create candidate signals, classifications, recommendations, and
+                tasks for review rather than publishing directly.
               </p>
             </div>
 
@@ -415,13 +650,12 @@ export default async function BrainPage() {
               </span>
 
               <h2 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">
-                Next: create the Supabase Brain tables.
+                Next: create the first controlled Brain action.
               </h2>
 
               <p className="mt-4 max-w-3xl text-base leading-8 text-white/80">
-                This private route establishes the command surface. The next implementation step is
-                a deliberate database migration for Master Brain records, sources, validation
-                reviews, agent runs, agent findings, and the publication queue.
+                The tables are live. The next implementation step is a private admin workflow for
+                creating source records, then connecting a verified source to a Master Brain record.
               </p>
             </div>
 
