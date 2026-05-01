@@ -19,6 +19,7 @@ import {
   Workflow,
 } from 'lucide-react'
 import { BrainSourceCreateForm } from '@/components/brain/brain-source-create-form'
+import { ApproveFindingButton } from '@/components/brain/approve-finding-button'
 import { BrainSourceScoutForm } from '@/components/brain/brain-source-scout-form'
 import { createClient } from '@/lib/supabase/server'
 
@@ -44,6 +45,7 @@ type LatestBrainRecord = {
 
 type LatestAgentFinding = {
   id: string
+  related_master_brain_record_id: string | null
   title: string
   finding_type: string
   summary: string
@@ -291,7 +293,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
 
   const { data: latestAgentFindings, error: latestAgentFindingsError } = await supabase
     .from('agent_findings')
-    .select('id, title, finding_type, summary, confidence_level, validation_status, recommended_action, created_at')
+    .select('id, related_master_brain_record_id, title, finding_type, summary, confidence_level, validation_status, recommended_action, created_at')
     .order('created_at', { ascending: false })
     .limit(6)
 
@@ -541,6 +543,14 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                       </p>
                     </div>
                   ) : null}
+
+                  <ApproveFindingButton
+                    findingId={finding.id}
+                    disabled={
+                      finding.validation_status === 'verified' ||
+                      Boolean(finding.related_master_brain_record_id)
+                    }
+                  />
                 </article>
               ))
             ) : (
@@ -833,6 +843,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     </main>
   )
 }
+
 
 
 
