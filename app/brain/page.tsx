@@ -138,10 +138,20 @@ type AiDiscoveryItem = {
   updated_at: string
 }
 
+type AiDiscoverySummaryItem = {
+  id: string
+  source_group: string | null
+  training_department: string | null
+  discovery_status: string
+  signal_quality: string
+  intake_priority: string
+}
+
 type BrainPageProps = {
   searchParams?: Promise<{
     source?: string
     review?: string
+    discovery?: string
   }>
 }
 
@@ -353,6 +363,23 @@ function splitParagraphs(value: string | null) {
     .filter(Boolean)
 }
 
+
+function getTopDiscoveryCounts(
+  items: AiDiscoverySummaryItem[],
+  key: 'source_group' | 'training_department',
+) {
+  const counts = new Map<string, number>()
+
+  for (const item of items) {
+    const value = item[key] ?? 'unclassified'
+    counts.set(value, (counts.get(value) ?? 0) + 1)
+  }
+
+  return Array.from(counts.entries())
+    .sort((first, second) => second[1] - first[1] || first[0].localeCompare(second[0]))
+    .slice(0, 6)
+}
+
 function getPillClass(value: string) {
   const baseClass =
     'rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.12em]'
@@ -491,6 +518,12 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     .order('created_at', { ascending: false })
     .limit(12)
 
+  const { data: discoverySummaryItems, error: discoverySummaryItemsError } = await supabase
+    .from('ai_discovery_items')
+    .select('id, source_group, training_department, discovery_status, signal_quality, intake_priority')
+    .order('created_at', { ascending: false })
+    .limit(1000)
+
   let latestAgentFindingsQuery = supabase
     .from('agent_findings')
     .select('id, related_master_brain_record_id, title, finding_type, summary, confidence_level, validation_status, recommended_action, created_at')
@@ -515,6 +548,25 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
   const sourceFeeds = (latestSourceFeeds ?? []) as SourceFeed[]
   const sourceFeedItems = (latestSourceFeedItems ?? []) as SourceFeedItem[]
   const discoveryItems = (latestDiscoveryItems ?? []) as AiDiscoveryItem[]
+  const discoverySummaryRows = (discoverySummaryItems ?? []) as AiDiscoverySummaryItem[]
+  const totalDiscoveryCandidates = discoverySummaryRows.length
+  const needsOfficialSourceCandidates = discoverySummaryRows.filter(
+    (item) => item.discovery_status === 'needs_official_source',
+  ).length
+  const worthTrackingCandidates = discoverySummaryRows.filter(
+    (item) => item.discovery_status === 'worth_tracking',
+  ).length
+  const rejectedOrDuplicateCandidates = discoverySummaryRows.filter((item) =>
+    ['rejected_hype', 'duplicate'].includes(item.discovery_status),
+  ).length
+  const highPriorityDiscoveryCandidates = discoverySummaryRows.filter(
+    (item) => item.intake_priority === 'high',
+  ).length
+  const topDiscoverySourceGroups = getTopDiscoveryCounts(discoverySummaryRows, 'source_group')
+  const topDiscoveryTrainingDepartments = getTopDiscoveryCounts(
+    discoverySummaryRows,
+    'training_department',
+  )
   const totalBrainRows = liveCounts.reduce((total, item) => total + item.count, 0)
   const readErrors = liveCounts.filter((item) => item.hasError).length
 
@@ -759,6 +811,119 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
               </p>
             </div>
           ) : null}
+
+          {discoverySummaryItemsError ? (
+            <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50 p-5">
+              <p className="text-sm font-bold text-amber-900">
+                AI discovery summary counts could not be read.
+              </p>
+              <p className="mt-2 text-sm leading-7 text-amber-800">
+                Check the ai_discovery_items table, schema cache, and admin-only RLS policy.
+              </p>
+            </div>
+          ) : null}
+
+          <div className="mt-8">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+              <Database className="h-4 w-4" aria-hidden="true" />
+              Discovery Queue Summary
+            </span>
+
+            <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+              {[
+                {
+                  label: 'Total candidates',
+                  count: totalDiscoveryCandidates,
+                  description: 'Discovery records currently held before source intake.',
+                },
+                {
+                  label: 'Needs official source',
+                  count: needsOfficialSourceCandidates,
+                  description: 'Candidates that need official docs, release notes, or source proof.',
+                },
+                {
+                  label: 'Worth tracking',
+                  count: worthTrackingCandidates,
+                  description: 'Candidates already marked as useful enough to monitor.',
+                },
+                {
+                  label: 'Rejected or duplicate',
+                  count: rejectedOrDuplicateCandidates,
+                  description: 'Candidates retained as history but removed from active consideration.',
+                },
+                {
+                  label: 'High priority',
+                  count: highPriorityDiscoveryCandidates,
+                  description: 'Candidates most likely to affect training, sandbox, or tool guidance.',
+                },
+              ].map((item) => (
+                <article
+                  key={item.label}
+                  className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
+                >
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                    {item.label}
+                  </p>
+                  <p className="mt-3 text-3xl font-bold tracking-tight text-sand">
+                    {formatCount(item.count)}
+                  </p>
+                  <p className="mt-2 text-sm leading-7 text-sand/60">
+                    {item.description}
+                  </p>
+                </article>
+              ))}
+            </div>
+
+            <div className="mt-4 grid gap-4 lg:grid-cols-2">
+              <article className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm">
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                  Top source groups
+                </p>
+
+                <div className="mt-4 grid gap-3">
+                  {topDiscoverySourceGroups.length > 0 ? (
+                    topDiscoverySourceGroups.map(([label, count]) => (
+                      <div
+                        key={label}
+                        className="flex items-center justify-between gap-4 rounded-2xl bg-[#F7FBFF] px-4 py-3"
+                      >
+                        <span className={getPillClass(label)}>{formatLabel(label)}</span>
+                        <span className="text-sm font-bold text-sand">{formatCount(count)}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm leading-7 text-sand/60">
+                      No source group classifications yet.
+                    </p>
+                  )}
+                </div>
+              </article>
+
+              <article className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm">
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                  Top training departments
+                </p>
+
+                <div className="mt-4 grid gap-3">
+                  {topDiscoveryTrainingDepartments.length > 0 ? (
+                    topDiscoveryTrainingDepartments.map(([label, count]) => (
+                      <div
+                        key={label}
+                        className="flex items-center justify-between gap-4 rounded-2xl bg-[#F7FBFF] px-4 py-3"
+                      >
+                        <span className={getPillClass(label)}>{formatLabel(label)}</span>
+                        <span className="text-sm font-bold text-sand">{formatCount(count)}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm leading-7 text-sand/60">
+                      No training department classifications yet.
+                    </p>
+                  )}
+                </div>
+              </article>
+            </div>
+          </div>
 
           <details open className="mt-8 rounded-3xl border border-[#123BFF]/15 bg-[#F7FBFF] p-4">
             <summary className="cursor-pointer list-none rounded-2xl bg-white px-4 py-3 shadow-sm">
