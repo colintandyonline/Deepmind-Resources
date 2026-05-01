@@ -275,6 +275,81 @@ function splitParagraphs(value: string | null) {
     .filter(Boolean)
 }
 
+function getPillClass(value: string) {
+  const baseClass =
+    'rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.12em]'
+
+  if (value === 'model_release' || value === 'model_release_note') {
+    return `${baseClass} bg-[#E9F0FF] text-[#123BFF]`
+  }
+
+  if (value === 'api_change') {
+    return `${baseClass} bg-[#EAF7FF] text-[#0A63FF]`
+  }
+
+  if (value === 'tool_capability_change' || value === 'tool_capability' || value === 'tool_launch') {
+    return `${baseClass} bg-[#EFFFF7] text-[#047857]`
+  }
+
+  if (value === 'documentation_update' || value === 'documentation_summary') {
+    return `${baseClass} bg-[#F5F3FF] text-[#6D28D9]`
+  }
+
+  if (value === 'business_ai_workflow_update' || value === 'business_training_note') {
+    return `${baseClass} bg-[#FFF7ED] text-[#C2410C]`
+  }
+
+  if (value === 'lesson_update_candidate' || value === 'lesson_material') {
+    return `${baseClass} bg-[#FEFCE8] text-[#A16207]`
+  }
+
+  if (value === 'sandbox_task_candidate' || value === 'sandbox_task') {
+    return `${baseClass} bg-[#ECFEFF] text-[#0E7490]`
+  }
+
+  if (value === 'tool_comparison_candidate' || value === 'tool_comparison') {
+    return `${baseClass} bg-[#FDF2F8] text-[#BE185D]`
+  }
+
+  if (value === 'pricing_change' || value === 'pricing_note') {
+    return `${baseClass} bg-[#F0FDF4] text-[#15803D]`
+  }
+
+  if (value === 'safety_update' || value === 'safety_note') {
+    return `${baseClass} bg-[#FEF2F2] text-[#B91C1C]`
+  }
+
+  if (value === 'tool_deprecation' || value === 'deprecation_record' || value === 'archived') {
+    return `${baseClass} bg-[#F1F5F9] text-[#475569]`
+  }
+
+  if (value === 'verified') {
+    return `${baseClass} bg-[#ECFDF5] text-[#047857]`
+  }
+
+  if (value === 'needs_review' || value === 'unverified_signal') {
+    return `${baseClass} bg-[#EFF6FF] text-[#1D4ED8]`
+  }
+
+  if (value === 'high') {
+    return `${baseClass} bg-[#ECFDF5] text-[#047857]`
+  }
+
+  if (value === 'medium') {
+    return `${baseClass} bg-[#FFFBEB] text-[#B45309]`
+  }
+
+  if (value === 'low' || value === 'unreviewed') {
+    return `${baseClass} bg-[#F1F5F9] text-[#475569]`
+  }
+
+  if (value === 'internal_only') {
+    return `${baseClass} bg-[#EEF2FF] text-[#4338CA]`
+  }
+
+  return `${baseClass} bg-[#EAF7FF] text-[#123BFF]`
+}
+
 export default async function BrainPage({ searchParams }: BrainPageProps) {
   const resolvedSearchParams = await searchParams
   const sourceStatus = resolvedSearchParams?.source ?? null
@@ -675,13 +750,13 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                   className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
                 >
                   <div className="flex flex-wrap gap-2">
-                    <span className="rounded-full bg-[#EAF7FF] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-[#123BFF]">
+                    <span className={getPillClass(finding.finding_type)}>
                       {formatLabel(finding.finding_type)}
                     </span>
-                    <span className="rounded-full bg-[#EAF7FF] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-[#123BFF]">
+                    <span className={getPillClass(finding.validation_status)}>
                       {formatLabel(finding.validation_status)}
                     </span>
-                    <span className="rounded-full bg-[#EAF7FF] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-[#123BFF]">
+                    <span className={getPillClass(finding.confidence_level)}>
                       {formatLabel(finding.confidence_level)}
                     </span>
                   </div>
@@ -770,9 +845,9 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                     key={record.id}
                     className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
                   >
-                    <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                    <span className={getPillClass(record.record_type)}>
                       {formatLabel(record.record_type)}
-                    </p>
+                    </span>
 
                     <h3 className="mt-2 text-lg font-bold tracking-tight text-sand">
                       {record.title}
@@ -781,10 +856,10 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                     <p className="mt-3 text-sm leading-7 text-sand/65">{record.summary}</p>
 
                     <div className="mt-4 flex flex-wrap gap-2">
-                      <span className="rounded-full bg-[#EAF7FF] px-3 py-1 text-xs font-bold text-[#123BFF]">
+                      <span className={getPillClass(record.validation_status)}>
                         {formatLabel(record.validation_status)}
                       </span>
-                      <span className="rounded-full bg-[#EAF7FF] px-3 py-1 text-xs font-bold text-[#123BFF]">
+                      <span className={getPillClass(record.publication_status)}>
                         {formatLabel(record.publication_status)}
                       </span>
                     </div>
@@ -1095,6 +1170,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     </main>
   )
 }
+
 
 
 
