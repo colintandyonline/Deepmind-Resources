@@ -87,6 +87,80 @@ function isValidUrl(value: string) {
   }
 }
 
+function normalizeScoutText(value: string | null | undefined) {
+  if (!value) {
+    return ''
+  }
+
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^\w\s.-]/g, '')
+    .replace(/\s+/g, ' ')
+}
+
+function getFindingTypePriority(findingType: string | null | undefined) {
+  if (findingType === 'model_release') {
+    return 1
+  }
+
+  if (findingType === 'api_change') {
+    return 2
+  }
+
+  if (findingType === 'tool_capability_change') {
+    return 3
+  }
+
+  if (findingType === 'documentation_update') {
+    return 4
+  }
+
+  if (findingType === 'business_ai_workflow_update') {
+    return 5
+  }
+
+  if (findingType === 'lesson_update_candidate') {
+    return 6
+  }
+
+  if (findingType === 'sandbox_task_candidate') {
+    return 7
+  }
+
+  if (findingType === 'tool_comparison_candidate') {
+    return 8
+  }
+
+  return 20
+}
+
+function dedupeScoutFindings(findings: ScoutFinding[]) {
+  const findingsByKey = new Map<string, ScoutFinding>()
+
+  for (const finding of findings) {
+    const titleKey = normalizeScoutText(finding.title)
+    const summaryKey = normalizeScoutText(finding.summary)
+
+    if (!titleKey || !summaryKey) {
+      continue
+    }
+
+    const duplicateKey = `${titleKey}::${summaryKey}`
+    const existingFinding = findingsByKey.get(duplicateKey)
+
+    if (
+      !existingFinding ||
+      getFindingTypePriority(finding.finding_type) <
+        getFindingTypePriority(existingFinding.finding_type)
+    ) {
+      findingsByKey.set(duplicateKey, finding)
+    }
+  }
+
+  return Array.from(findingsByKey.values())
+}
+
 function extractResponseText(responseJson: Record<string, unknown>) {
   const outputText = responseJson.output_text
 
@@ -170,6 +244,8 @@ Rules:
 - Do not publish final training content.
 - Do not create hype.
 - If the source contains many small updates, return only the most practically important items.
+- Do not return the same update more than once under different finding types.
+- If one update could fit several finding types, choose the single best type.
 - If nothing meaningful is found, return an empty findings array.
 - Keep each finding concise and operational.
 - Mark findings as "unverified_signal" or "needs_review".
@@ -461,7 +537,9 @@ export async function POST(request: Request) {
     )
   }
 
-  const findingsToInsert = scoutResult.findings
+  const dedupedScoutFindings = dedupeScoutFindings(scoutResult.findings)
+
+  const findingsToInsert = dedupedScoutFindings
     .filter((finding) => finding.title && finding.summary)
     .map((finding) => ({
       agent_run_id: agentRun.id,
@@ -534,3 +612,4 @@ export async function POST(request: Request) {
     findingsCreated: findingsToInsert.length,
   })
 }
+
