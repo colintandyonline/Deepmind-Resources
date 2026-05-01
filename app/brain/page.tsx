@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import {
@@ -76,6 +76,19 @@ type SourceFeed = {
   last_checked_at: string | null
   last_success_at: string | null
   last_error: string | null
+}
+
+type SourceFeedItem = {
+  id: string
+  provider: string
+  signal_type: string
+  title: string
+  summary: string | null
+  published_at: string | null
+  detected_at: string | null
+  relevance_status: string
+  review_status: string
+  item_url: string
 }
 
 type BrainPageProps = {
@@ -419,6 +432,12 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     .order('title', { ascending: true })
     .limit(20)
 
+  const { data: latestSourceFeedItems, error: latestSourceFeedItemsError } = await supabase
+    .from('source_feed_items')
+    .select('id, provider, signal_type, title, summary, published_at, detected_at, relevance_status, review_status, item_url')
+    .order('detected_at', { ascending: false })
+    .limit(12)
+
   let latestAgentFindingsQuery = supabase
     .from('agent_findings')
     .select('id, related_master_brain_record_id, title, finding_type, summary, confidence_level, validation_status, recommended_action, created_at')
@@ -441,6 +460,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
   const latestRecords = (latestBrainRecords ?? []) as LatestBrainRecord[]
   const latestFindings = (latestAgentFindings ?? []) as LatestAgentFinding[]
   const sourceFeeds = (latestSourceFeeds ?? []) as SourceFeed[]
+  const sourceFeedItems = (latestSourceFeedItems ?? []) as SourceFeedItem[]
   const totalBrainRows = liveCounts.reduce((total, item) => total + item.count, 0)
   const readErrors = liveCounts.filter((item) => item.hasError).length
 
@@ -742,6 +762,137 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                 <p className="mt-3 text-sm leading-7 text-sand/65">
                   Add trusted source feeds in Supabase before building feed checks or automated
                   signal intake.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+
+
+        <section className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                <Rss className="h-4 w-4" aria-hidden="true" />
+                Source Signals
+              </span>
+
+              <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
+                Newest feed items waiting for review.
+              </h2>
+
+              <p className="mt-4 text-base leading-8 text-sand/65">
+                Feed checks create source signals only. These items show what the intake layer has
+                detected, but they still need Scout extraction, review, approval, and validation
+                before they affect lessons, sandbox tasks, tool intelligence, or business training.
+              </p>
+            </div>
+
+            <div className="rounded-3xl bg-[#EAF7FF] p-5 shadow-sm lg:max-w-md">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF]">
+                Review boundary
+              </p>
+              <p className="mt-3 text-sm leading-7 text-sand/65">
+                A feed item is not a Brain record. It is an intake signal that helps decide what the
+                Scout workflow should inspect next.
+              </p>
+            </div>
+          </div>
+
+          {latestSourceFeedItemsError ? (
+            <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50 p-5">
+              <p className="text-sm font-bold text-amber-900">
+                Source signals could not be read.
+              </p>
+              <p className="mt-2 text-sm leading-7 text-amber-800">
+                Check the source_feed_items table, schema cache, selected columns, and admin-only RLS
+                policy.
+              </p>
+            </div>
+          ) : null}
+
+          <div className="mt-8 grid gap-4">
+            {sourceFeedItems.length > 0 ? (
+              sourceFeedItems.map((item) => (
+                <article
+                  key={item.id}
+                  className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
+                >
+                  <div className="flex flex-wrap gap-2">
+                    <span className={getPillClass(item.signal_type)}>
+                      {formatLabel(item.signal_type)}
+                    </span>
+                    <span className={getPillClass(item.relevance_status)}>
+                      {formatLabel(item.relevance_status)}
+                    </span>
+                    <span className={getPillClass(item.review_status)}>
+                      {formatLabel(item.review_status)}
+                    </span>
+                  </div>
+
+                  <div className="mt-5 grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
+                    <div className="rounded-2xl bg-[#F7FBFF] p-4">
+                      <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                        Provider
+                      </p>
+                      <p className="mt-2 text-sm font-bold leading-7 text-sand">
+                        {item.provider}
+                      </p>
+
+                      <div className="mt-4 grid gap-3">
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                            Published
+                          </p>
+                          <p className="mt-1 text-sm leading-7 text-sand/65">
+                            {item.published_at
+                              ? new Date(item.published_at).toLocaleString('en-GB')
+                              : 'No published date recorded'}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                            Detected
+                          </p>
+                          <p className="mt-1 text-sm leading-7 text-sand/65">
+                            {item.detected_at
+                              ? new Date(item.detected_at).toLocaleString('en-GB')
+                              : 'No detected date recorded'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="text-xl font-bold tracking-tight text-sand">
+                        {item.title}
+                      </h3>
+
+                      <p className="mt-3 text-sm leading-7 text-sand/65">
+                        {item.summary ||
+                          'No summary was supplied by the feed. Open the source item before scouting or reviewing this signal.'}
+                      </p>
+
+                      <a
+                        href={item.item_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-5 inline-flex items-center gap-2 rounded-2xl border border-[#123BFF]/15 bg-[#EAF7FF] px-4 py-3 text-sm font-bold text-[#123BFF] transition hover:border-[#123BFF]/35 hover:bg-[#DDF1FF]"
+                      >
+                        Open source item
+                        <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              ))
+            ) : (
+              <div className="rounded-3xl border border-[#123BFF]/15 bg-[#EAF7FF] p-5">
+                <p className="text-sm font-bold text-sand">No source signals detected yet.</p>
+                <p className="mt-3 text-sm leading-7 text-sand/65">
+                  Use Check feed now on a supported trusted intake feed. New RSS, Atom, or GitHub
+                  release items will appear here before they move into Scout review.
                 </p>
               </div>
             )}
