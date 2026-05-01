@@ -22,6 +22,7 @@ import {
 import { BrainSourceCreateForm } from '@/components/brain/brain-source-create-form'
 import { CheckFeedButton } from '@/components/brain/check-feed-button'
 import { SourceSignalActionButton } from '@/components/brain/source-signal-action-button'
+import { SourceSignalScoutButton } from '@/components/brain/source-signal-scout-button'
 import { ArchiveFindingButton } from '@/components/brain/archive-finding-button'
 import { ApproveFindingButton } from '@/components/brain/approve-finding-button'
 import { RestoreFindingButton } from '@/components/brain/restore-finding-button'
@@ -911,6 +912,11 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                           <SourceSignalActionButton signalId={item.id} action="restore" />
                         ) : (
                           <>
+                            <SourceSignalScoutButton
+                              sourceUrl={item.item_url}
+                              signalTitle={item.title}
+                              signalSummary={item.summary}
+                            />
                             <SourceSignalActionButton signalId={item.id} action="archive" />
                             <SourceSignalActionButton signalId={item.id} action="duplicate" />
                             <SourceSignalActionButton signalId={item.id} action="ignore" />
