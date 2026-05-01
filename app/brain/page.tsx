@@ -321,7 +321,8 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
   const { data: latestAgentFindings, error: latestAgentFindingsError } = await supabase
     .from('agent_findings')
     .select('id, related_master_brain_record_id, title, finding_type, summary, confidence_level, validation_status, recommended_action, created_at')
-    .neq('validation_status', 'archived')
+    .in('validation_status', ['unverified_signal', 'needs_review'])
+    .is('related_master_brain_record_id', null)
     .order('created_at', { ascending: false })
     .limit(6)
 
@@ -511,15 +512,15 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
             <div className="max-w-3xl">
               <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
                 <Sparkles className="h-4 w-4" aria-hidden="true" />
-                Latest Agent Findings
+                Active Review Queue
               </span>
 
               <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
-                Review Scout findings before they become Brain records.
+                Review active Scout findings before they become Brain records.
               </h2>
 
               <p className="mt-4 text-base leading-8 text-sand/65">
-                Agent findings are private candidate signals. They are useful only after review:
+                Active Scout findings are private candidate signals. They are useful only after review:
                 each one still needs validation, source judgement, and a decision about whether it
                 should affect lessons, sandbox tasks, tool intelligence, or business training.
               </p>
@@ -530,7 +531,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                 Review rule
               </p>
               <p className="mt-3 text-sm leading-7 text-sand/65">
-                Scout output is not published content. It is a candidate queue for human review and
+                Scout output is not published content. Active findings stay here for human review and
                 later promotion into verified Master Brain records.
               </p>
             </div>
@@ -593,10 +594,10 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
               ))
             ) : (
               <div className="rounded-3xl border border-[#123BFF]/15 bg-[#EAF7FF] p-5 lg:col-span-2">
-                <p className="text-sm font-bold text-sand">No Scout findings yet.</p>
+                <p className="text-sm font-bold text-sand">No active Scout findings.</p>
                 <p className="mt-3 text-sm leading-7 text-sand/65">
                   Run the Source Scout against an official source to create private candidate
-                  findings for review.
+                  findings, or review the existing verified and archived history in Supabase.
                 </p>
               </div>
             )}
@@ -964,6 +965,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     </main>
   )
 }
+
 
 
 
