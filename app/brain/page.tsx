@@ -104,6 +104,39 @@ type SourceFeedItem = {
   item_url: string
 }
 
+type AiDiscoveryItem = {
+  id: string
+  provider_name: string
+  product_name: string | null
+  model_name: string | null
+  model_family: string | null
+  website_url: string | null
+  official_source_url: string | null
+  source_type: string | null
+  suggested_feed_type: string | null
+  source_group: string | null
+  tool_category: string | null
+  product_area: string | null
+  capability_area: string | null
+  training_department: string | null
+  primary_use_case: string | null
+  audience_level: string | null
+  discovery_status: string
+  signal_quality: string
+  intake_priority: string
+  academy_relevance: string | null
+  business_relevance: string | null
+  sandbox_relevance: string | null
+  discovery_summary: string | null
+  practical_training_value: string | null
+  social_noise_notes: string | null
+  verification_notes: string | null
+  discovered_from: string | null
+  discovered_url: string | null
+  created_at: string
+  updated_at: string
+}
+
 type BrainPageProps = {
   searchParams?: Promise<{
     source?: string
@@ -451,6 +484,12 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     .order('detected_at', { ascending: false })
     .limit(12)
 
+  const { data: latestDiscoveryItems, error: latestDiscoveryItemsError } = await supabase
+    .from('ai_discovery_items')
+    .select('id, provider_name, product_name, model_name, model_family, website_url, official_source_url, source_type, suggested_feed_type, source_group, tool_category, product_area, capability_area, training_department, primary_use_case, audience_level, discovery_status, signal_quality, intake_priority, academy_relevance, business_relevance, sandbox_relevance, discovery_summary, practical_training_value, social_noise_notes, verification_notes, discovered_from, discovered_url, created_at, updated_at')
+    .order('created_at', { ascending: false })
+    .limit(12)
+
   let latestAgentFindingsQuery = supabase
     .from('agent_findings')
     .select('id, related_master_brain_record_id, title, finding_type, summary, confidence_level, validation_status, recommended_action, created_at')
@@ -474,6 +513,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
   const latestFindings = (latestAgentFindings ?? []) as LatestAgentFinding[]
   const sourceFeeds = (latestSourceFeeds ?? []) as SourceFeed[]
   const sourceFeedItems = (latestSourceFeedItems ?? []) as SourceFeedItem[]
+  const discoveryItems = (latestDiscoveryItems ?? []) as AiDiscoveryItem[]
   const totalBrainRows = liveCounts.reduce((total, item) => total + item.count, 0)
   const readErrors = liveCounts.filter((item) => item.hasError).length
 
@@ -656,6 +696,204 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
         <BrainSourceCreateForm />
 
         <BrainSourceScoutForm />
+
+        <section className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                <Radar className="h-4 w-4" aria-hidden="true" />
+                AI Discovery Queue
+              </span>
+
+              <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
+                New AI tools, models, platforms, and weak signals before intake.
+              </h2>
+
+              <p className="mt-4 text-base leading-8 text-sand/65">
+                The discovery queue is the layer before trusted feeds. It gives new AI companies,
+                models, apps, and social discovery signals a place to be classified, verified, and
+                routed before they become official source intake.
+              </p>
+            </div>
+
+            <div className="rounded-3xl bg-[#EAF7FF] p-5 shadow-sm lg:max-w-md">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF]">
+                Discovery rule
+              </p>
+              <p className="mt-3 text-sm leading-7 text-sand/65">
+                New tools should not jump straight into training. First identify the provider,
+                official source, tool category, likely audience, and whether the signal is useful or
+                just hype.
+              </p>
+            </div>
+          </div>
+
+          {latestDiscoveryItemsError ? (
+            <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50 p-5">
+              <p className="text-sm font-bold text-amber-900">
+                AI discovery items could not be read.
+              </p>
+              <p className="mt-2 text-sm leading-7 text-amber-800">
+                Check the ai_discovery_items table, schema cache, and admin-only RLS policy.
+              </p>
+            </div>
+          ) : null}
+
+          <details open className="mt-8 rounded-3xl border border-[#123BFF]/15 bg-[#F7FBFF] p-4">
+            <summary className="cursor-pointer list-none rounded-2xl bg-white px-4 py-3 shadow-sm">
+              <span className="block text-sm font-bold text-sand">
+                Show/hide discovery candidates
+              </span>
+              <span className="mt-1 block text-sm leading-7 text-sand/60">
+                Candidate tools, models, platforms, and weak signals waiting for classification or
+                source verification.
+              </span>
+            </summary>
+
+            <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {discoveryItems.length > 0 ? (
+                discoveryItems.map((item) => (
+                  <article
+                    key={item.id}
+                    className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
+                  >
+                    <div className="flex flex-wrap gap-2">
+                      <span className={getPillClass(item.discovery_status)}>
+                        {formatLabel(item.discovery_status)}
+                      </span>
+                      <span className={getPillClass(item.signal_quality)}>
+                        {formatLabel(item.signal_quality)}
+                      </span>
+                      <span className={getPillClass(item.intake_priority)}>
+                        {formatLabel(item.intake_priority)}
+                      </span>
+                      {item.source_group ? (
+                        <span className={getPillClass(item.source_group)}>
+                          {formatLabel(item.source_group)}
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <p className="mt-5 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                      {item.provider_name}
+                    </p>
+
+                    <h3 className="mt-2 text-lg font-bold tracking-tight text-sand">
+                      {[item.product_name, item.model_name].filter(Boolean).join(' — ') ||
+                        item.provider_name}
+                    </h3>
+
+                    <div className="mt-4 grid gap-3 rounded-2xl bg-[#F7FBFF] p-4">
+                      {item.tool_category ? (
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                            Tool category
+                          </p>
+                          <p className="mt-1 text-sm leading-7 text-sand/65">
+                            {formatLabel(item.tool_category)}
+                          </p>
+                        </div>
+                      ) : null}
+
+                      {item.training_department ? (
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                            Training department
+                          </p>
+                          <p className="mt-1 text-sm leading-7 text-sand/65">
+                            {formatLabel(item.training_department)}
+                          </p>
+                        </div>
+                      ) : null}
+
+                      {item.primary_use_case ? (
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                            Primary use case
+                          </p>
+                          <p className="mt-1 text-sm leading-7 text-sand/65">
+                            {formatLabel(item.primary_use_case)}
+                          </p>
+                        </div>
+                      ) : null}
+
+                      {item.audience_level ? (
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                            Audience level
+                          </p>
+                          <p className="mt-1 text-sm leading-7 text-sand/65">
+                            {formatLabel(item.audience_level)}
+                          </p>
+                        </div>
+                      ) : null}
+
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                          Added
+                        </p>
+                        <p className="mt-1 text-sm leading-7 text-sand/65">
+                          {new Date(item.created_at).toLocaleString('en-GB')}
+                        </p>
+                      </div>
+                    </div>
+
+                    {item.discovery_summary ? (
+                      <p className="mt-4 text-sm leading-7 text-sand/65">
+                        {item.discovery_summary}
+                      </p>
+                    ) : null}
+
+                    {item.practical_training_value ? (
+                      <div className="mt-4 rounded-2xl border border-[#123BFF]/15 bg-[#EAF7FF] p-4">
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                          Practical training value
+                        </p>
+                        <p className="mt-2 text-sm leading-7 text-sand/70">
+                          {item.practical_training_value}
+                        </p>
+                      </div>
+                    ) : null}
+
+                    {item.social_noise_notes ? (
+                      <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-amber-900">
+                          Social noise notes
+                        </p>
+                        <p className="mt-2 text-sm leading-7 text-amber-900">
+                          {item.social_noise_notes}
+                        </p>
+                      </div>
+                    ) : null}
+
+                    {item.official_source_url || item.website_url || item.discovered_url ? (
+                      <a
+                        href={item.official_source_url || item.website_url || item.discovered_url || '#'}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-[#123BFF]/15 bg-[#EAF7FF] px-4 py-3 text-sm font-bold text-[#123BFF] transition hover:border-[#123BFF]/35 hover:bg-[#DDF1FF] sm:w-auto"
+                      >
+                        Open discovery source
+                        <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                      </a>
+                    ) : null}
+                  </article>
+                ))
+              ) : (
+                <div className="rounded-3xl border border-[#123BFF]/15 bg-[#EAF7FF] p-5 md:col-span-2 xl:col-span-3">
+                  <p className="text-sm font-bold text-sand">
+                    No AI discovery candidates recorded yet.
+                  </p>
+                  <p className="mt-3 text-sm leading-7 text-sand/65">
+                    New tools, models, companies, apps, and weak discovery signals will appear here
+                    before they are verified as trusted intake sources.
+                  </p>
+                </div>
+              )}
+            </div>
+          </details>
+        </section>
+
 
         <section className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
