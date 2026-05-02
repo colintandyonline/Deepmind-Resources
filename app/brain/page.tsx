@@ -794,7 +794,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
             </div>
           </summary>
 
-          <div className="mt-4 [&>section]:mt-0">
+          <div className="mt-4 [&>section]:mt-0 [&>section>div>div:first-child]:hidden lg:[&>section>div]:grid-cols-1">
             <AiDiscoveryCreateForm />
           </div>
         </details>
@@ -830,7 +830,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
             </div>
           </summary>
 
-          <div className="mt-4 [&>section]:mt-0">
+          <div className="mt-4 [&>section]:mt-0 [&>section>div>div:first-child]:hidden lg:[&>section>div]:grid-cols-1">
             <BrainSourceCreateForm />
           </div>
         </details>
@@ -868,7 +868,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
             </div>
           </summary>
 
-          <div className="mt-4 [&>section]:mt-0">
+          <div className="mt-4 [&>section]:mt-0 [&>section>div:first-child]:hidden">
         <section className="mt-0 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
@@ -1213,7 +1213,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
             </div>
           </summary>
 
-          <div className="mt-4 [&>section]:mt-0">
+          <div className="mt-4 [&>section]:mt-0 [&>section>div:first-child]:hidden">
         <section className="mt-0 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
