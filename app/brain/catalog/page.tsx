@@ -1664,7 +1664,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
 
                   {selectedTab === 'overview' ? (
                     <div className="mt-8 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-                      {isTopLevelModelFamily(selectedEntity) ? (
+                      {(isTopLevelModelFamily(selectedEntity) || selectedEntityType === 'company') ? (
                         <section className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5 xl:col-span-2">
                           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                             <div>
@@ -2168,6 +2168,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
     </main>
   )
 }
+
 
 
 
