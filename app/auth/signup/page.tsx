@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, type FormEvent } from 'react'
+import { BrainCircuit,  useEffect, useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import {
   ArrowRight,
@@ -14,7 +14,7 @@ import {
   ShieldCheck,
   Sparkles,
   Workflow,
-} from 'lucide-react'
+ } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 type AccountType = 'individual' | 'business'
@@ -215,11 +215,11 @@ export default function SignupPage() {
             <div className="flex items-start justify-between gap-4">
               <Link href="/" className="inline-flex items-center gap-3">
                 <span className="inline-flex h-13 w-13 items-center justify-center rounded-2xl bg-[#123BFF] p-2 shadow-sm">
-                  <img
-                    src="/brand/deepmind-resources-emblem.png"
-                    alt="DeepMind Resources"
-                    className="h-9 w-9 rounded-xl object-contain"
-                  />
+                  <div className="relative flex h-20 w-20 items-center justify-center rounded-[1.4rem] bg-[#123BFF] shadow-[0_18px_44px_rgba(18,59,255,0.28)]" aria-hidden="true">
+  <div className="absolute inset-0 rounded-[1.4rem] bg-[#123BFF]/25 animate-ping" />
+  <div className="absolute inset-[5px] rounded-[1.1rem] bg-white/10 animate-pulse" />
+  <BrainCircuit className="relative z-10 h-10 w-10 text-white" strokeWidth={2.2} />
+</div>
                 </span>
                 <span className="text-base font-bold tracking-tight text-sand">
                   DeepMind Resources
@@ -493,11 +493,11 @@ export default function SignupPage() {
               </span>
 
               <a href="https://deepmindresources.pro" className="shrink-0">
-                <img
-                  src="/brand/deepmind-resources-emblem.png"
-                  alt="DeepMind Resources"
-                  className="h-14 w-14 rounded-2xl object-contain shadow-sm"
-                />
+                <div className="relative flex h-20 w-20 items-center justify-center rounded-[1.4rem] bg-[#123BFF] shadow-[0_18px_44px_rgba(18,59,255,0.28)]" aria-hidden="true">
+  <div className="absolute inset-0 rounded-[1.4rem] bg-[#123BFF]/25 animate-ping" />
+  <div className="absolute inset-[5px] rounded-[1.1rem] bg-white/10 animate-pulse" />
+  <BrainCircuit className="relative z-10 h-10 w-10 text-white" strokeWidth={2.2} />
+</div>
               </a>
             </div>
 
