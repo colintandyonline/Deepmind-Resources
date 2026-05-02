@@ -1384,23 +1384,27 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                   </div>
 
                   {selectedCompanyEnrichment ? (
-                    <section className="mt-8 rounded-[2rem] border border-[#123BFF]/15 bg-gradient-to-br from-[#F8FCFF] via-white to-[#EEF4FF] p-5 shadow-sm sm:p-6">
-                      <div className="flex flex-wrap items-start justify-between gap-4">
-                        <div>
+                    <section className="mt-8 rounded-[2rem] border border-[#123BFF]/15 bg-gradient-to-br from-[#F8FCFF] via-white to-[#EEF4FF] p-5 shadow-sm sm:p-6 lg:p-8">
+                      <div className="flex flex-wrap items-start justify-between gap-5">
+                        <div className="max-w-3xl">
                           <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
                             <Building2 className="h-4 w-4" aria-hidden="true" />
                             Company profile
                           </span>
 
-                          <h3 className="mt-4 text-2xl font-bold tracking-tight text-sand">
+                          <h3 className="mt-5 text-3xl font-bold tracking-tight text-sand">
                             {getEntityName(selectedEntity)}
                           </h3>
 
                           {selectedCompanyDescription ? (
-                            <p className="mt-3 max-w-3xl text-sm leading-7 text-sand/68">
+                            <p className="mt-4 text-base leading-8 text-sand/72">
                               {selectedCompanyDescription}
                             </p>
-                          ) : null}
+                          ) : (
+                            <p className="mt-4 text-base leading-8 text-sand/60">
+                              No enriched company description is attached yet.
+                            </p>
+                          )}
                         </div>
 
                         <div className="flex flex-wrap gap-2">
@@ -1428,10 +1432,10 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                         </div>
                       </div>
 
-                      <div className="mt-6 grid gap-4 lg:grid-cols-3">
+                      <div className="mt-8 grid gap-4 lg:grid-cols-2">
                         <div className="rounded-[1.5rem] border border-sand/10 bg-white p-5 shadow-sm">
                           <p className="text-xs font-bold uppercase tracking-[0.18em] text-sand/45">
-                            Official website
+                            Official company website
                           </p>
 
                           {selectedCompanyOfficialUrl ? (
@@ -1439,7 +1443,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                               href={selectedCompanyOfficialUrl}
                               target="_blank"
                               rel="noreferrer"
-                              className="mt-3 inline-flex break-all text-sm font-bold text-[#123BFF] transition hover:text-[#0A63FF]"
+                              className="mt-3 inline-flex break-all text-base font-bold text-[#123BFF] transition hover:text-[#0A63FF]"
                             >
                               {selectedCompanyOfficialUrl}
                             </a>
@@ -1452,56 +1456,113 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
 
                         <div className="rounded-[1.5rem] border border-sand/10 bg-white p-5 shadow-sm">
                           <p className="text-xs font-bold uppercase tracking-[0.18em] text-sand/45">
-                            Latest release / update
+                            Latest release or update from enrichment
                           </p>
 
                           {selectedCompanyLatestRelease ? (
-                            <>
-                              <p className="mt-3 text-sm font-bold leading-7 text-sand">
-                                {selectedCompanyLatestRelease}
-                              </p>
-
-                              {selectedCompanyLatestReleaseUrl ? (
-                                <a
-                                  href={selectedCompanyLatestReleaseUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="mt-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF] transition hover:text-[#0A63FF]"
-                                >
-                                  Open source
-                                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                                </a>
-                              ) : null}
-                            </>
+                            <p className="mt-3 text-base font-bold leading-7 text-sand">
+                              {selectedCompanyLatestRelease}
+                            </p>
                           ) : (
                             <p className="mt-3 text-sm leading-7 text-sand/60">
-                              No latest release is attached yet.
+                              No latest release or update was supplied.
                             </p>
                           )}
+
+                          {selectedCompanyLatestReleaseUrl ? (
+                            <a
+                              href={selectedCompanyLatestReleaseUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="mt-4 inline-flex break-all text-sm font-bold leading-6 text-[#123BFF] transition hover:text-[#0A63FF]"
+                            >
+                              {selectedCompanyLatestReleaseUrl}
+                            </a>
+                          ) : null}
+                        </div>
+                      </div>
+
+                      <div className="mt-4 grid gap-4 lg:grid-cols-4">
+                        <div className="rounded-[1.5rem] border border-sand/10 bg-white p-5 shadow-sm">
+                          <p className="text-xs font-bold uppercase tracking-[0.18em] text-sand/45">
+                            Confidence
+                          </p>
+                          <p className="mt-3 text-base font-bold text-sand">
+                            {selectedCompanyConfidence
+                              ? getReadableLabel(selectedCompanyConfidence)
+                              : 'Not supplied'}
+                          </p>
                         </div>
 
                         <div className="rounded-[1.5rem] border border-sand/10 bg-white p-5 shadow-sm">
                           <p className="text-xs font-bold uppercase tracking-[0.18em] text-sand/45">
-                            Brain review state
+                            Review status
                           </p>
-
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {selectedCompanyReviewStatus ? (
-                              <span className="inline-flex rounded-full bg-amber-50 px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] text-amber-700">
-                                {getReadableLabel(selectedCompanyReviewStatus)}
-                              </span>
-                            ) : null}
-
-                            <span className={`inline-flex rounded-full px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] ${getStatusPillClassName(selectedStatus)}`}>
-                              {selectedStatus ? getReadableLabel(selectedStatus) : 'Needs review'}
-                            </span>
-                          </div>
-
-                          <p className="mt-4 text-sm leading-7 text-sand/60">
-                            This company data can support the Brain catalogue now, but client-facing
-                            publication stays blocked until review marks it safe.
+                          <p className="mt-3 text-base font-bold leading-7 text-sand">
+                            {selectedCompanyReviewStatus
+                              ? getReadableLabel(selectedCompanyReviewStatus)
+                              : 'Needs review'}
                           </p>
                         </div>
+
+                        <div className="rounded-[1.5rem] border border-sand/10 bg-white p-5 shadow-sm">
+                          <p className="text-xs font-bold uppercase tracking-[0.18em] text-sand/45">
+                            Publication safety
+                          </p>
+                          <p className="mt-3 text-base font-bold leading-7 text-sand">
+                            {selectedCompanyPublicationSafe === 'true'
+                              ? 'Safe to publish'
+                              : 'Blocked until reviewed'}
+                          </p>
+                        </div>
+
+                        <div className="rounded-[1.5rem] border border-sand/10 bg-white p-5 shadow-sm">
+                          <p className="text-xs font-bold uppercase tracking-[0.18em] text-sand/45">
+                            Brain source state
+                          </p>
+                          <p className="mt-3 text-base font-bold leading-7 text-sand">
+                            {selectedStatus ? getReadableLabel(selectedStatus) : 'Source found'}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 rounded-[1.5rem] border border-[#123BFF]/10 bg-[#F8FCFF] p-5">
+                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-sand/45">
+                          Stored Brain enrichment payload
+                        </p>
+
+                        <dl className="mt-4 grid gap-4 lg:grid-cols-3">
+                          <div>
+                            <dt className="text-xs font-bold uppercase tracking-[0.16em] text-sand/45">
+                              Date checked
+                            </dt>
+                            <dd className="mt-2 text-sm font-bold text-sand">
+                              {getPayloadText(selectedCompanyEnrichment, 'date_checked') ?? 'Not supplied'}
+                            </dd>
+                          </div>
+
+                          <div>
+                            <dt className="text-xs font-bold uppercase tracking-[0.16em] text-sand/45">
+                              Source mode
+                            </dt>
+                            <dd className="mt-2 text-sm font-bold leading-6 text-sand">
+                              {getPayloadText(selectedCompanyEnrichment, 'source_mode')
+                                ? getReadableLabel(
+                                    getPayloadText(selectedCompanyEnrichment, 'source_mode') ?? '',
+                                  )
+                                : 'Not supplied'}
+                            </dd>
+                          </div>
+
+                          <div>
+                            <dt className="text-xs font-bold uppercase tracking-[0.16em] text-sand/45">
+                              Company key
+                            </dt>
+                            <dd className="mt-2 break-all text-sm font-bold text-sand">
+                              {getPayloadText(selectedCompanyEnrichment, 'entity_key') ?? 'Not supplied'}
+                            </dd>
+                          </div>
+                        </dl>
                       </div>
                     </section>
                   ) : null}
@@ -2069,3 +2130,4 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
     </main>
   )
 }
+
