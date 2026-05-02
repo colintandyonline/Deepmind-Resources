@@ -764,14 +764,34 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
           </div>
         ) : null}
 
-        <details className="mt-8 rounded-[2rem] border border-[#123BFF]/15 bg-[#F7FBFF] p-4 shadow-sm">
-          <summary className="cursor-pointer list-none rounded-2xl bg-white px-4 py-3 shadow-sm">
-            <span className="block text-sm font-bold text-sand">
-              Show/hide add discovery candidate form
-            </span>
-            <span className="mt-1 block text-sm leading-7 text-sand/60">
-              Capture new AI tools, models, platforms, companies, or weak signals before they enter intake.
-            </span>
+        <details className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
+          <summary className="cursor-pointer list-none">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-3xl">
+                <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                  <Radar className="h-4 w-4" aria-hidden="true" />
+                  Add discovery candidate
+                </span>
+
+                <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
+                  Capture new AI tools before they become trusted sources.
+                </h2>
+
+                <p className="mt-4 text-base leading-8 text-sand/65">
+                  Use this when you spot a new AI model, company, app, platform, creative tool,
+                  coding tool, automation product, or social-media claim that may deserve tracking.
+                </p>
+              </div>
+
+              <div className="rounded-3xl bg-[#EAF7FF] p-5 shadow-sm lg:max-w-md">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF]">
+                  Form toggle
+                </p>
+                <p className="mt-3 text-sm leading-7 text-sand/65">
+                  Open this section to add a discovery candidate without losing the page structure.
+                </p>
+              </div>
+            </div>
           </summary>
 
           <div className="mt-4 [&>section]:mt-0">
@@ -779,14 +799,35 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
           </div>
         </details>
 
-        <details className="mt-8 rounded-[2rem] border border-[#123BFF]/15 bg-[#F7FBFF] p-4 shadow-sm">
-          <summary className="cursor-pointer list-none rounded-2xl bg-white px-4 py-3 shadow-sm">
-            <span className="block text-sm font-bold text-sand">
-              Show/hide create source form
-            </span>
-            <span className="mt-1 block text-sm leading-7 text-sand/60">
-              Add official documentation, release notes, trusted sources, or weak source-backed signals.
-            </span>
+        <details className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
+          <summary className="cursor-pointer list-none">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-3xl">
+                <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                  <FileSearch className="h-4 w-4" aria-hidden="true" />
+                  Create source
+                </span>
+
+                <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
+                  Add the first source-backed signal.
+                </h2>
+
+                <p className="mt-4 text-base leading-8 text-sand/65">
+                  Sources are the first layer of the Brain. Add official documentation, release
+                  notes, trusted technical material, internal test results, or weak discovery signals.
+                </p>
+              </div>
+
+              <div className="rounded-3xl bg-[#EAF7FF] p-5 shadow-sm lg:max-w-md">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF]">
+                  Source rule
+                </p>
+                <p className="mt-3 text-sm leading-7 text-sand/65">
+                  Open this section when a discovery item has enough source evidence to become part
+                  of monitored intake.
+                </p>
+              </div>
+            </div>
           </summary>
 
           <div className="mt-4 [&>section]:mt-0">
@@ -796,14 +837,35 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
 
         <BrainSourceScoutForm />
 
-        <details className="mt-8 rounded-[2rem] border border-[#123BFF]/15 bg-[#F7FBFF] p-4 shadow-sm">
-          <summary className="cursor-pointer list-none rounded-2xl bg-white px-4 py-3 shadow-sm">
-            <span className="block text-sm font-bold text-sand">
-              Show/hide AI Discovery Queue
-            </span>
-            <span className="mt-1 block text-sm leading-7 text-sand/60">
-              Discovery summary, candidate tools, model records, platform signals, and source verification status.
-            </span>
+        <details className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
+          <summary className="cursor-pointer list-none">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-3xl">
+                <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                  <Radar className="h-4 w-4" aria-hidden="true" />
+                  AI Discovery Queue
+                </span>
+
+                <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
+                  New AI tools, models, platforms, and weak signals before intake.
+                </h2>
+
+                <p className="mt-4 text-base leading-8 text-sand/65">
+                  The discovery queue is the layer before trusted feeds. It gives new AI companies,
+                  models, apps, and social discovery signals a place to be classified and verified.
+                </p>
+              </div>
+
+              <div className="rounded-3xl bg-[#EAF7FF] p-5 shadow-sm lg:max-w-md">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF]">
+                  Discovery boundary
+                </p>
+                <p className="mt-3 text-sm leading-7 text-sand/65">
+                  Open this section to view discovery counts, candidates, model records, and source
+                  verification status.
+                </p>
+              </div>
+            </div>
           </summary>
 
           <div className="mt-4 [&>section]:mt-0">
@@ -1120,14 +1182,35 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
         </details>
 
 
-        <details className="mt-8 rounded-[2rem] border border-[#123BFF]/15 bg-[#F7FBFF] p-4 shadow-sm">
-          <summary className="cursor-pointer list-none rounded-2xl bg-white px-4 py-3 shadow-sm">
-            <span className="block text-sm font-bold text-sand">
-              Show/hide Trusted Intake Feeds
-            </span>
-            <span className="mt-1 block text-sm leading-7 text-sand/60">
-              Registered source feeds, taxonomy routing, check buttons, polling status, and feed-level errors.
-            </span>
+        <details className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
+          <summary className="cursor-pointer list-none">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-3xl">
+                <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                  <Rss className="h-4 w-4" aria-hidden="true" />
+                  Trusted Intake Feeds
+                </span>
+
+                <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
+                  Official sources ready for monitored intelligence intake.
+                </h2>
+
+                <p className="mt-4 text-base leading-8 text-sand/65">
+                  These feeds are registered as trusted intake sources. They do not publish content
+                  or update lessons automatically; they only create reviewable source signals.
+                </p>
+              </div>
+
+              <div className="rounded-3xl bg-[#EAF7FF] p-5 shadow-sm lg:max-w-md">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF]">
+                  Intake boundary
+                </p>
+                <p className="mt-3 text-sm leading-7 text-sand/65">
+                  Open this section to view registered feeds, taxonomy routing, check buttons,
+                  polling status, and feed-level errors.
+                </p>
+              </div>
+            </div>
           </summary>
 
           <div className="mt-4 [&>section]:mt-0">
