@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
 const BRAIN_ADMIN_EMAIL = 'colintandy@gmail.com'
@@ -19,7 +19,7 @@ const discoveryActionMap = {
   },
   mark_duplicate: {
     discovery_status: 'duplicate',
-    signal_quality: 'duplicate',
+    signal_quality: 'mixed',
     rejection_reason: 'Marked as a duplicate discovery candidate.',
   },
   needs_official_source: {
