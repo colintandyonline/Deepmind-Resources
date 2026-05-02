@@ -1564,7 +1564,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                         </div>
                       </div>
 
-                      <div className="mt-4 rounded-[1.5rem] border border-[#123BFF]/10 bg-[#F8FCFF] p-5">
+                      <div className="hidden">
                         <p className="text-xs font-bold uppercase tracking-[0.18em] text-sand/45">
                           Stored Brain enrichment payload
                         </p>
@@ -1604,7 +1604,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                       </div>
                     </section>
                   ) : null}
-                  <div className="mt-8 grid gap-4 sm:grid-cols-3">
+                  <div className={selectedEntityType === 'company' ? 'hidden' : 'mt-8 grid gap-4 sm:grid-cols-3'}>
                     <article className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
                       <p className="text-2xl font-bold text-[#123BFF]">
                         {formatCount(selectedRelationshipLinks.length)}
@@ -1744,8 +1744,8 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                         </section>
                       ) : null}
 
-                      <section className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
-                        <div className="flex items-center gap-3">
+                      <section className={selectedEntityType === 'company' ? 'hidden' : 'rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5'}>
+                        <div className={selectedEntityType === 'company' ? 'hidden' : 'flex items-center gap-3'}>
                           <FileSearch className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
                           <h3 className="text-lg font-bold text-sand">Basic information</h3>
                         </div>
@@ -1792,8 +1792,8 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                         </dl>
                       </section>
 
-                      <section className="grid gap-6">
-                        <article className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
+                      <section className={selectedEntityType === 'company' ? 'hidden' : 'grid gap-6'}>
+                        <article className={selectedEntityType === 'company' ? 'hidden' : 'rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5'}>
                           <div className="flex items-center gap-3">
                             <Link2 className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
                             <h3 className="text-lg font-bold text-sand">Official links</h3>
@@ -2168,6 +2168,8 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
     </main>
   )
 }
+
+
 
 
 
