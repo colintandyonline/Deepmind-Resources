@@ -1,11 +1,14 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import type { LucideIcon } from 'lucide-react'
 import {
+  AppWindow,
   ArrowRight,
   BadgeCheck,
-  BarChart3,
+  Bot,
   BrainCircuit,
+  Building2,
   Database,
   FileSearch,
   GitBranch,
@@ -40,6 +43,11 @@ type CataloguePageSearchParams = {
   entity?: string
   search?: string
   type?: string
+  tab?: string
+}
+
+type CataloguePageProps = {
+  searchParams?: Promise<CataloguePageSearchParams> | CataloguePageSearchParams
 }
 
 type CatalogueRecord = Record<string, unknown>
@@ -52,19 +60,27 @@ type CatalogueTableName =
   | 'ai_catalog_comparison_groups'
   | 'ai_catalog_entity_comparison_groups'
 
-type CatalogueCountCard = {
+type DetailTabKey = 'overview' | 'training' | 'relationships' | 'fields'
+
+type CountCard = {
   table: CatalogueTableName
   label: string
   description: string
-  icon: typeof Database
+  icon: LucideIcon
   baseline: string
 }
 
-type CataloguePageProps = {
-  searchParams?: Promise<CataloguePageSearchParams>
+type EntityTypeCard = {
+  type: string
+  label: string
+  description: string
+  icon: LucideIcon
+  cardClassName: string
+  pillClassName: string
+  iconClassName: string
 }
 
-const catalogueCountCards: CatalogueCountCard[] = [
+const countCards: CountCard[] = [
   {
     table: 'ai_catalog_entities',
     label: 'Catalogue entities',
@@ -115,34 +131,122 @@ const catalogueCountCards: CatalogueCountCard[] = [
   },
 ]
 
-const priorityFieldKeys = [
-  'id',
-  'name',
-  'title',
-  'slug',
-  'entity_type',
-  'type',
-  'catalog_entity_type',
+const entityTypeCards: EntityTypeCard[] = [
+  {
+    type: 'company',
+    label: 'Companies',
+    description: 'Browse providers and organisations behind AI products and model lines.',
+    icon: Building2,
+    cardClassName: 'border-[#123BFF]/20 bg-[#EEF4FF]',
+    pillClassName: 'bg-[#123BFF] text-white',
+    iconClassName: 'bg-white text-[#123BFF]',
+  },
+  {
+    type: 'platform',
+    label: 'Platforms',
+    description: 'Browse apps, products, and AI platforms that package model capabilities.',
+    icon: AppWindow,
+    cardClassName: 'border-emerald-200 bg-emerald-50',
+    pillClassName: 'bg-emerald-600 text-white',
+    iconClassName: 'bg-white text-emerald-700',
+  },
+  {
+    type: 'model_family',
+    label: 'Model families',
+    description: 'Browse grouped model lines such as GPT, Claude, Gemini, Llama, and Sora.',
+    icon: Layers3,
+    cardClassName: 'border-violet-200 bg-violet-50',
+    pillClassName: 'bg-violet-600 text-white',
+    iconClassName: 'bg-white text-violet-700',
+  },
+  {
+    type: 'model',
+    label: 'Models',
+    description: 'Browse individual model entries with enriched catalogue descriptions.',
+    icon: Bot,
+    cardClassName: 'border-amber-200 bg-amber-50',
+    pillClassName: 'bg-amber-500 text-sand',
+    iconClassName: 'bg-white text-amber-700',
+  },
+]
+
+const detailTabs: Array<{ key: DetailTabKey; label: string }> = [
+  {
+    key: 'overview',
+    label: 'Overview',
+  },
+  {
+    key: 'training',
+    label: 'Training context',
+  },
+  {
+    key: 'relationships',
+    label: 'Relationships',
+  },
+  {
+    key: 'fields',
+    label: 'Data fields',
+  },
+]
+
+const overviewFieldKeys = [
   'provider_name',
   'product_name',
   'model_name',
   'model_family',
-  'website_url',
-  'official_source_url',
   'source_group',
   'tool_category',
   'product_area',
   'capability_area',
+  'primary_modality',
+  'primary_use_case',
+  'audience_level',
+  'tracking_status',
+  'verification_status',
+  'source_status',
+]
+
+const priorityFieldKeys = [
+  'id',
+  'name',
+  'display_name',
+  'description',
+  'entity_type',
+  'provider_name',
+  'product_name',
+  'model_name',
+  'model_family',
+  'source_group',
+  'tool_category',
+  'product_area',
+  'capability_area',
+  'primary_modality',
   'training_department',
   'primary_use_case',
   'audience_level',
-  'discovery_status',
-  'signal_quality',
-  'validation_status',
-  'publication_status',
-  'status',
+  'academy_relevance',
+  'business_relevance',
+  'sandbox_relevance',
+  'tracking_status',
+  'verification_status',
+  'source_status',
+  'comparison_notes',
+  'training_notes',
+  'official_site_url',
+  'official_docs_url',
+  'release_notes_url',
+  'changelog_url',
+  'github_url',
   'created_at',
   'updated_at',
+]
+
+const urlFieldKeys = [
+  'official_site_url',
+  'official_docs_url',
+  'release_notes_url',
+  'changelog_url',
+  'github_url',
 ]
 
 function isNonEmptyString(value: unknown): value is string {
@@ -151,6 +255,14 @@ function isNonEmptyString(value: unknown): value is string {
 
 function formatCount(value: number) {
   return new Intl.NumberFormat('en-GB').format(value)
+}
+
+function getReadableLabel(value: string) {
+  return value
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (character) => character.toUpperCase())
 }
 
 function getRecordId(record: CatalogueRecord) {
@@ -174,9 +286,9 @@ function getFirstText(record: CatalogueRecord, keys: string[]) {
 function getEntityName(record: CatalogueRecord) {
   return (
     getFirstText(record, [
+      'display_name',
       'name',
       'title',
-      'display_name',
       'entity_name',
       'provider_name',
       'product_name',
@@ -202,8 +314,8 @@ function getEntityType(record: CatalogueRecord) {
 
 function getEntitySummary(record: CatalogueRecord) {
   return getFirstText(record, [
-    'summary',
     'description',
+    'summary',
     'short_description',
     'discovery_summary',
     'practical_training_value',
@@ -214,6 +326,9 @@ function getEntitySummary(record: CatalogueRecord) {
 
 function getEntityStatus(record: CatalogueRecord) {
   return getFirstText(record, [
+    'verification_status',
+    'source_status',
+    'tracking_status',
     'validation_status',
     'publication_status',
     'discovery_status',
@@ -222,21 +337,13 @@ function getEntityStatus(record: CatalogueRecord) {
   ])
 }
 
-function getReadableLabel(value: string) {
-  return value
-    .replace(/[_-]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .replace(/\b\w/g, (character) => character.toUpperCase())
-}
-
 function formatValue(value: unknown) {
   if (value === null || value === undefined) {
-    return 'â€”'
+    return '—'
   }
 
   if (typeof value === 'string') {
-    return value.trim() || 'â€”'
+    return value.trim() || '—'
   }
 
   if (typeof value === 'number' || typeof value === 'boolean') {
@@ -278,6 +385,7 @@ function buildCatalogueHref(params: {
   entity?: string | null
   search?: string | null
   type?: string | null
+  tab?: string | null
 }) {
   const query = new URLSearchParams()
 
@@ -293,19 +401,13 @@ function buildCatalogueHref(params: {
     query.set('type', params.type)
   }
 
+  if (params.tab) {
+    query.set('tab', params.tab)
+  }
+
   const queryString = query.toString()
 
   return queryString ? `/brain/catalog?${queryString}` : '/brain/catalog'
-}
-
-function getPriorityFields(record: CatalogueRecord) {
-  return priorityFieldKeys
-    .filter((key) => Object.prototype.hasOwnProperty.call(record, key))
-    .map((key) => [key, record[key]] as const)
-}
-
-function getRemainingFields(record: CatalogueRecord) {
-  return Object.entries(record).filter(([key]) => !priorityFieldKeys.includes(key))
 }
 
 function recordContainsExactValue(record: CatalogueRecord, selectedId: string) {
@@ -316,6 +418,19 @@ function recordContainsExactValue(record: CatalogueRecord, selectedId: string) {
 
     return value === selectedId
   })
+}
+
+function getRelationshipLabel(record: CatalogueRecord) {
+  return (
+    getFirstText(record, [
+      'relationship_type',
+      'relation_type',
+      'link_type',
+      'relationship',
+      'type',
+      'status',
+    ]) ?? 'relationship'
+  )
 }
 
 function getLinkedIds(record: CatalogueRecord, selectedId: string) {
@@ -333,17 +448,36 @@ function getLinkedIds(record: CatalogueRecord, selectedId: string) {
     }))
 }
 
-function getRelationshipLabel(record: CatalogueRecord) {
-  return (
-    getFirstText(record, [
-      'relationship_type',
-      'relation_type',
-      'link_type',
-      'relationship',
-      'type',
-      'status',
-    ]) ?? 'relationship'
-  )
+function getDisplayNameById(records: CatalogueRecord[], id: string) {
+  const match = records.find((record) => getRecordId(record) === id)
+
+  return match ? getEntityName(match) : id
+}
+
+function getMatchingRecordsFromLinks(
+  linkRows: CatalogueRecord[],
+  records: CatalogueRecord[],
+  selectedId: string,
+  keyIncludes: string[],
+) {
+  const matchedIds = new Set<string>()
+
+  for (const row of linkRows) {
+    for (const [key, value] of Object.entries(row)) {
+      const lowerKey = key.toLowerCase()
+      const matchesKey = keyIncludes.some((keyword) => lowerKey.includes(keyword))
+
+      if (matchesKey && isNonEmptyString(value) && value !== selectedId) {
+        matchedIds.add(value)
+      }
+    }
+  }
+
+  return records.filter((record) => {
+    const id = getRecordId(record)
+
+    return Boolean(id && matchedIds.has(id))
+  })
 }
 
 function getRawPayloadObject(record: CatalogueRecord) {
@@ -394,36 +528,109 @@ function getInventoryGroup(record: CatalogueRecord) {
   return null
 }
 
-function getMatchingRecordsFromLinks(
-  linkRows: CatalogueRecord[],
-  records: CatalogueRecord[],
-  selectedId: string,
-  keyIncludes: string[],
-) {
-  const matchedIds = new Set<string>()
-
-  for (const row of linkRows) {
-    for (const [key, value] of Object.entries(row)) {
-      const lowerKey = key.toLowerCase()
-      const matchesKey = keyIncludes.some((keyword) => lowerKey.includes(keyword))
-
-      if (matchesKey && isNonEmptyString(value) && value !== selectedId) {
-        matchedIds.add(value)
-      }
+function getTypeConfig(type: string | null): EntityTypeCard {
+  return (
+    entityTypeCards.find((item) => item.type === type) ?? {
+      type: type ?? 'unknown',
+      label: type ? getReadableLabel(type) : 'Unknown type',
+      description: 'Catalogue entity',
+      icon: Database,
+      cardClassName: 'border-sand/10 bg-[#F8FCFF]',
+      pillClassName: 'bg-[#123BFF] text-white',
+      iconClassName: 'bg-white text-[#123BFF]',
     }
-  }
-
-  return records.filter((record) => {
-    const id = getRecordId(record)
-
-    return Boolean(id && matchedIds.has(id))
-  })
+  )
 }
 
-function getDisplayNameById(records: CatalogueRecord[], id: string) {
-  const match = records.find((record) => getRecordId(record) === id)
+function getStatusPillClassName(value: string | null) {
+  if (!value) {
+    return 'bg-slate-100 text-slate-700'
+  }
 
-  return match ? getEntityName(match) : id
+  const normalised = value.toLowerCase()
+
+  if (
+    normalised.includes('verified') ||
+    normalised.includes('passed') ||
+    normalised.includes('ready') ||
+    normalised.includes('active')
+  ) {
+    return 'bg-emerald-50 text-emerald-700'
+  }
+
+  if (
+    normalised.includes('need') ||
+    normalised.includes('source') ||
+    normalised.includes('pending') ||
+    normalised.includes('review')
+  ) {
+    return 'bg-amber-50 text-amber-700'
+  }
+
+  if (
+    normalised.includes('failed') ||
+    normalised.includes('blocked') ||
+    normalised.includes('error')
+  ) {
+    return 'bg-red-50 text-red-700'
+  }
+
+  return 'bg-[#EAF7FF] text-[#123BFF]'
+}
+
+function getRelevancePillClassName(value: string | null) {
+  if (!value) {
+    return 'bg-slate-100 text-slate-700'
+  }
+
+  const normalised = value.toLowerCase()
+
+  if (normalised === 'high') {
+    return 'bg-emerald-50 text-emerald-700'
+  }
+
+  if (normalised === 'medium') {
+    return 'bg-amber-50 text-amber-700'
+  }
+
+  if (normalised === 'low') {
+    return 'bg-slate-100 text-slate-700'
+  }
+
+  return 'bg-[#EAF7FF] text-[#123BFF]'
+}
+
+function getOverviewFields(record: CatalogueRecord) {
+  return overviewFieldKeys
+    .filter((key) => Object.prototype.hasOwnProperty.call(record, key))
+    .map((key) => [key, record[key]] as const)
+    .filter(([, value]) => {
+      if (value === null || value === undefined) {
+        return false
+      }
+
+      if (typeof value === 'string') {
+        return value.trim().length > 0
+      }
+
+      return true
+    })
+}
+
+function getPriorityFields(record: CatalogueRecord) {
+  return priorityFieldKeys
+    .filter((key) => Object.prototype.hasOwnProperty.call(record, key))
+    .map((key) => [key, record[key]] as const)
+}
+
+function getRemainingFields(record: CatalogueRecord) {
+  return Object.entries(record).filter(([key]) => !priorityFieldKeys.includes(key))
+}
+
+function getUrlFields(record: CatalogueRecord) {
+  return urlFieldKeys
+    .map((key) => [key, record[key]] as const)
+    .filter(([, value]) => isNonEmptyString(value))
 }
 
 function getReadErrorMessage(error: unknown) {
@@ -443,10 +650,16 @@ function getReadErrorMessage(error: unknown) {
 }
 
 export default async function BrainCataloguePage({ searchParams }: CataloguePageProps) {
-  const resolvedSearchParams = await searchParams
-  const selectedEntityId = resolvedSearchParams?.entity ?? null
-  const searchQuery = resolvedSearchParams?.search?.trim() ?? ''
-  const typeFilter = resolvedSearchParams?.type?.trim() || null
+  const resolvedSearchParams = await Promise.resolve(searchParams ?? {})
+  const selectedEntityId = resolvedSearchParams.entity ?? null
+  const searchQuery = resolvedSearchParams.search?.trim() ?? ''
+  const typeFilter = resolvedSearchParams.type?.trim() || null
+  const selectedTab: DetailTabKey =
+    resolvedSearchParams.tab === 'training' ||
+    resolvedSearchParams.tab === 'relationships' ||
+    resolvedSearchParams.tab === 'fields'
+      ? resolvedSearchParams.tab
+      : 'overview'
 
   const supabase = await createClient()
 
@@ -465,7 +678,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
   }
 
   const liveCounts = await Promise.all(
-    catalogueCountCards.map(async (card) => {
+    countCards.map(async (card) => {
       const { count, error } = await supabase
         .from(card.table)
         .select('*', {
@@ -504,52 +717,6 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
   const comparisonGroups = (comparisonGroupsResult.data ?? []) as CatalogueRecord[]
   const entityComparisonGroupLinks = (entityComparisonGroupsResult.data ?? []) as CatalogueRecord[]
 
-  const catalogueTypes = Array.from(
-    new Set(
-      catalogueEntities
-        .map((record) => getEntityType(record))
-        .filter((value): value is string => Boolean(value)),
-    ),
-  ).sort((first, second) => first.localeCompare(second))
-
-  const filteredEntities = catalogueEntities
-    .filter((record) => recordMatchesSearch(record, searchQuery))
-    .filter((record) => recordMatchesType(record, typeFilter))
-    .slice(0, 120)
-
-  const selectedEntity =
-    catalogueEntities.find((record) => getRecordId(record) === selectedEntityId) ??
-    filteredEntities[0] ??
-    null
-
-  const selectedId = selectedEntity ? getRecordId(selectedEntity) : null
-
-  const selectedRelationshipLinks = selectedId
-    ? entityLinks.filter((record) => recordContainsExactValue(record, selectedId))
-    : []
-
-  const selectedCapabilityLinks = selectedId
-    ? entityCapabilityLinks.filter((record) => recordContainsExactValue(record, selectedId))
-    : []
-
-  const selectedComparisonLinks = selectedId
-    ? entityComparisonGroupLinks.filter((record) => recordContainsExactValue(record, selectedId))
-    : []
-
-  const selectedCapabilities = selectedId
-    ? getMatchingRecordsFromLinks(selectedCapabilityLinks, capabilities, selectedId, ['capability'])
-    : []
-
-  const selectedComparisonGroups = selectedId
-    ? getMatchingRecordsFromLinks(selectedComparisonLinks, comparisonGroups, selectedId, [
-        'comparison',
-        'group',
-      ])
-    : []
-
-  const totalCatalogueRows = liveCounts.reduce((total, item) => total + item.count, 0)
-  const readErrors = liveCounts.filter((item) => item.hasError).length
-
   const readErrorMessages = [
     ['Entities', entitiesResult.error],
     ['Entity links', entityLinksResult.error],
@@ -564,6 +731,101 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
       return message ? `${label}: ${message}` : null
     })
     .filter((message): message is string => Boolean(message))
+
+  const catalogueTypes = Array.from(
+    new Set(
+      catalogueEntities
+        .map((record) => getEntityType(record))
+        .filter((value): value is string => Boolean(value)),
+    ),
+  ).sort((first, second) => first.localeCompare(second))
+
+  const entityTypeCounts = catalogueEntities.reduce<Record<string, number>>((accumulator, record) => {
+    const type = getEntityType(record) ?? 'unknown'
+    accumulator[type] = (accumulator[type] ?? 0) + 1
+    return accumulator
+  }, {})
+
+  const filteredEntities = catalogueEntities
+    .filter((record) => recordMatchesSearch(record, searchQuery))
+    .filter((record) => recordMatchesType(record, typeFilter))
+    .slice(0, 120)
+
+  const selectedEntity =
+    catalogueEntities.find((record) => getRecordId(record) === selectedEntityId) ??
+    filteredEntities[0] ??
+    null
+
+  const selectedId = selectedEntity ? getRecordId(selectedEntity) : null
+  const selectedEntityType = selectedEntity ? getEntityType(selectedEntity) : null
+  const selectedTypeConfig = getTypeConfig(selectedEntityType)
+  const SelectedTypeIcon = selectedTypeConfig.icon
+  const selectedStatus = selectedEntity ? getEntityStatus(selectedEntity) : null
+  const selectedInventoryProfile = selectedEntity ? getModelInventoryProfile(selectedEntity) : null
+  const selectedInventoryGroup = selectedEntity ? getInventoryGroup(selectedEntity) : null
+  const selectedOverviewFields = selectedEntity ? getOverviewFields(selectedEntity) : []
+  const selectedUrlFields = selectedEntity ? getUrlFields(selectedEntity) : []
+  const selectedTrainingNotes = selectedEntity ? getFirstText(selectedEntity, ['training_notes']) : null
+  const selectedComparisonNotes = selectedEntity
+    ? getFirstText(selectedEntity, ['comparison_notes'])
+    : null
+  const selectedAcademyRelevance = selectedEntity
+    ? getFirstText(selectedEntity, ['academy_relevance'])
+    : null
+  const selectedBusinessRelevance = selectedEntity
+    ? getFirstText(selectedEntity, ['business_relevance'])
+    : null
+  const selectedSandboxRelevance = selectedEntity
+    ? getFirstText(selectedEntity, ['sandbox_relevance'])
+    : null
+
+  const selectedRelationshipLinks =
+    selectedId !== null
+      ? entityLinks.filter((record) => recordContainsExactValue(record, selectedId))
+      : []
+
+  const selectedCapabilityLinks =
+    selectedId !== null
+      ? entityCapabilityLinks.filter((record) => recordContainsExactValue(record, selectedId))
+      : []
+
+  const selectedComparisonLinks =
+    selectedId !== null
+      ? entityComparisonGroupLinks.filter((record) => recordContainsExactValue(record, selectedId))
+      : []
+
+  const selectedCapabilities =
+    selectedId !== null
+      ? getMatchingRecordsFromLinks(selectedCapabilityLinks, capabilities, selectedId, [
+          'capability',
+        ])
+      : []
+
+  const selectedComparisonGroups =
+    selectedId !== null
+      ? getMatchingRecordsFromLinks(selectedComparisonLinks, comparisonGroups, selectedId, [
+          'comparison',
+          'group',
+        ])
+      : []
+
+  const totalCatalogueRows = liveCounts.reduce((total, item) => total + item.count, 0)
+  const readErrors = liveCounts.filter((item) => item.hasError).length
+
+  const relevanceItems: Array<{ label: string; value: string | null }> = [
+    {
+      label: 'academy_relevance',
+      value: selectedAcademyRelevance,
+    },
+    {
+      label: 'business_relevance',
+      value: selectedBusinessRelevance,
+    },
+    {
+      label: 'sandbox_relevance',
+      value: selectedSandboxRelevance,
+    },
+  ]
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-obsidian px-4 py-8 text-sand sm:px-6 lg:px-8">
@@ -597,10 +859,9 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
               </h1>
 
               <p className="mt-5 max-w-3xl text-base leading-8 text-sand/65 sm:text-lg">
-                Search catalogue entities, open an individual entry, and inspect its raw fields,
-                relationship links, capability links, and comparison-group links. This is still a
-                private internal page, but it is structured like the future client-facing catalogue
-                experience.
+                Browse by entity type first, then narrow the index and open a clean entry view.
+                Each selected item prioritises summary and core facts, while deeper catalogue
+                detail sits behind tabs.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -623,7 +884,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
 
             <aside className="rounded-[2rem] bg-[#123BFF] p-6 text-white shadow-sm sm:p-8">
               <span className="inline-flex items-center gap-2 rounded-full bg-white/12 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white">
-                <BarChart3 className="h-4 w-4" aria-hidden="true" />
+                <Database className="h-4 w-4" aria-hidden="true" />
                 Live catalogue read
               </span>
 
@@ -649,9 +910,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                   <p className="mt-1 text-sm leading-6 text-white/75">
                     {readErrors === 0 && readErrorMessages.length === 0
                       ? 'All catalogue table count and index reads returned successfully.'
-                      : `${readErrors + readErrorMessages.length} catalogue read check${
-                          readErrors + readErrorMessages.length === 1 ? '' : 's'
-                        } need attention.`}
+                      : `${readErrors + readErrorMessages.length} catalogue read checks need attention.`}
                   </p>
                 </div>
               </div>
@@ -714,6 +973,86 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
           })}
         </section>
 
+        <section className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                <Route className="h-4 w-4" aria-hidden="true" />
+                Browse by entity type
+              </span>
+
+              <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
+                Start by choosing a catalogue layer.
+              </h2>
+
+              <p className="mt-4 text-base leading-8 text-sand/65">
+                Use the top-level catalogue types to jump straight into companies, platforms, model
+                families, or models before searching inside that slice.
+              </p>
+            </div>
+
+            <div className="rounded-3xl bg-[#EAF7FF] p-5 shadow-sm lg:max-w-sm">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF]">
+                Current browse mode
+              </p>
+              <p className="mt-3 text-2xl font-bold text-sand">
+                {typeFilter ? getReadableLabel(typeFilter) : 'All catalogue entities'}
+              </p>
+              <p className="mt-2 text-sm leading-7 text-sand/65">
+                Click a type card below to focus the index.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {entityTypeCards.map((definition) => {
+              const Icon = definition.icon
+              const isActive = typeFilter === definition.type
+
+              return (
+                <Link
+                  key={definition.type}
+                  href={buildCatalogueHref({
+                    type: definition.type,
+                  })}
+                  scroll={false}
+                  className={`block rounded-3xl border p-5 shadow-sm transition hover:-translate-y-0.5 ${
+                    definition.cardClassName
+                  } ${isActive ? 'ring-2 ring-[#123BFF]/30' : ''}`}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <span
+                      className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl ${definition.iconClassName}`}
+                    >
+                      <Icon className="h-6 w-6" aria-hidden="true" />
+                    </span>
+
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] ${definition.pillClassName}`}
+                    >
+                      {formatCount(entityTypeCounts[definition.type] ?? 0)}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-5 text-xl font-bold tracking-tight text-sand">
+                    {definition.label}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-7 text-sand/65">{definition.description}</p>
+
+                  <div className="mt-5">
+                    <span
+                      className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] ${definition.pillClassName}`}
+                    >
+                      {isActive ? 'Currently selected' : 'Browse this type'}
+                    </span>
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+        </section>
+
         <section className="mt-8 rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
@@ -727,8 +1066,8 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
               </h2>
 
               <p className="mt-4 text-base leading-8 text-sand/65">
-                Use the search and type filter to narrow the catalogue. Each item opens its own
-                detail space on this page using the entity ID in the URL.
+                Narrow the list with search and type filters, then open an entry. The detail panel
+                now shows basic information first, with deeper catalogue data organised into tabs.
               </p>
             </div>
 
@@ -753,7 +1092,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
               <input
                 name="search"
                 defaultValue={searchQuery}
-                placeholder="Search names, slugs, types, departments, notes..."
+                placeholder="Search names, slugs, providers, departments, notes..."
                 className="mt-2 w-full rounded-2xl border border-sand/10 bg-[#F8FCFF] px-4 py-3 text-sm font-semibold text-sand outline-none transition placeholder:text-sand/35 focus:border-[#123BFF]/40"
               />
             </label>
@@ -793,8 +1132,8 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
             </div>
           </form>
 
-          <div className="mt-8 grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-            <aside className="max-h-[44rem] overflow-y-auto rounded-3xl border border-sand/10 bg-[#F8FCFF] p-4">
+          <div className="mt-8 grid gap-6 lg:grid-cols-[0.78fr_1.22fr]">
+            <aside className="max-h-[52rem] overflow-y-auto rounded-3xl border border-sand/10 bg-[#F8FCFF] p-4">
               <div className="grid gap-3">
                 {filteredEntities.length > 0 ? (
                   filteredEntities.map((record) => {
@@ -802,6 +1141,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                     const isSelected = Boolean(id && selectedId === id)
                     const entityType = getEntityType(record)
                     const status = getEntityStatus(record)
+                    const typeConfig = getTypeConfig(entityType)
 
                     return (
                       <Link
@@ -810,6 +1150,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                           entity: id,
                           search: searchQuery || null,
                           type: typeFilter,
+                          tab: selectedTab,
                         })}
                         scroll={false}
                         className={`block rounded-2xl border p-4 transition ${
@@ -819,14 +1160,18 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                         }`}
                       >
                         <div className="flex flex-wrap items-center gap-2">
-                          {entityType ? (
-                            <span className="rounded-full bg-[#123BFF] px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.12em] text-white">
-                              {getReadableLabel(entityType)}
-                            </span>
-                          ) : null}
+                          <span
+                            className={`rounded-full px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.12em] ${typeConfig.pillClassName}`}
+                          >
+                            {getReadableLabel(entityType ?? 'entity')}
+                          </span>
 
                           {status ? (
-                            <span className="rounded-full bg-[#EAF7FF] px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.12em] text-[#123BFF]">
+                            <span
+                              className={`rounded-full px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.12em] ${getStatusPillClassName(
+                                status,
+                              )}`}
+                            >
                               {getReadableLabel(status)}
                             </span>
                           ) : null}
@@ -837,7 +1182,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                         </h3>
 
                         {getEntitySummary(record) ? (
-                          <p className="mt-2 line-clamp-3 text-xs leading-6 text-sand/60">
+                          <p className="mt-2 text-xs leading-6 text-sand/60">
                             {getEntitySummary(record)}
                           </p>
                         ) : null}
@@ -859,19 +1204,23 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
               {selectedEntity && selectedId ? (
                 <div>
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                    <div>
+                    <div className="max-w-3xl">
                       <div className="flex flex-wrap items-center gap-2">
-                        {getEntityType(selectedEntity) ? (
-                          <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
-                            <Database className="h-4 w-4" aria-hidden="true" />
-                            {getReadableLabel(getEntityType(selectedEntity) as string)}
-                          </span>
-                        ) : null}
+                        <span
+                          className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] ${selectedTypeConfig.pillClassName}`}
+                        >
+                          <SelectedTypeIcon className="h-4 w-4" aria-hidden="true" />
+                          {getReadableLabel(selectedEntityType ?? 'entity')}
+                        </span>
 
-                        {getEntityStatus(selectedEntity) ? (
-                          <span className="inline-flex items-center gap-2 rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                        {selectedStatus ? (
+                          <span
+                            className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] ${getStatusPillClassName(
+                              selectedStatus,
+                            )}`}
+                          >
                             <BadgeCheck className="h-4 w-4" aria-hidden="true" />
-                            {getReadableLabel(getEntityStatus(selectedEntity) as string)}
+                            {getReadableLabel(selectedStatus)}
                           </span>
                         ) : null}
                       </div>
@@ -882,76 +1231,15 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
 
                       <p className="mt-4 max-w-3xl text-sm leading-7 text-sand/65">
                         {getEntitySummary(selectedEntity) ??
-                          'This catalogue entry does not yet have a populated summary field. The raw field table below shows the available database values.'}
+                          'This catalogue entry does not yet have a populated summary field.'}
                       </p>
-
-                      {getModelInventoryProfile(selectedEntity) ? (
-                        <div className="mt-6 grid gap-3 rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5 sm:grid-cols-2">
-                          <div className="rounded-2xl bg-white p-4">
-                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                              Inventory group
-                            </p>
-                            <p className="mt-2 text-sm font-bold leading-7 text-sand">
-                              {getInventoryGroup(selectedEntity) ?? 'Unclassified model inventory'}
-                            </p>
-                          </div>
-
-                          <div className="rounded-2xl bg-white p-4">
-                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                              Profile status
-                            </p>
-                            <p className="mt-2 text-sm font-bold leading-7 text-sand">
-                              {getReadableLabel(
-                                getProfileText(
-                                  getModelInventoryProfile(selectedEntity),
-                                  'profile_status',
-                                ) ?? 'seeded_from_original_inventory',
-                              )}
-                            </p>
-                          </div>
-
-                          <div className="rounded-2xl bg-white p-4">
-                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                              Client visibility
-                            </p>
-                            <p className="mt-2 text-sm font-bold leading-7 text-sand">
-                              {getReadableLabel(
-                                getProfileText(
-                                  getModelInventoryProfile(selectedEntity),
-                                  'client_visibility',
-                                ) ?? 'private_internal',
-                              )}
-                            </p>
-                          </div>
-
-                          <div className="rounded-2xl bg-white p-4">
-                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                              Verification note
-                            </p>
-                            <p className="mt-2 text-sm font-bold leading-7 text-sand">
-                              {getProfileText(
-                                getModelInventoryProfile(selectedEntity),
-                                'verification_note',
-                              ) ?? 'Needs official source before public or client-facing publication.'}
-                            </p>
-                          </div>
-
-                          {isNonEmptyString(selectedEntity.training_notes) ? (
-                            <div className="rounded-2xl bg-white p-4 sm:col-span-2">
-                              <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                                Training notes
-                              </p>
-                              <p className="mt-2 text-sm font-semibold leading-7 text-sand/70">
-                                {selectedEntity.training_notes}
-                              </p>
-                            </div>
-                          ) : null}
-                        </div>
-                      ) : null}
                     </div>
 
                     <Link
-                      href="/brain/catalog"
+                      href={buildCatalogueHref({
+                        search: searchQuery || null,
+                        type: typeFilter,
+                      })}
                       scroll={false}
                       className="inline-flex items-center justify-center rounded-2xl border border-sand/10 bg-white px-5 py-3 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
                     >
@@ -966,185 +1254,411 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                       </p>
                       <h3 className="mt-2 text-sm font-bold text-sand">Relationship links</h3>
                       <p className="mt-2 text-xs leading-6 text-sand/60">
-                        Catalogue entity links connected to this entry.
+                        Connected rows in the catalogue relationship spine.
                       </p>
                     </article>
 
                     <article className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
                       <p className="text-2xl font-bold text-[#123BFF]">
-                        {formatCount(selectedCapabilityLinks.length)}
+                        {formatCount(selectedCapabilities.length)}
                       </p>
-                      <h3 className="mt-2 text-sm font-bold text-sand">Capability links</h3>
+                      <h3 className="mt-2 text-sm font-bold text-sand">Capabilities</h3>
                       <p className="mt-2 text-xs leading-6 text-sand/60">
-                        Capability records connected through the catalogue mapping table.
+                        Capability records resolved through the entity link tables.
                       </p>
                     </article>
 
                     <article className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
                       <p className="text-2xl font-bold text-[#123BFF]">
-                        {formatCount(selectedComparisonLinks.length)}
+                        {formatCount(selectedComparisonGroups.length)}
                       </p>
-                      <h3 className="mt-2 text-sm font-bold text-sand">Comparison links</h3>
+                      <h3 className="mt-2 text-sm font-bold text-sand">Comparison groups</h3>
                       <p className="mt-2 text-xs leading-6 text-sand/60">
-                        Comparison groups connected through the catalogue mapping table.
+                        Comparison group records resolved through the mapping tables.
                       </p>
                     </article>
                   </div>
 
-                  <div className="mt-8 grid gap-6 xl:grid-cols-2">
-                    <section className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
-                      <div className="flex items-center gap-3">
-                        <FileSearch className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
-                        <h3 className="text-lg font-bold text-sand">Primary fields</h3>
-                      </div>
+                  <div className="mt-8 flex flex-wrap gap-3 rounded-3xl border border-sand/10 bg-[#F8FCFF] p-3">
+                    {detailTabs.map((tab) => {
+                      const isActive = selectedTab === tab.key
 
-                      <dl className="mt-5 grid gap-3">
-                        {getPriorityFields(selectedEntity).map(([key, value]) => (
-                          <div key={key} className="rounded-2xl bg-white p-4">
-                            <dt className="text-xs font-bold uppercase tracking-[0.14em] text-sand/50">
-                              {getReadableLabel(key)}
-                            </dt>
-                            <dd className="mt-2 whitespace-pre-wrap break-words text-sm font-semibold leading-7 text-sand">
-                              {formatValue(value)}
-                            </dd>
+                      return (
+                        <Link
+                          key={tab.key}
+                          href={buildCatalogueHref({
+                            entity: selectedId,
+                            search: searchQuery || null,
+                            type: typeFilter,
+                            tab: tab.key,
+                          })}
+                          scroll={false}
+                          className={`inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-bold transition ${
+                            isActive
+                              ? 'bg-[#123BFF] text-white shadow-sm'
+                              : 'bg-white text-sand hover:text-[#123BFF]'
+                          }`}
+                        >
+                          {tab.label}
+                        </Link>
+                      )
+                    })}
+                  </div>
+
+                  {selectedTab === 'overview' ? (
+                    <div className="mt-8 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+                      <section className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
+                        <div className="flex items-center gap-3">
+                          <FileSearch className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
+                          <h3 className="text-lg font-bold text-sand">Basic information</h3>
+                        </div>
+
+                        <dl className="mt-5 grid gap-3 sm:grid-cols-2">
+                          {selectedOverviewFields.length > 0 ? (
+                            selectedOverviewFields.map(([key, value]) => {
+                              const formatted = formatValue(value)
+                              const isStatusLike = [
+                                'tracking_status',
+                                'verification_status',
+                                'source_status',
+                              ].includes(key)
+
+                              return (
+                                <div key={key} className="rounded-2xl bg-white p-4">
+                                  <dt className="text-xs font-bold uppercase tracking-[0.14em] text-sand/50">
+                                    {getReadableLabel(key)}
+                                  </dt>
+
+                                  <dd className="mt-2 break-words text-sm font-semibold leading-7 text-sand">
+                                    {isStatusLike ? (
+                                      <span
+                                        className={`inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] ${getStatusPillClassName(
+                                          formatted === '—' ? null : formatted,
+                                        )}`}
+                                      >
+                                        {formatted}
+                                      </span>
+                                    ) : (
+                                      formatted
+                                    )}
+                                  </dd>
+                                </div>
+                              )
+                            })
+                          ) : (
+                            <div className="rounded-2xl bg-white p-4 sm:col-span-2">
+                              <p className="text-sm leading-7 text-sand/65">
+                                No overview fields are currently available for this entry.
+                              </p>
+                            </div>
+                          )}
+                        </dl>
+                      </section>
+
+                      <section className="grid gap-6">
+                        <article className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
+                          <div className="flex items-center gap-3">
+                            <Link2 className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
+                            <h3 className="text-lg font-bold text-sand">Official links</h3>
                           </div>
-                        ))}
-                      </dl>
-                    </section>
 
-                    <section className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
-                      <div className="flex items-center gap-3">
-                        <Sparkles className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
-                        <h3 className="text-lg font-bold text-sand">Connected training context</h3>
-                      </div>
-
-                      <div className="mt-5 grid gap-4">
-                        <div className="rounded-2xl bg-white p-4">
-                          <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                            Capabilities
-                          </p>
-
-                          {selectedCapabilities.length > 0 ? (
-                            <div className="mt-3 flex flex-wrap gap-2">
-                              {selectedCapabilities.map((record) => (
-                                <span
-                                  key={getRecordId(record) ?? getEntityName(record)}
-                                  className="rounded-full bg-[#EAF7FF] px-3 py-1 text-xs font-bold text-[#123BFF]"
-                                >
-                                  {getEntityName(record)}
-                                </span>
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="mt-3 text-sm leading-7 text-sand/65">
-                              No capability records were resolved from the current link rows.
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="rounded-2xl bg-white p-4">
-                          <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                            Comparison groups
-                          </p>
-
-                          {selectedComparisonGroups.length > 0 ? (
-                            <div className="mt-3 flex flex-wrap gap-2">
-                              {selectedComparisonGroups.map((record) => (
-                                <span
-                                  key={getRecordId(record) ?? getEntityName(record)}
-                                  className="rounded-full bg-[#EAF7FF] px-3 py-1 text-xs font-bold text-[#123BFF]"
-                                >
-                                  {getEntityName(record)}
-                                </span>
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="mt-3 text-sm leading-7 text-sand/65">
-                              No comparison group records were resolved from the current link rows.
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="rounded-2xl bg-white p-4">
-                          <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                            Next content layer
-                          </p>
-                          <p className="mt-3 text-sm leading-7 text-sand/65">
-                            This entry space can later expand into client-only detail pages with
-                            source-backed summaries, capabilities, limitations, lessons, sandbox
-                            tasks, comparison pages, and business training implications.
-                          </p>
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-
-                  <section className="mt-8 rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
-                    <div className="flex items-center gap-3">
-                      <Link2 className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
-                      <h3 className="text-lg font-bold text-sand">Relationship rows</h3>
-                    </div>
-
-                    {selectedRelationshipLinks.length > 0 ? (
-                      <div className="mt-5 grid gap-3">
-                        {selectedRelationshipLinks.slice(0, 24).map((record, index) => (
-                          <article
-                            key={`${getRelationshipLabel(record)}-${index}`}
-                            className="rounded-2xl bg-white p-4"
-                          >
-                            <p className="text-sm font-bold text-sand">
-                              {getReadableLabel(getRelationshipLabel(record))}
-                            </p>
-
-                            <div className="mt-3 grid gap-2">
-                              {getLinkedIds(record, selectedId).map((linkedItem) => (
-                                <p
-                                  key={`${linkedItem.key}-${linkedItem.value}`}
-                                  className="break-words text-xs leading-6 text-sand/65"
-                                >
-                                  <span className="font-bold text-sand">
-                                    {getReadableLabel(linkedItem.key)}:
-                                  </span>{' '}
-                                  {getDisplayNameById(catalogueEntities, linkedItem.value)}
+                          <div className="mt-5 grid gap-3">
+                            {selectedUrlFields.length > 0 ? (
+                              selectedUrlFields.map(([key, value]) => (
+                                <div key={key} className="rounded-2xl bg-white p-4">
+                                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-sand/50">
+                                    {getReadableLabel(key)}
+                                  </p>
+                                  <a
+                                    href={String(value)}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="mt-2 block break-words text-sm font-semibold leading-7 text-[#123BFF] underline decoration-[#123BFF]/30 underline-offset-4"
+                                  >
+                                    {String(value)}
+                                  </a>
+                                </div>
+                              ))
+                            ) : (
+                              <div className="rounded-2xl bg-white p-4">
+                                <p className="text-sm leading-7 text-sand/65">
+                                  No official links are currently attached to this entry.
                                 </p>
-                              ))}
-                            </div>
-                          </article>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="mt-5 rounded-2xl bg-white p-4 text-sm leading-7 text-sand/65">
-                        No relationship rows are currently linked to this catalogue entry.
-                      </p>
-                    )}
-                  </section>
-
-                  <details className="mt-8 rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
-                    <summary className="cursor-pointer text-lg font-bold text-sand">
-                      Raw remaining fields
-                    </summary>
-
-                    <dl className="mt-5 grid gap-3">
-                      {getRemainingFields(selectedEntity).length > 0 ? (
-                        getRemainingFields(selectedEntity).map(([key, value]) => (
-                          <div key={key} className="rounded-2xl bg-white p-4">
-                            <dt className="text-xs font-bold uppercase tracking-[0.14em] text-sand/50">
-                              {getReadableLabel(key)}
-                            </dt>
-                            <dd className="mt-2 whitespace-pre-wrap break-words text-sm font-semibold leading-7 text-sand">
-                              {formatValue(value)}
-                            </dd>
+                              </div>
+                            )}
                           </div>
-                        ))
-                      ) : (
-                        <div className="rounded-2xl bg-white p-4">
-                          <p className="text-sm leading-7 text-sand/65">
-                            No additional fields are available for this entry.
-                          </p>
+                        </article>
+
+                        <article className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
+                          <div className="flex items-center gap-3">
+                            <Sparkles className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
+                            <h3 className="text-lg font-bold text-sand">Quick catalogue note</h3>
+                          </div>
+
+                          <div className="mt-5 rounded-2xl bg-white p-4">
+                            <p className="text-sm leading-7 text-sand/65">
+                              {selectedComparisonNotes ??
+                                'No comparison note is currently attached to this catalogue entry.'}
+                            </p>
+                          </div>
+                        </article>
+                      </section>
+                    </div>
+                  ) : null}
+
+                  {selectedTab === 'training' ? (
+                    <div className="mt-8 grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+                      <section className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
+                        <div className="flex items-center gap-3">
+                          <Sparkles className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
+                          <h3 className="text-lg font-bold text-sand">Training profile</h3>
                         </div>
+
+                        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                          <div className="rounded-2xl bg-white p-4">
+                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                              Inventory group
+                            </p>
+                            <p className="mt-2 text-sm font-bold leading-7 text-sand">
+                              {selectedInventoryGroup ?? 'No inventory group recorded'}
+                            </p>
+                          </div>
+
+                          <div className="rounded-2xl bg-white p-4">
+                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                              Profile status
+                            </p>
+                            <p className="mt-2 text-sm font-bold leading-7 text-sand">
+                              {getReadableLabel(
+                                getProfileText(selectedInventoryProfile, 'profile_status') ??
+                                  'not specified',
+                              )}
+                            </p>
+                          </div>
+
+                          <div className="rounded-2xl bg-white p-4">
+                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                              Client visibility
+                            </p>
+                            <p className="mt-2 text-sm font-bold leading-7 text-sand">
+                              {getReadableLabel(
+                                getProfileText(selectedInventoryProfile, 'client_visibility') ??
+                                  'not specified',
+                              )}
+                            </p>
+                          </div>
+
+                          <div className="rounded-2xl bg-white p-4">
+                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                              Verification note
+                            </p>
+                            <p className="mt-2 text-sm font-semibold leading-7 text-sand/70">
+                              {getProfileText(selectedInventoryProfile, 'verification_note') ??
+                                'No verification note is currently attached.'}
+                            </p>
+                          </div>
+
+                          <div className="rounded-2xl bg-white p-4 sm:col-span-2">
+                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                              Training notes
+                            </p>
+                            <p className="mt-2 text-sm font-semibold leading-7 text-sand/70">
+                              {selectedTrainingNotes ??
+                                'No training note is currently attached to this entry.'}
+                            </p>
+                          </div>
+                        </div>
+                      </section>
+
+                      <section className="grid gap-6">
+                        <article className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
+                          <div className="flex items-center gap-3">
+                            <BadgeCheck className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
+                            <h3 className="text-lg font-bold text-sand">Relevance markers</h3>
+                          </div>
+
+                          <div className="mt-5 grid gap-3">
+                            {relevanceItems.map((item) => (
+                              <div key={item.label} className="rounded-2xl bg-white p-4">
+                                <p className="text-xs font-bold uppercase tracking-[0.14em] text-sand/50">
+                                  {getReadableLabel(item.label)}
+                                </p>
+                                <div className="mt-2">
+                                  <span
+                                    className={`inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] ${getRelevancePillClassName(
+                                      item.value,
+                                    )}`}
+                                  >
+                                    {item.value ? getReadableLabel(item.value) : 'Not specified'}
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </article>
+
+                        <article className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
+                          <div className="flex items-center gap-3">
+                            <Network className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
+                            <h3 className="text-lg font-bold text-sand">
+                              Connected training context
+                            </h3>
+                          </div>
+
+                          <div className="mt-5 grid gap-4">
+                            <div className="rounded-2xl bg-white p-4">
+                              <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                                Capabilities
+                              </p>
+
+                              {selectedCapabilities.length > 0 ? (
+                                <div className="mt-3 flex flex-wrap gap-2">
+                                  {selectedCapabilities.map((record) => (
+                                    <span
+                                      key={getRecordId(record) ?? getEntityName(record)}
+                                      className="rounded-full bg-[#EAF7FF] px-3 py-1 text-xs font-bold text-[#123BFF]"
+                                    >
+                                      {getEntityName(record)}
+                                    </span>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="mt-3 text-sm leading-7 text-sand/65">
+                                  No capability records were resolved from the current link rows.
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="rounded-2xl bg-white p-4">
+                              <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                                Comparison groups
+                              </p>
+
+                              {selectedComparisonGroups.length > 0 ? (
+                                <div className="mt-3 flex flex-wrap gap-2">
+                                  {selectedComparisonGroups.map((record) => (
+                                    <span
+                                      key={getRecordId(record) ?? getEntityName(record)}
+                                      className="rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700"
+                                    >
+                                      {getEntityName(record)}
+                                    </span>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="mt-3 text-sm leading-7 text-sand/65">
+                                  No comparison group records were resolved from the current link
+                                  rows.
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </article>
+                      </section>
+                    </div>
+                  ) : null}
+
+                  {selectedTab === 'relationships' ? (
+                    <section className="mt-8 rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
+                      <div className="flex items-center gap-3">
+                        <Link2 className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
+                        <h3 className="text-lg font-bold text-sand">Relationship rows</h3>
+                      </div>
+
+                      {selectedRelationshipLinks.length > 0 ? (
+                        <div className="mt-5 grid gap-3">
+                          {selectedRelationshipLinks.slice(0, 36).map((record, index) => (
+                            <article
+                              key={`${getRelationshipLabel(record)}-${index}`}
+                              className="rounded-2xl bg-white p-4"
+                            >
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="rounded-full bg-[#123BFF] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-white">
+                                  {getReadableLabel(getRelationshipLabel(record))}
+                                </span>
+                              </div>
+
+                              <div className="mt-4 grid gap-2">
+                                {getLinkedIds(record, selectedId).length > 0 ? (
+                                  getLinkedIds(record, selectedId).map((linkedItem) => (
+                                    <p
+                                      key={`${linkedItem.key}-${linkedItem.value}`}
+                                      className="break-words text-sm leading-7 text-sand/65"
+                                    >
+                                      <span className="font-bold text-sand">
+                                        {getReadableLabel(linkedItem.key)}:
+                                      </span>{' '}
+                                      {getDisplayNameById(catalogueEntities, linkedItem.value)}
+                                    </p>
+                                  ))
+                                ) : (
+                                  <p className="text-sm leading-7 text-sand/65">
+                                    No secondary linked entity IDs were detected in this row.
+                                  </p>
+                                )}
+                              </div>
+                            </article>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="mt-5 rounded-2xl bg-white p-4 text-sm leading-7 text-sand/65">
+                          No relationship rows are currently linked to this catalogue entry.
+                        </p>
                       )}
-                    </dl>
-                  </details>
+                    </section>
+                  ) : null}
+
+                  {selectedTab === 'fields' ? (
+                    <div className="mt-8 grid gap-6 xl:grid-cols-2">
+                      <section className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
+                        <div className="flex items-center gap-3">
+                          <FileSearch className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
+                          <h3 className="text-lg font-bold text-sand">Primary fields</h3>
+                        </div>
+
+                        <dl className="mt-5 grid gap-3">
+                          {getPriorityFields(selectedEntity).map(([key, value]) => (
+                            <div key={key} className="rounded-2xl bg-white p-4">
+                              <dt className="text-xs font-bold uppercase tracking-[0.14em] text-sand/50">
+                                {getReadableLabel(key)}
+                              </dt>
+                              <dd className="mt-2 whitespace-pre-wrap break-words text-sm font-semibold leading-7 text-sand">
+                                {formatValue(value)}
+                              </dd>
+                            </div>
+                          ))}
+                        </dl>
+                      </section>
+
+                      <section className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
+                        <div className="flex items-center gap-3">
+                          <Database className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
+                          <h3 className="text-lg font-bold text-sand">Raw remaining fields</h3>
+                        </div>
+
+                        <dl className="mt-5 grid gap-3">
+                          {getRemainingFields(selectedEntity).length > 0 ? (
+                            getRemainingFields(selectedEntity).map(([key, value]) => (
+                              <div key={key} className="rounded-2xl bg-white p-4">
+                                <dt className="text-xs font-bold uppercase tracking-[0.14em] text-sand/50">
+                                  {getReadableLabel(key)}
+                                </dt>
+                                <dd className="mt-2 whitespace-pre-wrap break-words text-sm font-semibold leading-7 text-sand">
+                                  {formatValue(value)}
+                                </dd>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="rounded-2xl bg-white p-4">
+                              <p className="text-sm leading-7 text-sand/65">
+                                No additional fields are available for this entry.
+                              </p>
+                            </div>
+                          )}
+                        </dl>
+                      </section>
+                    </div>
+                  ) : null}
                 </div>
               ) : (
                 <div className="rounded-3xl bg-[#F8FCFF] p-6">
@@ -1172,9 +1686,10 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
             </h2>
 
             <p className="mt-4 text-sm leading-7 text-sand/65">
-              This private index gives every catalogue entry a browsable space now. Later, those
-              spaces can become polished client-only pages with verified summaries, tool details,
-              model context, lessons, sandbox tasks, source confidence, and business relevance.
+              This private index gives every catalogue entry a structured browsable space now.
+              Later, those spaces can become polished client-only pages with verified summaries,
+              tool details, model context, lessons, sandbox tasks, source confidence, and business
+              relevance.
             </p>
           </article>
 
@@ -1190,7 +1705,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
 
             <p className="mt-4 text-sm leading-7 text-white/82">
               The current page uses URL query selection for safety and speed. The next route layer
-              can split each entity into a proper detail route when the final public/client-only
+              can split each entity into a proper detail route when the final public or client-only
               catalogue structure is ready.
             </p>
           </article>
