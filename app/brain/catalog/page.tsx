@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import {
@@ -763,6 +763,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                           search: searchQuery || null,
                           type: typeFilter,
                         })}
+                        scroll={false}
                         className={`block rounded-2xl border p-4 transition ${
                           isSelected
                             ? 'border-[#123BFF]/40 bg-[#EAF7FF] shadow-sm'
@@ -839,6 +840,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
 
                     <Link
                       href="/brain/catalog"
+                      scroll={false}
                       className="inline-flex items-center justify-center rounded-2xl border border-sand/10 bg-white px-5 py-3 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
                     >
                       Clear selection
