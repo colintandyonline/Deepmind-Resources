@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import { BrainSourceCreateForm } from '@/components/brain/brain-source-create-form'
 import { AiDiscoveryCreateForm } from '@/components/brain/ai-discovery-create-form'
+import { AiDiscoveryActionButton } from '@/components/brain/ai-discovery-action-button'
 import { CheckFeedButton } from '@/components/brain/check-feed-button'
 import { SourceSignalActionButton } from '@/components/brain/source-signal-action-button'
 import { SourceSignalScoutButton } from '@/components/brain/source-signal-scout-button'
@@ -1150,6 +1151,33 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                         </p>
                       </div>
                     ) : null}
+
+                    <div className="mt-5 flex flex-wrap gap-3">
+                      <AiDiscoveryActionButton
+                        discoveryItemId={item.id}
+                        action="worth_tracking"
+                        disabled={item.discovery_status === 'worth_tracking'}
+                      />
+
+                      <AiDiscoveryActionButton
+                        discoveryItemId={item.id}
+                        action="reject_hype"
+                        disabled={item.discovery_status === 'rejected_hype'}
+                      />
+
+                      <AiDiscoveryActionButton
+                        discoveryItemId={item.id}
+                        action="mark_duplicate"
+                        disabled={item.discovery_status === 'duplicate'}
+                      />
+
+                      {item.discovery_status !== 'needs_official_source' ? (
+                        <AiDiscoveryActionButton
+                          discoveryItemId={item.id}
+                          action="needs_official_source"
+                        />
+                      ) : null}
+                    </div>
 
                     {item.official_source_url || item.website_url || item.discovered_url ? (
                       <a
