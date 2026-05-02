@@ -527,6 +527,31 @@ function getLinkedModelsForTopLevelFamily(
     .sort((first, second) => getEntityName(first).localeCompare(getEntityName(second)))
 }
 
+function getLinkedModelsForCompany(
+  linkRows: CatalogueRecord[],
+  records: CatalogueRecord[],
+  selectedId: string,
+) {
+  const linkedModelIds = linkRows
+    .filter((row) => {
+      return (
+        getFirstText(row, ['link_type']) === 'company_develops_model' &&
+        row.source_entity_id === selectedId &&
+        isNonEmptyString(row.target_entity_id)
+      )
+    })
+    .map((row) => row.target_entity_id as string)
+
+  const linkedModelIdSet = new Set(linkedModelIds)
+
+  return records
+    .filter((record) => {
+      const id = getRecordId(record)
+
+      return Boolean(id && linkedModelIdSet.has(id) && getEntityType(record) === 'model')
+    })
+    .sort((first, second) => getEntityName(first).localeCompare(getEntityName(second)))
+}
 function getRawPayloadObject(record: CatalogueRecord) {
   const value = record.raw_payload
 
@@ -914,7 +939,9 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
   const selectedLinkedModels =
     selectedId !== null && selectedEntity && isTopLevelModelFamily(selectedEntity)
       ? getLinkedModelsForTopLevelFamily(entityLinks, catalogueEntities, selectedId)
-      : []
+      : selectedId !== null && selectedEntityType === 'company'
+        ? getLinkedModelsForCompany(entityLinks, catalogueEntities, selectedId)
+        : []
 
   const totalCatalogueRows = liveCounts.reduce((total, item) => total + item.count, 0)
   const readErrors = liveCounts.filter((item) => item.hasError).length
@@ -1643,11 +1670,11 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                             <div>
                               <div className="flex items-center gap-3">
                                 <Bot className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
-                                <h3 className="text-lg font-bold text-sand">Models in this family</h3>
+                                <h3 className="text-lg font-bold text-sand">{selectedEntityType === 'company' ? 'Models from this company' : 'Models in this family'}</h3>
                               </div>
 
                               <p className="mt-3 max-w-3xl text-sm leading-7 text-sand/65">
-                                These are the individual model entries linked to this top-level catalogue family.
+                                {selectedEntityType === 'company' ? 'These are the individual model entries linked to this company through the catalogue relationship spine.' : 'These are the individual model entries linked to this top-level catalogue family.'}
                               </p>
                             </div>
 
@@ -2141,5 +2168,6 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
     </main>
   )
 }
+
 
 
