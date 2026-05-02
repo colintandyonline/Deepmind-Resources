@@ -232,11 +232,11 @@ function getReadableLabel(value: string) {
 
 function formatValue(value: unknown) {
   if (value === null || value === undefined) {
-    return '—'
+    return 'â€”'
   }
 
   if (typeof value === 'string') {
-    return value.trim() || '—'
+    return value.trim() || 'â€”'
   }
 
   if (typeof value === 'number' || typeof value === 'boolean') {
@@ -344,6 +344,54 @@ function getRelationshipLabel(record: CatalogueRecord) {
       'status',
     ]) ?? 'relationship'
   )
+}
+
+function getRawPayloadObject(record: CatalogueRecord) {
+  const value = record.raw_payload
+
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    return value as Record<string, unknown>
+  }
+
+  return null
+}
+
+function getModelInventoryProfile(record: CatalogueRecord) {
+  const rawPayload = getRawPayloadObject(record)
+  const value = rawPayload?.model_inventory_profile
+
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    return value as Record<string, unknown>
+  }
+
+  return null
+}
+
+function getProfileText(profile: Record<string, unknown> | null, key: string) {
+  if (!profile) {
+    return null
+  }
+
+  const value = profile[key]
+
+  return isNonEmptyString(value) ? value.trim() : null
+}
+
+function getInventoryGroup(record: CatalogueRecord) {
+  const profile = getModelInventoryProfile(record)
+  const profileGroup = getProfileText(profile, 'inventory_group')
+
+  if (profileGroup) {
+    return profileGroup
+  }
+
+  const comparisonNotes = getFirstText(record, ['comparison_notes'])
+
+  if (comparisonNotes?.startsWith('Inventory group: ')) {
+    return comparisonNotes.replace('Inventory group: ', '').trim()
+  }
+
+  return null
 }
 
 function getMatchingRecordsFromLinks(
@@ -836,6 +884,70 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                         {getEntitySummary(selectedEntity) ??
                           'This catalogue entry does not yet have a populated summary field. The raw field table below shows the available database values.'}
                       </p>
+
+                      {getModelInventoryProfile(selectedEntity) ? (
+                        <div className="mt-6 grid gap-3 rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5 sm:grid-cols-2">
+                          <div className="rounded-2xl bg-white p-4">
+                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                              Inventory group
+                            </p>
+                            <p className="mt-2 text-sm font-bold leading-7 text-sand">
+                              {getInventoryGroup(selectedEntity) ?? 'Unclassified model inventory'}
+                            </p>
+                          </div>
+
+                          <div className="rounded-2xl bg-white p-4">
+                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                              Profile status
+                            </p>
+                            <p className="mt-2 text-sm font-bold leading-7 text-sand">
+                              {getReadableLabel(
+                                getProfileText(
+                                  getModelInventoryProfile(selectedEntity),
+                                  'profile_status',
+                                ) ?? 'seeded_from_original_inventory',
+                              )}
+                            </p>
+                          </div>
+
+                          <div className="rounded-2xl bg-white p-4">
+                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                              Client visibility
+                            </p>
+                            <p className="mt-2 text-sm font-bold leading-7 text-sand">
+                              {getReadableLabel(
+                                getProfileText(
+                                  getModelInventoryProfile(selectedEntity),
+                                  'client_visibility',
+                                ) ?? 'private_internal',
+                              )}
+                            </p>
+                          </div>
+
+                          <div className="rounded-2xl bg-white p-4">
+                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                              Verification note
+                            </p>
+                            <p className="mt-2 text-sm font-bold leading-7 text-sand">
+                              {getProfileText(
+                                getModelInventoryProfile(selectedEntity),
+                                'verification_note',
+                              ) ?? 'Needs official source before public or client-facing publication.'}
+                            </p>
+                          </div>
+
+                          {isNonEmptyString(selectedEntity.training_notes) ? (
+                            <div className="rounded-2xl bg-white p-4 sm:col-span-2">
+                              <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
+                                Training notes
+                              </p>
+                              <p className="mt-2 text-sm font-semibold leading-7 text-sand/70">
+                                {selectedEntity.training_notes}
+                              </p>
+                            </div>
+                          ) : null}
+                        </div>
+                      ) : null}
                     </div>
 
                     <Link
