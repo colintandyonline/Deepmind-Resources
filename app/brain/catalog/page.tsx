@@ -339,11 +339,11 @@ function getEntityStatus(record: CatalogueRecord) {
 
 function formatValue(value: unknown) {
   if (value === null || value === undefined) {
-    return '—'
+    return 'â€”'
   }
 
   if (typeof value === 'string') {
-    return value.trim() || '—'
+    return value.trim() || 'â€”'
   }
 
   if (typeof value === 'number' || typeof value === 'boolean') {
@@ -373,9 +373,30 @@ function recordMatchesSearch(record: CatalogueRecord, searchQuery: string) {
   return getSearchableText(record).includes(searchQuery.trim().toLowerCase())
 }
 
+function isTopLevelModelFamily(record: CatalogueRecord) {
+  return (
+    getEntityType(record) === 'model_family' &&
+    getFirstText(record, ['source_group']) === 'top_level_model_inventory_group'
+  )
+}
+
+function isBrowsableCatalogueEntity(record: CatalogueRecord) {
+  const entityType = getEntityType(record)
+
+  if (entityType === 'model_family') {
+    return isTopLevelModelFamily(record)
+  }
+
+  return entityType === 'company' || entityType === 'platform' || entityType === 'model'
+}
+
 function recordMatchesType(record: CatalogueRecord, typeFilter: string | null) {
   if (!typeFilter) {
-    return true
+    return isBrowsableCatalogueEntity(record)
+  }
+
+  if (typeFilter === 'model_family') {
+    return isTopLevelModelFamily(record)
   }
 
   return getEntityType(record) === typeFilter
@@ -732,21 +753,28 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
     })
     .filter((message): message is string => Boolean(message))
 
+  const browsableCatalogueEntities = catalogueEntities.filter((record) =>
+    isBrowsableCatalogueEntity(record),
+  )
+
   const catalogueTypes = Array.from(
     new Set(
-      catalogueEntities
+      browsableCatalogueEntities
         .map((record) => getEntityType(record))
         .filter((value): value is string => Boolean(value)),
     ),
   ).sort((first, second) => first.localeCompare(second))
 
-  const entityTypeCounts = catalogueEntities.reduce<Record<string, number>>((accumulator, record) => {
-    const type = getEntityType(record) ?? 'unknown'
-    accumulator[type] = (accumulator[type] ?? 0) + 1
-    return accumulator
-  }, {})
+  const entityTypeCounts = browsableCatalogueEntities.reduce<Record<string, number>>(
+    (accumulator, record) => {
+      const type = getEntityType(record) ?? 'unknown'
+      accumulator[type] = (accumulator[type] ?? 0) + 1
+      return accumulator
+    },
+    {},
+  )
 
-  const filteredEntities = catalogueEntities
+  const filteredEntities = browsableCatalogueEntities
     .filter((record) => recordMatchesSearch(record, searchQuery))
     .filter((record) => recordMatchesType(record, typeFilter))
     .slice(0, 120)
@@ -1076,10 +1104,10 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                 Showing
               </p>
               <p className="mt-3 text-2xl font-bold text-sand">
-                {formatCount(filteredEntities.length)} of {formatCount(catalogueEntities.length)}
+                {formatCount(filteredEntities.length)} of {formatCount(browsableCatalogueEntities.length)}
               </p>
               <p className="mt-2 text-sm leading-7 text-sand/65">
-                The page reads up to 1,000 catalogue entities for this private index view.
+                The index shows browsable companies, platforms, top-level model families, and models.
               </p>
             </div>
           </div>
@@ -1333,7 +1361,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                                     {isStatusLike ? (
                                       <span
                                         className={`inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] ${getStatusPillClassName(
-                                          formatted === '—' ? null : formatted,
+                                          formatted === 'â€”' ? null : formatted,
                                         )}`}
                                       >
                                         {formatted}
