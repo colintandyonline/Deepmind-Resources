@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import type { LucideIcon } from 'lucide-react'
@@ -339,11 +339,11 @@ function getEntityStatus(record: CatalogueRecord) {
 
 function formatValue(value: unknown) {
   if (value === null || value === undefined) {
-    return 'Ã¢â‚¬â€'
+    return 'ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â'
   }
 
   if (typeof value === 'string') {
-    return value.trim() || 'Ã¢â‚¬â€'
+    return value.trim() || 'ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â'
   }
 
   if (typeof value === 'number' || typeof value === 'boolean') {
@@ -680,6 +680,54 @@ function getUrlFields(record: CatalogueRecord) {
     .filter(([, value]) => isNonEmptyString(value))
 }
 
+function getCompanyEnrichment(record: CatalogueRecord) {
+  const rawPayload = getRawPayloadObject(record)
+  const value = rawPayload?.company_enrichment_basic
+
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    return value as Record<string, unknown>
+  }
+
+  return null
+}
+
+function getPayloadText(payload: Record<string, unknown> | null, key: string) {
+  if (!payload) {
+    return null
+  }
+
+  const value = payload[key]
+
+  return isNonEmptyString(value) ? value.trim() : null
+}
+
+function getCompanyConfidencePillClassName(value: string | null) {
+  if (value === 'high') {
+    return 'bg-emerald-50 text-emerald-700'
+  }
+
+  if (value === 'medium') {
+    return 'bg-amber-50 text-amber-700'
+  }
+
+  if (value === 'low') {
+    return 'bg-red-50 text-red-700'
+  }
+
+  return 'bg-slate-100 text-slate-700'
+}
+
+function getPublicationPillClassName(value: string | null) {
+  if (value === 'true') {
+    return 'bg-emerald-50 text-emerald-700'
+  }
+
+  if (value === 'false') {
+    return 'bg-amber-50 text-amber-700'
+  }
+
+  return 'bg-slate-100 text-slate-700'
+}
 function getReadErrorMessage(error: unknown) {
   if (!error) {
     return null
@@ -885,6 +933,35 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
       value: selectedSandboxRelevance,
     },
   ]
+  const selectedCompanyEnrichment =
+    selectedEntity && selectedEntityType === 'company'
+      ? getCompanyEnrichment(selectedEntity)
+      : null
+
+  const selectedCompanyOfficialUrl =
+    getPayloadText(selectedCompanyEnrichment, 'official_url') ??
+    (selectedEntity ? getFirstText(selectedEntity, ['official_site_url']) : null)
+
+  const selectedCompanyDescription =
+    getPayloadText(selectedCompanyEnrichment, 'description') ??
+    (selectedEntity ? getEntitySummary(selectedEntity) : null)
+
+  const selectedCompanyLatestRelease = getPayloadText(
+    selectedCompanyEnrichment,
+    'latest_release_or_update',
+  )
+
+  const selectedCompanyLatestReleaseUrl = getPayloadText(
+    selectedCompanyEnrichment,
+    'latest_release_url',
+  )
+
+  const selectedCompanyConfidence = getPayloadText(selectedCompanyEnrichment, 'confidence')
+  const selectedCompanyReviewStatus = getPayloadText(selectedCompanyEnrichment, 'review_status')
+  const selectedCompanyPublicationSafe =
+    selectedCompanyEnrichment && typeof selectedCompanyEnrichment.publication_safe === 'boolean'
+      ? String(selectedCompanyEnrichment.publication_safe)
+      : null
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-obsidian px-4 py-8 text-sand sm:px-6 lg:px-8">
@@ -1306,6 +1383,128 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                     </Link>
                   </div>
 
+                  {selectedCompanyEnrichment ? (
+                    <section className="mt-8 rounded-[2rem] border border-[#123BFF]/15 bg-gradient-to-br from-[#F8FCFF] via-white to-[#EEF4FF] p-5 shadow-sm sm:p-6">
+                      <div className="flex flex-wrap items-start justify-between gap-4">
+                        <div>
+                          <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                            <Building2 className="h-4 w-4" aria-hidden="true" />
+                            Company profile
+                          </span>
+
+                          <h3 className="mt-4 text-2xl font-bold tracking-tight text-sand">
+                            {getEntityName(selectedEntity)}
+                          </h3>
+
+                          {selectedCompanyDescription ? (
+                            <p className="mt-3 max-w-3xl text-sm leading-7 text-sand/68">
+                              {selectedCompanyDescription}
+                            </p>
+                          ) : null}
+                        </div>
+
+                        <div className="flex flex-wrap gap-2">
+                          {selectedCompanyConfidence ? (
+                            <span
+                              className={`inline-flex items-center rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] ${getCompanyConfidencePillClassName(
+                                selectedCompanyConfidence,
+                              )}`}
+                            >
+                              {selectedCompanyConfidence} confidence
+                            </span>
+                          ) : null}
+
+                          {selectedCompanyPublicationSafe ? (
+                            <span
+                              className={`inline-flex items-center rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] ${getPublicationPillClassName(
+                                selectedCompanyPublicationSafe,
+                              )}`}
+                            >
+                              {selectedCompanyPublicationSafe === 'true'
+                                ? 'Publication safe'
+                                : 'Review before publish'}
+                            </span>
+                          ) : null}
+                        </div>
+                      </div>
+
+                      <div className="mt-6 grid gap-4 lg:grid-cols-3">
+                        <div className="rounded-[1.5rem] border border-sand/10 bg-white p-5 shadow-sm">
+                          <p className="text-xs font-bold uppercase tracking-[0.18em] text-sand/45">
+                            Official website
+                          </p>
+
+                          {selectedCompanyOfficialUrl ? (
+                            <a
+                              href={selectedCompanyOfficialUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="mt-3 inline-flex break-all text-sm font-bold text-[#123BFF] transition hover:text-[#0A63FF]"
+                            >
+                              {selectedCompanyOfficialUrl}
+                            </a>
+                          ) : (
+                            <p className="mt-3 text-sm leading-7 text-sand/60">
+                              No official website is attached yet.
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="rounded-[1.5rem] border border-sand/10 bg-white p-5 shadow-sm">
+                          <p className="text-xs font-bold uppercase tracking-[0.18em] text-sand/45">
+                            Latest release / update
+                          </p>
+
+                          {selectedCompanyLatestRelease ? (
+                            <>
+                              <p className="mt-3 text-sm font-bold leading-7 text-sand">
+                                {selectedCompanyLatestRelease}
+                              </p>
+
+                              {selectedCompanyLatestReleaseUrl ? (
+                                <a
+                                  href={selectedCompanyLatestReleaseUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="mt-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF] transition hover:text-[#0A63FF]"
+                                >
+                                  Open source
+                                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                                </a>
+                              ) : null}
+                            </>
+                          ) : (
+                            <p className="mt-3 text-sm leading-7 text-sand/60">
+                              No latest release is attached yet.
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="rounded-[1.5rem] border border-sand/10 bg-white p-5 shadow-sm">
+                          <p className="text-xs font-bold uppercase tracking-[0.18em] text-sand/45">
+                            Brain review state
+                          </p>
+
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {selectedCompanyReviewStatus ? (
+                              <span className="inline-flex rounded-full bg-amber-50 px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] text-amber-700">
+                                {getReadableLabel(selectedCompanyReviewStatus)}
+                              </span>
+                            ) : null}
+
+                            <span className={`inline-flex rounded-full px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] ${getStatusPillClassName(selectedStatus)}`}>
+                              {selectedStatus ? getReadableLabel(selectedStatus) : 'Needs review'}
+                            </span>
+                          </div>
+
+                          <p className="mt-4 text-sm leading-7 text-sand/60">
+                            This company data can support the Brain catalogue now, but client-facing
+                            publication stays blocked until review marks it safe.
+                          </p>
+                        </div>
+                      </div>
+                    </section>
+                  ) : null}
                   <div className="mt-8 grid gap-4 sm:grid-cols-3">
                     <article className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
                       <p className="text-2xl font-bold text-[#123BFF]">
@@ -1472,7 +1671,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                                     {isStatusLike ? (
                                       <span
                                         className={`inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] ${getStatusPillClassName(
-                                          formatted === 'Ã¢â‚¬â€' ? null : formatted,
+                                          formatted === 'ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â' ? null : formatted,
                                         )}`}
                                       >
                                         {formatted}
