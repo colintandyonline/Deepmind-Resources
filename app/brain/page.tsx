@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import {
@@ -146,6 +146,12 @@ type AiDiscoverySummaryItem = {
   discovery_status: string
   signal_quality: string
   intake_priority: string
+}
+type CompanyCatalogueReadinessRow = {
+  id: string
+  tracking_status: string | null
+  source_status: string | null
+  raw_payload: Record<string, unknown> | null
 }
 
 type BrainPageProps = {
@@ -332,6 +338,23 @@ const commandZones = [
   },
 ]
 
+function getCompanyEnrichmentFromRawPayload(rawPayload: Record<string, unknown> | null) {
+  const value = rawPayload?.company_enrichment_basic
+
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    return value as Record<string, unknown>
+  }
+
+  return null
+}
+
+function getBooleanPayloadValue(payload: Record<string, unknown> | null, key: string) {
+  if (!payload) {
+    return false
+  }
+
+  return typeof payload[key] === 'boolean' ? payload[key] : false
+}
 function formatCount(value: number) {
   return new Intl.NumberFormat('en-GB').format(value)
 }
@@ -524,6 +547,12 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     .select('id, source_group, training_department, discovery_status, signal_quality, intake_priority')
     .order('created_at', { ascending: false })
     .limit(1000)
+  const { data: companyCatalogueReadinessData, error: companyCatalogueReadinessError } =
+    await supabase
+      .from('ai_catalog_entities')
+      .select('id, tracking_status, source_status, raw_payload')
+      .eq('entity_type', 'company')
+      .limit(200)
 
   let latestAgentFindingsQuery = supabase
     .from('agent_findings')
@@ -550,6 +579,25 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
   const sourceFeedItems = (latestSourceFeedItems ?? []) as SourceFeedItem[]
   const discoveryItems = (latestDiscoveryItems ?? []) as AiDiscoveryItem[]
   const discoverySummaryRows = (discoverySummaryItems ?? []) as AiDiscoverySummaryItem[]
+  const companyCatalogueReadinessRows =
+    (companyCatalogueReadinessData ?? []) as CompanyCatalogueReadinessRow[]
+  const totalCompanyCatalogueRows = companyCatalogueReadinessRows.length
+  const trackedCompanyCatalogueRows = companyCatalogueReadinessRows.filter(
+    (item) => item.tracking_status === 'tracked',
+  ).length
+  const sourceLinkedCompanyCatalogueRows = companyCatalogueReadinessRows.filter(
+    (item) => item.source_status === 'source_linked',
+  ).length
+  const privateBrainAvailableCompanies = companyCatalogueReadinessRows.filter((item) => {
+    const enrichment = getCompanyEnrichmentFromRawPayload(item.raw_payload)
+
+    return getBooleanPayloadValue(enrichment, 'brain_available')
+  }).length
+  const publicationBlockedCompanyRows = companyCatalogueReadinessRows.filter((item) => {
+    const enrichment = getCompanyEnrichmentFromRawPayload(item.raw_payload)
+
+    return enrichment?.publication_safe === false
+  }).length
   const totalDiscoveryCandidates = discoverySummaryRows.length
   const needsOfficialSourceCandidates = discoverySummaryRows.filter(
     (item) => item.discovery_status === 'needs_official_source',
@@ -569,7 +617,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     'training_department',
   )
   const totalBrainRows = liveCounts.reduce((total, item) => total + item.count, 0)
-  const readErrors = liveCounts.filter((item) => item.hasError).length
+  const readErrors = liveCounts.filter((item) => item.hasError).length + (companyCatalogueReadinessError ? 1 : 0)
 
   const [
     activeFindingsResult,
@@ -694,7 +742,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                   href="/brain/catalog"
                   className="inline-flex items-center justify-center rounded-2xl border border-sand/10 bg-white px-5 py-3.5 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
                 >
-                  Open catalogue
+                  Open private catalogue
                 </Link>
               </div>
             </div>
@@ -729,6 +777,25 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                     {readErrors === 0
                       ? 'All Brain table count checks returned successfully.'
                       : `${readErrors} table count check needs attention.`}
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-white/10 p-4">
+                  <p className="text-sm font-bold text-white">Company catalogue</p>
+                  <p className="mt-1 text-sm leading-6 text-white/75">
+                    {companyCatalogueReadinessError
+                      ? 'Company catalogue readiness check needs attention.'
+                      : `${formatCount(privateBrainAvailableCompanies)} of ${formatCount(
+                          totalCompanyCatalogueRows,
+                        )} companies are reviewed for private Brain use.`}
+                  </p>
+                  <p className="mt-2 text-xs leading-5 text-white/62">
+                    {companyCatalogueReadinessError
+                      ? 'Open the catalogue to inspect company data manually.'
+                      : `${formatCount(trackedCompanyCatalogueRows)} tracked · ${formatCount(
+                          sourceLinkedCompanyCatalogueRows,
+                        )} source-linked · ${formatCount(
+                          publicationBlockedCompanyRows,
+                        )} blocked from public publication.`}
                   </p>
                 </div>
               </div>
@@ -1072,7 +1139,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                     </p>
 
                     <h3 className="mt-2 text-lg font-bold tracking-tight text-sand">
-                      {[item.product_name, item.model_name].filter(Boolean).join(' â€” ') ||
+                      {[item.product_name, item.model_name].filter(Boolean).join(' Ã¢â‚¬â€ ') ||
                         item.provider_name}
                     </h3>
 
@@ -1651,7 +1718,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                 </p>
 
                 <p className="mt-3 text-4xl font-bold tracking-tight text-sand">
-                  {item.hasError ? 'â€”' : formatCount(item.count)}
+                  {item.hasError ? 'Ã¢â‚¬â€' : formatCount(item.count)}
                 </p>
 
                 <p className="mt-3 text-sm leading-7 text-sand/65">
@@ -1723,7 +1790,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                   </p>
 
                   <p className="mt-2 text-4xl font-bold tracking-tight text-sand">
-                    {item.hasError ? 'â€”' : formatCount(item.count)}
+                    {item.hasError ? 'Ã¢â‚¬â€' : formatCount(item.count)}
                   </p>
 
                   <p className="mt-3 text-sm leading-7 text-sand/65">
@@ -2252,6 +2319,8 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
     </main>
   )
 }
+
+
 
 
 
