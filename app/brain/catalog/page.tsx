@@ -962,6 +962,15 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
     selectedCompanyEnrichment && typeof selectedCompanyEnrichment.publication_safe === 'boolean'
       ? String(selectedCompanyEnrichment.publication_safe)
       : null
+  const selectedCompanyBrainAvailable =
+    selectedCompanyEnrichment && typeof selectedCompanyEnrichment.brain_available === 'boolean'
+      ? String(selectedCompanyEnrichment.brain_available)
+      : null
+
+  const selectedCompanyBrainReviewStatus = getPayloadText(
+    selectedCompanyEnrichment,
+    'brain_review_status',
+  )
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-obsidian px-4 py-8 text-sand sm:px-6 lg:px-8">
@@ -1499,9 +1508,11 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                             Review status
                           </p>
                           <p className="mt-3 text-base font-bold leading-7 text-sand">
-                            {selectedCompanyReviewStatus
-                              ? getReadableLabel(selectedCompanyReviewStatus)
-                              : 'Needs review'}
+                            {selectedCompanyBrainReviewStatus
+                              ? getReadableLabel(selectedCompanyBrainReviewStatus)
+                              : selectedCompanyReviewStatus
+                                ? getReadableLabel(selectedCompanyReviewStatus)
+                                : 'Needs review'}
                           </p>
                         </div>
 
@@ -1518,10 +1529,10 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
 
                         <div className="rounded-[1.5rem] border border-sand/10 bg-white p-5 shadow-sm">
                           <p className="text-xs font-bold uppercase tracking-[0.18em] text-sand/45">
-                            Brain source state
+                            Brain availability
                           </p>
                           <p className="mt-3 text-base font-bold leading-7 text-sand">
-                            {selectedStatus ? getReadableLabel(selectedStatus) : 'Source found'}
+                            {selectedCompanyBrainAvailable === 'true' ? 'Available privately' : 'Not marked available'}
                           </p>
                         </div>
                       </div>
@@ -2130,4 +2141,5 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
     </main>
   )
 }
+
 
