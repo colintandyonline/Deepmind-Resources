@@ -324,6 +324,196 @@ export default function AcademyPage() {
       />
 
       <div
+        id="academy-onboarding-popup"
+        className="hidden fixed inset-0 z-50 items-center justify-center bg-sand/30 px-4 py-6 backdrop-blur-sm"
+        aria-hidden="true"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="academy-onboarding-title"
+      >
+        <div className="relative w-full max-w-2xl overflow-hidden rounded-[2rem] border border-sand/10 bg-white shadow-2xl">
+          <div className="absolute inset-x-0 top-0 h-1.5 bg-[#123BFF]" />
+
+          <button
+            id="academy-onboarding-close"
+            type="button"
+            className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-sand/10 bg-white text-sand/60 shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
+            aria-label="Close Academy onboarding"
+          >
+            ×
+          </button>
+
+          <div className="grid gap-0 md:grid-cols-[0.95fr_1.05fr]">
+            <div className="bg-[#123BFF] p-6 text-white sm:p-8">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF] shadow-sm">
+                <Sparkles className="h-4 w-4" aria-hidden="true" />
+                Start the competency path
+              </span>
+
+              <h2 id="academy-onboarding-title" className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">
+                Ready to turn AI change into execution?
+              </h2>
+
+              <p className="mt-4 text-sm leading-7 text-white/80 sm:text-base">
+                Create your workspace to start structured AI training, or get your business
+                onboarded so your team can build production-ready AI competency.
+              </p>
+
+              <div className="mt-6 grid gap-3">
+                {[
+                  'Deterministic learning paths',
+                  'Verified sandbox tasks',
+                  'Tool intelligence for real workflows',
+                ].map((item) => (
+                  <div key={item} className="flex items-start gap-3 rounded-2xl bg-white/10 p-3">
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-white" aria-hidden="true" />
+                    <p className="text-sm font-semibold leading-6 text-white/90">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-6 sm:p-8">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF]">
+                Choose your next step
+              </p>
+
+              <h3 className="mt-3 text-2xl font-bold tracking-tight text-sand">
+                Start as an individual, or upgrade your team.
+              </h3>
+
+              <p className="mt-3 text-sm leading-7 text-sand/65">
+                DeepMind Resources is built for individual competency, team training,
+                workforce readiness, and business-safe AI adoption.
+              </p>
+
+              <div className="mt-6 grid gap-3">
+                <Link
+                  href="/auth/signup"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
+                >
+                  Sign up and create workspace
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-sand/10 bg-white px-5 py-4 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
+                >
+                  Get your business onboarded
+                  <BriefcaseBusiness className="h-4 w-4" aria-hidden="true" />
+                </Link>
+
+                <Link
+                  href="/business-ai-training"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#EAF7FF] px-5 py-4 text-sm font-bold text-[#123BFF] shadow-sm transition hover:bg-[#DDF2FF]"
+                >
+                  View business training
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+              </div>
+
+              <p className="mt-5 text-xs leading-6 text-sand/45">
+                No pressure. Close this and keep exploring the Academy map.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            (() => {
+              const popup = document.getElementById('academy-onboarding-popup');
+              const closeButton = document.getElementById('academy-onboarding-close');
+              const storageKey = 'dmr_academy_onboarding_popup_dismissed';
+              let shown = false;
+              let timerId = null;
+
+              if (!popup) return;
+
+              const hasDismissed = () => {
+                try {
+                  return window.sessionStorage.getItem(storageKey) === 'true';
+                } catch {
+                  return false;
+                }
+              };
+
+              const markDismissed = () => {
+                try {
+                  window.sessionStorage.setItem(storageKey, 'true');
+                } catch {}
+              };
+
+              const showPopup = () => {
+                if (shown || hasDismissed()) return;
+
+                shown = true;
+                popup.classList.remove('hidden');
+                popup.classList.add('flex');
+                popup.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+
+                if (timerId) {
+                  window.clearTimeout(timerId);
+                }
+
+                window.removeEventListener('scroll', handleScroll);
+              };
+
+              const closePopup = () => {
+                markDismissed();
+                popup.classList.add('hidden');
+                popup.classList.remove('flex');
+                popup.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+              };
+
+              const handleScroll = () => {
+                const doc = document.documentElement;
+                const scrollableHeight = doc.scrollHeight - window.innerHeight;
+
+                if (scrollableHeight <= 0) return;
+
+                const scrollPercent = (window.scrollY / scrollableHeight) * 100;
+
+                if (scrollPercent >= 15) {
+                  showPopup();
+                }
+              };
+
+              if (hasDismissed()) return;
+
+              timerId = window.setTimeout(showPopup, 15000);
+              window.addEventListener('scroll', handleScroll, { passive: true });
+
+              if (closeButton) {
+                closeButton.addEventListener('click', closePopup);
+              }
+
+              popup.addEventListener('click', (event) => {
+                if (event.target === popup) {
+                  closePopup();
+                }
+              });
+
+              popup.querySelectorAll('a').forEach((link) => {
+                link.addEventListener('click', markDismissed);
+              });
+
+              window.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && !popup.classList.contains('hidden')) {
+                  closePopup();
+                }
+              });
+            })();
+          `,
+        }}
+      />
+
+      <div
         className="pointer-events-none fixed inset-0 z-0"
         style={{
           background:
