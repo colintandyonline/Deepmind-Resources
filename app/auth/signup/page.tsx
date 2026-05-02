@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   ArrowRight,
   Brain,
@@ -214,17 +215,15 @@ export default function SignupPage() {
           <section className="rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
             <div className="flex items-start justify-between gap-4">
               <Link href="/" className="inline-flex items-center gap-3">
-                <span className="inline-flex h-13 w-13 items-center justify-center rounded-2xl bg-[#123BFF] p-2 shadow-sm">
-                  <div className="relative flex h-20 w-20 items-center justify-center rounded-[1.4rem] bg-[#123BFF] shadow-[0_18px_44px_rgba(18,59,255,0.28)]" aria-hidden="true">
-  <div className="absolute inset-0 rounded-[1.4rem] bg-[#123BFF]/25 animate-ping" />
-  <div className="absolute inset-[5px] rounded-[1.1rem] bg-white/10 animate-pulse" />
-  <Brain className="relative z-10 h-10 w-10 text-white" strokeWidth={2.2} />
-</div>
-                </span>
-                <span className="text-base font-bold tracking-tight text-sand">
-                  DeepMind Resources
-                </span>
-              </Link>
+  <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#123BFF] shadow-[0_12px_32px_rgba(18,59,255,0.26)]" aria-hidden="true">
+    <div className="absolute inset-0 rounded-2xl bg-[#123BFF]/20 animate-ping" />
+    <div className="absolute inset-[4px] rounded-[1rem] bg-white/10 animate-pulse" />
+    <Brain className="relative z-10 h-7 w-7 text-white" strokeWidth={2.2} />
+  </div>
+  <span className="text-base font-bold tracking-tight text-sand">
+    DeepMind Resources
+  </span>
+</Link>
 
               <span className="hidden rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF] sm:inline-flex">
                 Secure signup
@@ -492,13 +491,20 @@ export default function SignupPage() {
                 Built for current AI skills
               </span>
 
-              <a href="https://deepmindresources.pro" className="shrink-0">
-                <div className="relative flex h-20 w-20 items-center justify-center rounded-[1.4rem] bg-[#123BFF] shadow-[0_18px_44px_rgba(18,59,255,0.28)]" aria-hidden="true">
-  <div className="absolute inset-0 rounded-[1.4rem] bg-[#123BFF]/25 animate-ping" />
-  <div className="absolute inset-[5px] rounded-[1.1rem] bg-white/10 animate-pulse" />
-  <Brain className="relative z-10 h-10 w-10 text-white" strokeWidth={2.2} />
-</div>
-              </a>
+              <Link
+  href="/"
+  aria-label="DeepMind Resources home"
+  className="relative flex h-20 w-20 shrink-0 overflow-hidden rounded-[1.4rem] bg-white p-2 shadow-sm ring-1 ring-sand/10"
+>
+  <Image
+    src="/brand/deepmind-resources-logo.png"
+    alt="DeepMind Resources logo"
+    fill
+    sizes="80px"
+    className="object-contain p-2"
+    priority={false}
+  />
+</Link>
             </div>
 
             <div className="mt-8 rounded-[1.5rem] bg-[#123BFF] p-6 text-white shadow-sm">
