@@ -218,7 +218,7 @@ export default function SignupPage() {
                   <div className="relative flex h-20 w-20 items-center justify-center rounded-[1.4rem] bg-[#123BFF] shadow-[0_18px_44px_rgba(18,59,255,0.28)]" aria-hidden="true">
   <div className="absolute inset-0 rounded-[1.4rem] bg-[#123BFF]/25 animate-ping" />
   <div className="absolute inset-[5px] rounded-[1.1rem] bg-white/10 animate-pulse" />
-  <BrainCircuit className="relative z-10 h-10 w-10 text-white" strokeWidth={2.2} />
+  <Brain className="relative z-10 h-10 w-10 text-white" strokeWidth={2.2} />
 </div>
                 </span>
                 <span className="text-base font-bold tracking-tight text-sand">
@@ -496,7 +496,7 @@ export default function SignupPage() {
                 <div className="relative flex h-20 w-20 items-center justify-center rounded-[1.4rem] bg-[#123BFF] shadow-[0_18px_44px_rgba(18,59,255,0.28)]" aria-hidden="true">
   <div className="absolute inset-0 rounded-[1.4rem] bg-[#123BFF]/25 animate-ping" />
   <div className="absolute inset-[5px] rounded-[1.1rem] bg-white/10 animate-pulse" />
-  <BrainCircuit className="relative z-10 h-10 w-10 text-white" strokeWidth={2.2} />
+  <Brain className="relative z-10 h-10 w-10 text-white" strokeWidth={2.2} />
 </div>
               </a>
             </div>
