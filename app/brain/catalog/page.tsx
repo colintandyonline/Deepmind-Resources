@@ -339,11 +339,11 @@ function getEntityStatus(record: CatalogueRecord) {
 
 function formatValue(value: unknown) {
   if (value === null || value === undefined) {
-    return 'â€”'
+    return 'Ã¢â‚¬â€'
   }
 
   if (typeof value === 'string') {
-    return value.trim() || 'â€”'
+    return value.trim() || 'Ã¢â‚¬â€'
   }
 
   if (typeof value === 'number' || typeof value === 'boolean') {
@@ -499,6 +499,32 @@ function getMatchingRecordsFromLinks(
 
     return Boolean(id && matchedIds.has(id))
   })
+}
+
+function getLinkedModelsForTopLevelFamily(
+  linkRows: CatalogueRecord[],
+  records: CatalogueRecord[],
+  selectedId: string,
+) {
+  const linkedModelIds = linkRows
+    .filter((row) => {
+      return (
+        getFirstText(row, ['link_type']) === 'model_belongs_to_family' &&
+        row.target_entity_id === selectedId &&
+        isNonEmptyString(row.source_entity_id)
+      )
+    })
+    .map((row) => row.source_entity_id as string)
+
+  const linkedModelIdSet = new Set(linkedModelIds)
+
+  return records
+    .filter((record) => {
+      const id = getRecordId(record)
+
+      return Boolean(id && linkedModelIdSet.has(id) && getEntityType(record) === 'model')
+    })
+    .sort((first, second) => getEntityName(first).localeCompare(getEntityName(second)))
 }
 
 function getRawPayloadObject(record: CatalogueRecord) {
@@ -835,6 +861,11 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
           'comparison',
           'group',
         ])
+      : []
+
+  const selectedLinkedModels =
+    selectedId !== null && selectedEntity && isTopLevelModelFamily(selectedEntity)
+      ? getLinkedModelsForTopLevelFamily(entityLinks, catalogueEntities, selectedId)
       : []
 
   const totalCatalogueRows = liveCounts.reduce((total, item) => total + item.count, 0)
@@ -1335,6 +1366,86 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
 
                   {selectedTab === 'overview' ? (
                     <div className="mt-8 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+                      {isTopLevelModelFamily(selectedEntity) ? (
+                        <section className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5 xl:col-span-2">
+                          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                            <div>
+                              <div className="flex items-center gap-3">
+                                <Bot className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
+                                <h3 className="text-lg font-bold text-sand">Models in this family</h3>
+                              </div>
+
+                              <p className="mt-3 max-w-3xl text-sm leading-7 text-sand/65">
+                                These are the individual model entries linked to this top-level catalogue family.
+                              </p>
+                            </div>
+
+                            <span className="inline-flex w-fit rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white">
+                              {formatCount(selectedLinkedModels.length)} models
+                            </span>
+                          </div>
+
+                          {selectedLinkedModels.length > 0 ? (
+                            <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                              {selectedLinkedModels.map((modelRecord) => {
+                                const modelId = getRecordId(modelRecord)
+                                const modelStatus = getEntityStatus(modelRecord)
+
+                                return (
+                                  <Link
+                                    key={modelId ?? getEntityName(modelRecord)}
+                                    href={buildCatalogueHref({
+                                      entity: modelId,
+                                      type: 'model',
+                                      tab: 'overview',
+                                    })}
+                                    scroll={false}
+                                    className="rounded-2xl border border-sand/10 bg-white p-4 transition hover:border-[#123BFF]/30 hover:bg-[#EAF7FF]"
+                                  >
+                                    <div className="flex flex-wrap items-center gap-2">
+                                      <span className="rounded-full bg-amber-500 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.12em] text-sand">
+                                        Model
+                                      </span>
+
+                                      {modelStatus ? (
+                                        <span
+                                          className={`rounded-full px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.12em] ${getStatusPillClassName(
+                                            modelStatus,
+                                          )}`}
+                                        >
+                                          {getReadableLabel(modelStatus)}
+                                        </span>
+                                      ) : null}
+                                    </div>
+
+                                    <h4 className="mt-3 text-base font-bold leading-6 text-sand">
+                                      {getEntityName(modelRecord)}
+                                    </h4>
+
+                                    {getEntitySummary(modelRecord) ? (
+                                      <p className="mt-2 text-xs leading-6 text-sand/60">
+                                        {getEntitySummary(modelRecord)}
+                                      </p>
+                                    ) : null}
+
+                                    <div className="mt-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#123BFF]">
+                                      Open model
+                                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                                    </div>
+                                  </Link>
+                                )
+                              })}
+                            </div>
+                          ) : (
+                            <div className="mt-5 rounded-2xl bg-white p-4">
+                              <p className="text-sm leading-7 text-sand/65">
+                                No model entries are currently linked to this top-level family.
+                              </p>
+                            </div>
+                          )}
+                        </section>
+                      ) : null}
+
                       <section className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
                         <div className="flex items-center gap-3">
                           <FileSearch className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
@@ -1361,7 +1472,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                                     {isStatusLike ? (
                                       <span
                                         className={`inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] ${getStatusPillClassName(
-                                          formatted === 'â€”' ? null : formatted,
+                                          formatted === 'Ã¢â‚¬â€' ? null : formatted,
                                         )}`}
                                       >
                                         {formatted}
