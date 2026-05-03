@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -87,8 +87,8 @@ export function HeroSection() {
               size="lg"
               className="bg-signal-green text-primary-foreground hover:bg-signal-green/90 font-semibold px-8 group shadow-sm"
             >
-              <Link href="/auth/signup">
-                Start Learning
+              <Link href="/academy">
+                Explore Academy
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
@@ -99,7 +99,7 @@ export function HeroSection() {
               variant="outline"
               className="border-sand/20 text-sand hover:bg-sand/5 hover:border-signal-green/30 font-semibold px-8 bg-white/60"
             >
-              <Link href="/auth/signup?intent=curriculum">
+              <Link href="/syllabus">
                 View Live Curriculum
               </Link>
             </Button>
