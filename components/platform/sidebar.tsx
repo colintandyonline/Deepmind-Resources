@@ -55,7 +55,6 @@ export function Sidebar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  
   useEffect(() => {
     document.documentElement.setAttribute(
       'data-dmr-sidebar-collapsed',
@@ -66,7 +65,8 @@ export function Sidebar() {
       document.documentElement.removeAttribute('data-dmr-sidebar-collapsed')
     }
   }, [isCollapsed])
-useEffect(() => {
+
+  useEffect(() => {
     const supabase = createClient()
 
     supabase.auth.getSession().then(({ data }) => {
@@ -83,6 +83,58 @@ useEffect(() => {
       subscription.unsubscribe()
     }
   }, [])
+
+  useEffect(() => {
+    let observer: IntersectionObserver | null = null
+    let cancelled = false
+
+    const setupScrollReveal = () => {
+      if (cancelled) {
+        return
+      }
+
+      const elements = Array.from(document.querySelectorAll<HTMLElement>('main section, main article'))
+
+      if (!elements.length) {
+        return
+      }
+
+      if (!('IntersectionObserver' in window)) {
+        elements.forEach((element) => element.classList.add('dmr-in-view'))
+        return
+      }
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('dmr-in-view')
+              observer?.unobserve(entry.target)
+            }
+          })
+        },
+        {
+          root: null,
+          rootMargin: '0px 0px -8% 0px',
+          threshold: 0.14,
+        }
+      )
+
+      elements.forEach((element, index) => {
+        element.classList.add('dmr-scroll-reveal')
+        element.style.setProperty('--dmr-reveal-delay', `${Math.min(index * 45, 220)}ms`)
+        observer?.observe(element)
+      })
+    }
+
+    const timer = window.setTimeout(setupScrollReveal, 80)
+
+    return () => {
+      cancelled = true
+      window.clearTimeout(timer)
+      observer?.disconnect()
+    }
+  }, [pathname])
 
   const bottomNavItems: NavItem[] = isLoggedIn
     ? [
@@ -225,7 +277,6 @@ useEffect(() => {
 
   return (
     <>
-      
       <style>{`
         @media (min-width: 768px) {
           html[data-dmr-sidebar-collapsed="true"] .md\\:pl-64 {
@@ -240,8 +291,135 @@ useEffect(() => {
             transition: padding-left 300ms ease-in-out;
           }
         }
+
+        img[src*="deepmind-resources-emblem"] {
+          border-radius: 1.35rem !important;
+          background: #ffffff;
+          box-shadow: 0 12px 32px rgba(6, 27, 91, 0.12);
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+          main section,
+          main article {
+            animation: none !important;
+          }
+
+          main .dmr-scroll-reveal {
+            opacity: 0;
+            transform: translateY(58px) scale(0.972);
+            filter: blur(14px);
+            transition:
+              opacity 760ms ease,
+              transform 760ms cubic-bezier(0.22, 1, 0.36, 1),
+              filter 760ms ease,
+              box-shadow 260ms ease,
+              border-color 260ms ease;
+            transition-delay: var(--dmr-reveal-delay, 0ms);
+            will-change: opacity, transform, filter;
+          }
+
+          main .dmr-scroll-reveal.dmr-in-view {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+          }
+
+          main a,
+          main button {
+            transition:
+              transform 220ms ease,
+              box-shadow 220ms ease,
+              border-color 220ms ease,
+              background-color 220ms ease,
+              color 220ms ease;
+          }
+
+          main a:hover,
+          main button:hover {
+            transform: translateY(-2px);
+          }
+        }
+
+        @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+          main article:hover {
+            border-color: rgba(18, 59, 255, 0.32) !important;
+            box-shadow: 0 22px 60px rgba(6, 27, 91, 0.14) !important;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          main .dmr-scroll-reveal,
+          main .dmr-scroll-reveal.dmr-in-view {
+            opacity: 1 !important;
+            transform: none !important;
+            filter: none !important;
+            transition: none !important;
+          }
+        }
+
+        @media (max-width: 767px) {
+          [id*="popup"][role="dialog"],
+          [id*="popup"][aria-modal="true"],
+          #homepage-cta-popup,
+          #academy-onboarding-popup,
+          #prompting-onboarding-popup {
+            align-items: flex-start !important;
+            justify-content: flex-start !important;
+            height: 100dvh !important;
+            max-height: 100dvh !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            overscroll-behavior: contain !important;
+            padding: calc(env(safe-area-inset-top) + 0.75rem) 0.75rem calc(env(safe-area-inset-bottom) + 0.75rem) !important;
+            -webkit-overflow-scrolling: touch;
+          }
+
+          [id*="popup"][role="dialog"] > div,
+          [id*="popup"][aria-modal="true"] > div,
+          #homepage-cta-popup > div,
+          #academy-onboarding-popup > div,
+          #prompting-onboarding-popup > div {
+            display: block !important;
+            width: calc(100vw - 1.5rem) !important;
+            max-width: calc(100vw - 1.5rem) !important;
+            max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 1.5rem) !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            border-radius: 1.35rem !important;
+            -webkit-overflow-scrolling: touch;
+          }
+
+          [id*="popup"] button[aria-label*="Close"],
+          [id*="popup"] button[id*="close"],
+          #homepage-cta-popup-close,
+          #academy-onboarding-close,
+          #prompting-onboarding-close {
+            position: fixed !important;
+            top: calc(env(safe-area-inset-top) + 0.75rem) !important;
+            right: calc(env(safe-area-inset-right) + 0.75rem) !important;
+            z-index: 99999 !important;
+            width: 2.75rem !important;
+            height: 2.75rem !important;
+            min-height: 2.75rem !important;
+            border-radius: 1rem !important;
+            background: #ffffff !important;
+            box-shadow: 0 12px 30px rgba(6, 27, 91, 0.22) !important;
+          }
+
+          [id*="popup"] h1,
+          [id*="popup"] h2,
+          [id*="popup"] h3 {
+            overflow-wrap: anywhere;
+          }
+
+          [id*="popup"] a,
+          [id*="popup"] button {
+            min-height: 3.25rem;
+          }
+        }
       `}</style>
-{/* Mobile Top Bar */}
+
+      {/* Mobile Top Bar */}
       <div className="fixed inset-x-0 top-0 z-50 flex h-16 items-center justify-between border-b border-sidebar-border bg-sidebar px-4 md:hidden">
         {renderLogo(true)}
         <button
