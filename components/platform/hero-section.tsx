@@ -116,7 +116,7 @@ export function HeroSection() {
 
       <div className="relative z-10 py-16 lg:py-24">
         {/* Live Status Indicator */}
-        <div className="flex items-center justify-center mb-8">
+        <div className="mb-8 flex items-center justify-center">
           <div className="flex items-center gap-3 rounded-full border border-[#123BFF]/20 bg-white/75 px-4 py-2 shadow-sm backdrop-blur">
             <span className="relative flex h-2.5 w-2.5">
               <span
@@ -134,19 +134,20 @@ export function HeroSection() {
 
         {/* Main Heading */}
         <div className="mx-auto max-w-6xl px-4 text-center">
-          <h1 className="mb-6 text-balance text-4xl font-bold tracking-tight text-sand sm:text-5xl lg:text-6xl">
-            AI competency that stays current as the frontier moves.
+          <h1 className="mb-6 text-balance text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            <span className="text-sand">Master the Art of</span>
+            <br />
+            <span className="text-[#123BFF]">Agentic AI Systems</span>
           </h1>
 
-          <p className="mx-auto mb-6 max-w-3xl text-pretty text-lg leading-relaxed text-sand/62 sm:text-xl">
-            DeepMind Resources is the current training layer for professional AI work. We turn
-            catalogue-backed intelligence into deterministic learning paths, verified guidance,
-            sandbox tasks, and production-ready skill gain.
+          <p className="mx-auto mb-6 max-w-3xl text-pretty text-lg leading-relaxed text-sand/60 sm:text-xl">
+            From AI beginner to multi-agent builder. Learn with verified lessons that evolve
+            as new models, tools, and platform updates change what matters.
           </p>
 
           <p className="mx-auto mb-10 max-w-3xl text-pretty text-base leading-relaxed text-sand/55 sm:text-lg">
-            The system maps companies, platforms, models, capabilities, and comparison groups so
-            learners and teams can stay ahead of the curve, not just in the queue.
+            DeepMind Resources cuts through hype, compares AI tools for real scenarios, and turns
+            trusted updates into practical sandbox training for individuals, teams, and businesses.
           </p>
 
           {/* CTA Buttons */}
