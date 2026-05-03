@@ -55,7 +55,18 @@ export function Sidebar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
+  
   useEffect(() => {
+    document.documentElement.setAttribute(
+      'data-dmr-sidebar-collapsed',
+      isCollapsed ? 'true' : 'false'
+    )
+
+    return () => {
+      document.documentElement.removeAttribute('data-dmr-sidebar-collapsed')
+    }
+  }, [isCollapsed])
+useEffect(() => {
     const supabase = createClient()
 
     supabase.auth.getSession().then(({ data }) => {
@@ -214,7 +225,23 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile Top Bar */}
+      
+      <style>{`
+        @media (min-width: 768px) {
+          html[data-dmr-sidebar-collapsed="true"] .md\\:pl-64 {
+            padding-left: 4rem !important;
+          }
+
+          html[data-dmr-sidebar-collapsed="false"] .md\\:pl-64 {
+            padding-left: 16rem !important;
+          }
+
+          .md\\:pl-64 {
+            transition: padding-left 300ms ease-in-out;
+          }
+        }
+      `}</style>
+{/* Mobile Top Bar */}
       <div className="fixed inset-x-0 top-0 z-50 flex h-16 items-center justify-between border-b border-sidebar-border bg-sidebar px-4 md:hidden">
         {renderLogo(true)}
         <button
