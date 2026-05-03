@@ -66,7 +66,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-sans antialiased">
-        {children}
+        <NavigationShell>{children}</NavigationShell>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
