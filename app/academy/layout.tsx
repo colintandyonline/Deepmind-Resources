@@ -11,11 +11,18 @@ export default function AcademyLayout({ children }: AcademyLayoutProps) {
 
       <style>
         {`
+          .dmr-academy-route main section:first-of-type > div:last-child > div:first-child {
+            position: relative !important;
+          }
+
           .dmr-academy-route main section:first-of-type > div:last-child > div:first-child > span:first-child {
+            position: absolute !important;
+            top: 4rem !important;
+            right: 3.25rem !important;
+            z-index: 2 !important;
             display: flex !important;
             width: 5.5rem !important;
             height: 5.5rem !important;
-            margin-left: auto !important;
             align-items: center !important;
             justify-content: center !important;
             flex-shrink: 0 !important;
@@ -30,6 +37,11 @@ export default function AcademyLayout({ children }: AcademyLayoutProps) {
 
           .dmr-academy-route main section:first-of-type > div:last-child > div:first-child > span:first-child svg {
             display: none !important;
+          }
+
+          .dmr-academy-route main section:first-of-type > div:last-child > div:first-child > p:first-of-type,
+          .dmr-academy-route main section:first-of-type > div:last-child > div:first-child > h2:first-of-type {
+            max-width: calc(100% - 7.25rem) !important;
           }
 
           .dmr-academy-route #academy-onboarding-close {
@@ -47,10 +59,17 @@ export default function AcademyLayout({ children }: AcademyLayoutProps) {
 
           @media (max-width: 640px) {
             .dmr-academy-route main section:first-of-type > div:last-child > div:first-child > span:first-child {
+              top: 3.75rem !important;
+              right: 1.5rem !important;
               width: 4.75rem !important;
               height: 4.75rem !important;
               border-radius: 1.35rem !important;
               background-size: 3.6rem 3.6rem !important;
+            }
+
+            .dmr-academy-route main section:first-of-type > div:last-child > div:first-child > p:first-of-type,
+            .dmr-academy-route main section:first-of-type > div:last-child > div:first-child > h2:first-of-type {
+              max-width: calc(100% - 5.5rem) !important;
             }
           }
         `}
