@@ -572,3 +572,20 @@
     min-height: 3.25rem;
   }
 }
+
+/* Disable marketing popups on mobile until each modal has a dedicated mobile layout */
+@media (max-width: 767px) {
+  body {
+    overflow: auto !important;
+  }
+
+  [id*="popup"][role="dialog"],
+  [id*="popup"][aria-modal="true"],
+  #homepage-cta-popup,
+  #academy-onboarding-popup,
+  #prompting-onboarding-popup {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
