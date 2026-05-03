@@ -363,7 +363,7 @@ function formatLabel(value: string) {
   return value
     .split('_')
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ')
+    .join(' - ')
 }
 
 function getStructuredString(content: Record<string, unknown> | null, key: string) {
@@ -482,7 +482,7 @@ function getPillClass(value: string) {
 export default async function BrainPage({ searchParams }: BrainPageProps) {
   const resolvedSearchParams = await searchParams
   const sourceStatus = resolvedSearchParams?.source ?? null
-  const reviewView = resolvedSearchParams?.review === 'archived' ? 'archived' : 'active'
+  const reviewView = resolvedSearchParams?.review === 'archived' ? ' - ' : 'active'
 
   const supabase = await createClient()
 
@@ -1139,7 +1139,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                     </p>
 
                     <h3 className="mt-2 text-lg font-bold tracking-tight text-sand">
-                      {[item.product_name, item.model_name].filter(Boolean).join('  - â‚¬ ') ||
+                      {[item.product_name, item.model_name].filter(Boolean).join(' - ') ||
                         item.provider_name}
                     </h3>
 
@@ -1485,7 +1485,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                         {[feed.academy_relevance, feed.business_relevance, feed.sandbox_relevance]
                           .filter(Boolean)
                           .map((value) => formatLabel(value as string))
-                          .join(' / ') || 'Not classified yet'}
+                          .join(' - ') || 'Not classified yet'}
                       </p>
                     </div>
                   </div>
@@ -1718,7 +1718,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                 </p>
 
                 <p className="mt-3 text-4xl font-bold tracking-tight text-sand">
-                  {item.hasError ? ' - â‚¬' : formatCount(item.count)}
+                  {item.hasError ? ' - ' : formatCount(item.count)}
                 </p>
 
                 <p className="mt-3 text-sm leading-7 text-sand/65">
@@ -1790,7 +1790,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                   </p>
 
                   <p className="mt-2 text-4xl font-bold tracking-tight text-sand">
-                    {item.hasError ? ' - â‚¬' : formatCount(item.count)}
+                    {item.hasError ? ' - ' : formatCount(item.count)}
                   </p>
 
                   <p className="mt-3 text-sm leading-7 text-sand/65">
@@ -1809,7 +1809,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
             <div className="max-w-3xl">
               <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
                 <Sparkles className="h-4 w-4" aria-hidden="true" />
-                {reviewView === 'archived' ? 'Archived Findings' : 'Active Review Queue'}
+                {reviewView === 'archived' ? ' - ' : 'Active Review Queue'}
               </span>
 
               <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
@@ -1827,7 +1827,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
 
             <div className="rounded-3xl bg-[#EAF7FF] p-5 shadow-sm lg:max-w-md">
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF]">
-                {reviewView === 'archived' ? 'Archive rule' : 'Review rule'}
+                {reviewView === 'archived' ? ' - ' : 'Review rule'}
               </p>
               <p className="mt-3 text-sm leading-7 text-sand/65">
                 {reviewView === 'archived'
@@ -1923,7 +1923,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
             ) : (
               <div className="rounded-3xl border border-[#123BFF]/15 bg-[#EAF7FF] p-5 lg:col-span-2">
                 <p className="text-sm font-bold text-sand">
-                  {reviewView === 'archived' ? 'No archived Scout findings.' : 'No active Scout findings.'}
+                  {reviewView === 'archived' ? ' - ' : 'No active Scout findings.'}
                 </p>
                 <p className="mt-3 text-sm leading-7 text-sand/65">
                   {reviewView === 'archived'
@@ -1955,7 +1955,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
             </span>
 
             <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand">
-              {latestRecords.length > 0 ? 'Most recent records.' : 'No Brain records yet.'}
+              {latestRecords.length > 0 ? ' - ' : 'No Brain records yet.'}
             </h2>
 
             <p className="mt-4 text-base leading-8 text-sand/65">

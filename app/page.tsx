@@ -213,7 +213,7 @@ export default function HomePage() {
             className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-sand/10 bg-white text-sand/60 shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
             aria-label="Close signup prompt"
           >
-            ×
+            Ãƒâ€”
           </button>
 
           <div className="grid md:grid-cols-[0.95fr_1.05fr]">
@@ -266,7 +266,7 @@ export default function HomePage() {
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
                 >
                   Explore the Academy
-                  <span aria-hidden="true">→</span>
+                  <span aria-hidden="true">Ã¢â€ â€™</span>
                 </a>
 
                 <a
@@ -274,7 +274,7 @@ export default function HomePage() {
                   className="inline-flex items-center justify-center gap-2 rounded-2xl border border-sand/10 bg-white px-5 py-4 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
                 >
                   Sign up and create workspace
-                  <span aria-hidden="true">→</span>
+                  <span aria-hidden="true">Ã¢â€ â€™</span>
                 </a>
 
                 <a
@@ -282,7 +282,7 @@ export default function HomePage() {
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#EAF7FF] px-5 py-4 text-sm font-bold text-[#123BFF] shadow-sm transition hover:bg-[#DDF2FF]"
                 >
                   Get your business onboarded
-                  <span aria-hidden="true">→</span>
+                  <span aria-hidden="true">Ã¢â€ â€™</span>
                 </a>
               </div>
 
@@ -730,8 +730,8 @@ export default function HomePage() {
 
               <div className="mt-8 rounded-2xl bg-[#123BFF] px-5 py-4 text-white shadow-sm">
                 <div className="flex flex-col gap-3 text-center text-xs sm:flex-row sm:items-center sm:justify-between sm:text-left">
-                  <p>Ã‚Â© 2026 DeepMind Resources. Built for verified AI skill gain.</p>
-                  <p>AI update Ã¢â€ â€™ verified meaning Ã¢â€ â€™ practical lesson Ã¢â€ â€™ sandbox task.</p>
+                  <p>© 2026 DeepMind Resources. Built for verified AI skill gain.</p>
+                  <p>AI update â†’ verified meaning â†’ practical lesson â†’ sandbox task.</p>
                 </div>
               </div>
             </div>

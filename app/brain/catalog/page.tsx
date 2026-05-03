@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import type { LucideIcon } from 'lucide-react'
@@ -339,11 +339,11 @@ function getEntityStatus(record: CatalogueRecord) {
 
 function formatValue(value: unknown) {
   if (value === null || value === undefined) {
-    return 'ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â'
+    return ' - '
   }
 
   if (typeof value === 'string') {
-    return value.trim() || 'ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â'
+    return value.trim() || 'Ãƒ¢Ã¢â€š¬ - '
   }
 
   if (typeof value === 'number' || typeof value === 'boolean') {
@@ -361,7 +361,7 @@ function getSearchableText(record: CatalogueRecord) {
   return Object.values(record)
     .filter((value) => value !== null && value !== undefined)
     .map((value) => formatValue(value))
-    .join(' ')
+    .join(' - ')
     .toLowerCase()
 }
 
@@ -616,7 +616,7 @@ function getTypeConfig(type: string | null): EntityTypeCard {
 
 function getStatusPillClassName(value: string | null) {
   if (!value) {
-    return 'bg-slate-100 text-slate-700'
+    return ' - '
   }
 
   const normalised = value.toLowerCase()
@@ -627,7 +627,7 @@ function getStatusPillClassName(value: string | null) {
     normalised.includes('ready') ||
     normalised.includes('active')
   ) {
-    return 'bg-emerald-50 text-emerald-700'
+    return ' - '
   }
 
   if (
@@ -636,7 +636,7 @@ function getStatusPillClassName(value: string | null) {
     normalised.includes('pending') ||
     normalised.includes('review')
   ) {
-    return 'bg-amber-50 text-amber-700'
+    return ' - '
   }
 
   if (
@@ -644,32 +644,32 @@ function getStatusPillClassName(value: string | null) {
     normalised.includes('blocked') ||
     normalised.includes('error')
   ) {
-    return 'bg-red-50 text-red-700'
+    return ' - '
   }
 
-  return 'bg-[#EAF7FF] text-[#123BFF]'
+  return ' - '
 }
 
 function getRelevancePillClassName(value: string | null) {
   if (!value) {
-    return 'bg-slate-100 text-slate-700'
+    return ' - '
   }
 
   const normalised = value.toLowerCase()
 
   if (normalised === 'high') {
-    return 'bg-emerald-50 text-emerald-700'
+    return ' - '
   }
 
   if (normalised === 'medium') {
-    return 'bg-amber-50 text-amber-700'
+    return ' - '
   }
 
   if (normalised === 'low') {
-    return 'bg-slate-100 text-slate-700'
+    return ' - '
   }
 
-  return 'bg-[#EAF7FF] text-[#123BFF]'
+  return ' - '
 }
 
 function getOverviewFields(record: CatalogueRecord) {
@@ -728,30 +728,30 @@ function getPayloadText(payload: Record<string, unknown> | null, key: string) {
 
 function getCompanyConfidencePillClassName(value: string | null) {
   if (value === 'high') {
-    return 'bg-emerald-50 text-emerald-700'
+    return ' - '
   }
 
   if (value === 'medium') {
-    return 'bg-amber-50 text-amber-700'
+    return ' - '
   }
 
   if (value === 'low') {
-    return 'bg-red-50 text-red-700'
+    return ' - '
   }
 
-  return 'bg-slate-100 text-slate-700'
+  return ' - '
 }
 
 function getPublicationPillClassName(value: string | null) {
   if (value === 'true') {
-    return 'bg-emerald-50 text-emerald-700'
+    return ' - '
   }
 
   if (value === 'false') {
-    return 'bg-amber-50 text-amber-700'
+    return ' - '
   }
 
-  return 'bg-slate-100 text-slate-700'
+  return ' - '
 }
 function getReadErrorMessage(error: unknown) {
   if (!error) {
@@ -766,7 +766,7 @@ function getReadErrorMessage(error: unknown) {
     }
   }
 
-  return 'Unknown read error'
+  return ' - '
 }
 
 export default async function BrainCataloguePage({ searchParams }: CataloguePageProps) {
@@ -1122,7 +1122,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                         : 'bg-emerald-50 text-emerald-700'
                     }`}
                   >
-                    {card.hasError ? 'Read check failed' : 'Read check passed'}
+                    {card.hasError ? ' - ' : 'Read check passed'}
                   </span>
                 </div>
 
@@ -1190,7 +1190,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                   scroll={false}
                   className={`block rounded-3xl border p-5 shadow-sm transition hover:-translate-y-0.5 ${
                     definition.cardClassName
-                  } ${isActive ? 'ring-2 ring-[#123BFF]/30' : ''}`}
+                  } ${isActive ? ' - ' : ''}`}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <span
@@ -1216,7 +1216,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                     <span
                       className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] ${definition.pillClassName}`}
                     >
-                      {isActive ? 'Currently selected' : 'Browse this type'}
+                      {isActive ? ' - ' : 'Browse this type'}
                     </span>
                   </div>
                 </Link>
@@ -1559,7 +1559,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                             Brain availability
                           </p>
                           <p className="mt-3 text-base font-bold leading-7 text-sand">
-                            {selectedCompanyBrainAvailable === 'true' ? 'Available privately' : 'Not marked available'}
+                            {selectedCompanyBrainAvailable === 'true' ? ' - ' : 'Not marked available'}
                           </p>
                         </div>
                       </div>
@@ -1604,7 +1604,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                       </div>
                     </section>
                   ) : null}
-                  <div className={selectedEntityType === 'company' ? 'hidden' : 'mt-8 grid gap-4 sm:grid-cols-3'}>
+                  <div className={selectedEntityType === 'company' ? ' - ' : 'mt-8 grid gap-4 sm:grid-cols-3'}>
                     <article className="rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5">
                       <p className="text-2xl font-bold text-[#123BFF]">
                         {formatCount(selectedRelationshipLinks.length)}
@@ -1670,11 +1670,11 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                             <div>
                               <div className="flex items-center gap-3">
                                 <Bot className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
-                                <h3 className="text-lg font-bold text-sand">{selectedEntityType === 'company' ? 'Models from this company' : 'Models in this family'}</h3>
+                                <h3 className="text-lg font-bold text-sand">{selectedEntityType === 'company' ? ' - ' : 'Models in this family'}</h3>
                               </div>
 
                               <p className="mt-3 max-w-3xl text-sm leading-7 text-sand/65">
-                                {selectedEntityType === 'company' ? 'These are the individual model entries linked to this company through the catalogue relationship spine.' : 'These are the individual model entries linked to this top-level catalogue family.'}
+                                {selectedEntityType === 'company' ? ' - ' : 'These are the individual model entries linked to this top-level catalogue family.'}
                               </p>
                             </div>
 
@@ -1744,8 +1744,8 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                         </section>
                       ) : null}
 
-                      <section className={selectedEntityType === 'company' ? 'hidden' : 'rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5'}>
-                        <div className={selectedEntityType === 'company' ? 'hidden' : 'flex items-center gap-3'}>
+                      <section className={selectedEntityType === 'company' ? ' - ' : 'rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5'}>
+                        <div className={selectedEntityType === 'company' ? ' - ' : 'flex items-center gap-3'}>
                           <FileSearch className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
                           <h3 className="text-lg font-bold text-sand">Basic information</h3>
                         </div>
@@ -1770,7 +1770,7 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                                     {isStatusLike ? (
                                       <span
                                         className={`inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] ${getStatusPillClassName(
-                                          formatted === 'ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â' ? null : formatted,
+                                          formatted === 'Ãƒ¢Ã¢â€š¬ - ' ? null : formatted,
                                         )}`}
                                       >
                                         {formatted}
@@ -1792,8 +1792,8 @@ export default async function BrainCataloguePage({ searchParams }: CataloguePage
                         </dl>
                       </section>
 
-                      <section className={selectedEntityType === 'company' ? 'hidden' : 'grid gap-6'}>
-                        <article className={selectedEntityType === 'company' ? 'hidden' : 'rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5'}>
+                      <section className={selectedEntityType === 'company' ? ' - ' : 'grid gap-6'}>
+                        <article className={selectedEntityType === 'company' ? ' - ' : 'rounded-3xl border border-sand/10 bg-[#F8FCFF] p-5'}>
                           <div className="flex items-center gap-3">
                             <Link2 className="h-5 w-5 text-[#123BFF]" aria-hidden="true" />
                             <h3 className="text-lg font-bold text-sand">Official links</h3>

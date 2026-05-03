@@ -373,7 +373,7 @@ export default function PlatformPage() {
               </h1>
 
               <p className="mt-6 max-w-3xl text-base leading-8 text-sand/70 sm:text-lg">
-                DeepMind Resources is the real-time operating system for AI competency. We distill the chaos of shifting models and protocols into a deterministic learning path for your team. From Agentic Orchestration to GraphRAG deployment, we turn global AI breakthroughs into production-ready skills and verified sandbox tasksÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Âensuring your business stays ahead of the curve, not just in the queue.
+                DeepMind Resources is the real-time operating system for AI competency. We distill the chaos of shifting models and protocols into a deterministic learning path for your team. From Agentic Orchestration to GraphRAG deployment, we turn global AI breakthroughs into production-ready skills and verified sandbox tasks â€” ensuring your business stays ahead of the curve, not just in the queue.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -418,7 +418,7 @@ export default function PlatformPage() {
                       Core platform loop
                     </p>
                     <h2 className="mt-1 text-xl font-bold text-sand">
-                      AI update → verified meaning → practical lesson → sandbox task → skill gain
+                      AI update Ã¢â€ â€™ verified meaning Ã¢â€ â€™ practical lesson Ã¢â€ â€™ sandbox task Ã¢â€ â€™ skill gain
                     </h2>
                   </div>
                 </div>
@@ -819,19 +819,19 @@ export default function PlatformPage() {
                   <article
                     key={principle.title}
                     className={`rounded-3xl border border-sand/10 p-6 shadow-sm sm:p-7 ${
-                      index === 1 ? 'bg-[#123BFF] text-white' : 'bg-white/90 text-sand'
+                      index === 1 ? ' - ' : 'bg-white/90 text-sand'
                     }`}
                   >
                     <span
                       className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl ${
-                        index === 1 ? 'bg-white text-[#123BFF]' : 'bg-[#EAF7FF] text-[#123BFF]'
+                        index === 1 ? ' - ' : 'bg-[#EAF7FF] text-[#123BFF]'
                       }`}
                     >
                       <Icon className="h-6 w-6" aria-hidden="true" />
                     </span>
 
                     <h2
-                      id={index === 0 ? 'trust-title' : undefined}
+                      id={index === 0 ? ' - ' : undefined}
                       className="mt-5 text-2xl font-bold tracking-tight"
                     >
                       {principle.title}
@@ -839,7 +839,7 @@ export default function PlatformPage() {
 
                     <p
                       className={`mt-4 text-sm leading-7 ${
-                        index === 1 ? 'text-white/80' : 'text-sand/65'
+                        index === 1 ? ' - ' : 'text-sand/65'
                       }`}
                     >
                       {principle.description}
