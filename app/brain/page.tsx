@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import {
@@ -1139,7 +1139,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                     </p>
 
                     <h3 className="mt-2 text-lg font-bold tracking-tight text-sand">
-                      {[item.product_name, item.model_name].filter(Boolean).join(' Ã¢â‚¬â€ ') ||
+                      {[item.product_name, item.model_name].filter(Boolean).join('  - € ') ||
                         item.provider_name}
                     </h3>
 
@@ -1718,7 +1718,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                 </p>
 
                 <p className="mt-3 text-4xl font-bold tracking-tight text-sand">
-                  {item.hasError ? 'Ã¢â‚¬â€' : formatCount(item.count)}
+                  {item.hasError ? ' - €' : formatCount(item.count)}
                 </p>
 
                 <p className="mt-3 text-sm leading-7 text-sand/65">
@@ -1790,7 +1790,7 @@ export default async function BrainPage({ searchParams }: BrainPageProps) {
                   </p>
 
                   <p className="mt-2 text-4xl font-bold tracking-tight text-sand">
-                    {item.hasError ? 'Ã¢â‚¬â€' : formatCount(item.count)}
+                    {item.hasError ? ' - €' : formatCount(item.count)}
                   </p>
 
                   <p className="mt-3 text-sm leading-7 text-sand/65">
