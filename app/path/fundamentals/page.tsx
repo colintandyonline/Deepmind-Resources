@@ -76,27 +76,27 @@ type FaqItem = {
 
 const fundamentalsPrinciples: Card[] = [
   {
-    title: 'AI competency before AI complexity',
+    title: 'Competency before complexity',
     description:
-      'Start with the concepts, limits, language, and judgement needed to use AI tools safely before moving into advanced workflows.',
+      'Build the mental model first: what AI systems are good at, where they fail, and how to control their use before workflows scale.',
     icon: GraduationCap,
   },
   {
-    title: 'Safe-use habits from the first step',
+    title: 'Security-aware from day one',
     description:
-      'Learn what should never be pasted into an AI tool, where human review belongs, and how to spot unsupported output.',
+      'Set the boundary early: sensitive data, unsupported claims, regulated decisions, and production workflows all need clear review rules.',
     icon: ShieldCheck,
   },
   {
-    title: 'Tool judgement, not tool worship',
+    title: 'Tool intelligence over hype',
     description:
-      'Understand the difference between models, assistants, platforms, files, memory, retrieval, and automation before choosing tools.',
+      'Learn how to separate model capability, product packaging, assistants, retrieval systems, and automation layers before choosing tools.',
     icon: Radar,
   },
   {
-    title: 'Practice inside verified sandbox tasks',
+    title: 'Practice before production',
     description:
-      'Move from reading to execution with guided tasks for prompt structure, output checking, AI risk, and workflow mapping.',
+      'Move from understanding to execution inside verified sandbox tasks that test prompting, validation, risk judgement, and tool selection.',
     icon: Route,
   },
 ]
@@ -104,146 +104,146 @@ const fundamentalsPrinciples: Card[] = [
 const pathwayOutcomes: Outcome[] = [
   {
     label: '01',
-    title: 'Understand what AI is actually doing',
+    title: 'Read the AI landscape with control',
     description:
-      'Build clear mental models for prediction, reasoning-like behaviour, retrieval, automation, context windows, and model limits.',
+      'Understand models, assistants, platforms, context windows, retrieval, automation, and why capability changes as the frontier moves.',
   },
   {
     label: '02',
-    title: 'Use AI without importing unnecessary risk',
+    title: 'Know the boundary before the workflow',
     description:
-      'Learn the privacy, accuracy, security, and review habits needed before applying AI to real workplace tasks.',
+      'Identify what can be delegated, what must be reviewed, what data should stay out, and where AI output cannot be trusted blindly.',
   },
   {
     label: '03',
-    title: 'Write stronger first prompts',
+    title: 'Turn prompts into operating instructions',
     description:
-      'Move from vague requests into structured instructions with context, task, constraints, audience, and output rules.',
+      'Move beyond casual requests and learn the structure behind reliable AI work: role, context, task, constraints, format, and review.',
   },
   {
     label: '04',
-    title: 'Know when a tool fits the job',
+    title: 'Prepare for tool intelligence',
     description:
-      'Start building tool intelligence by matching AI systems to use cases instead of choosing from hype cycles.',
+      'Build the judgement needed to compare AI tools by workflow fit, risk profile, production use, and measurable competency value.',
   },
 ]
 
 const pathwayModules: Card[] = [
   {
-    title: 'What AI is and is not',
+    title: 'How AI systems behave',
     description:
-      'Separate practical AI capability from hype, myths, and overconfident claims so every later pathway has a solid base.',
+      'Learn the practical operating model behind modern AI: prediction, reasoning-like output, context, retrieval, memory, and failure modes.',
     icon: BrainCircuit,
   },
   {
-    title: 'How modern AI tools work',
+    title: 'The modern tool stack',
     description:
-      'Understand prompts, responses, models, apps, files, memory, retrieval, context windows, and why behaviour changes after updates.',
+      'Map assistants, model APIs, research tools, coding systems, RAG platforms, agent workflows, and automation layers into one clear picture.',
     icon: Layers3,
   },
   {
-    title: 'Strengths, limits, and risks',
+    title: 'Risk, review, and reliability',
     description:
-      'Learn where AI helps, where it fails, how hallucinations happen, and when sensitive or high-risk tasks need review.',
+      'Set professional rules for privacy, hallucinations, source checking, regulated decisions, business approval, and safe AI adoption.',
     icon: FileCheck2,
   },
   {
-    title: 'The AI tool landscape',
+    title: 'From foundation to execution',
     description:
-      'Map chat assistants, research tools, coding assistants, automation platforms, RAG systems, and agentic workflows into clear categories.',
+      'Use the fundamentals route as the launch point for prompt systems, workflow mapping, tool intelligence, agents, and verified sandbox practice.',
     icon: Compass,
   },
 ]
 
 const sandboxTasks: Card[] = [
   {
-    title: 'Classify AI tasks by risk',
+    title: 'Classify workflow risk',
     description:
-      'Decide whether sample workplace tasks are safe, sensitive, review-required, or unsuitable for AI assistance.',
+      'Decide whether real workplace scenarios are safe for AI, require review, contain sensitive data, or should stay outside automated workflows.',
     icon: ShieldCheck,
   },
   {
-    title: 'Rewrite a weak AI prompt',
+    title: 'Convert vague input into controlled instruction',
     description:
-      'Turn a vague request into a controlled prompt with context, constraints, output format, and review rules.',
+      'Rewrite weak prompts into structured operating instructions with context, constraints, output rules, and clear review expectations.',
     icon: Sparkles,
   },
   {
-    title: 'Check a confident wrong answer',
+    title: 'Audit a confident AI answer',
     description:
-      'Inspect an AI response for unsupported claims, missing evidence, uncertain wording, and required source checks.',
+      'Inspect output for unsupported claims, missing evidence, wrong assumptions, source gaps, and review requirements before it is used.',
     icon: BadgeCheck,
   },
   {
-    title: 'Match tools to real use cases',
+    title: 'Match tools to production use cases',
     description:
-      'Build the first layer of tool intelligence by choosing the right type of AI system for a practical scenario.',
+      'Build tool intelligence by choosing the right AI system type for a task instead of following hype, popularity, or generic recommendations.',
     icon: Target,
   },
 ]
 
 const audienceCards: Card[] = [
   {
-    title: 'Individual learners',
+    title: 'Individual operators',
     description:
-      'For people who want a clean starting path into AI without getting trapped in scattered tutorials or generic course filler.',
+      'For learners who want to move from scattered AI experimentation into structured, current, production-aware capability.',
     icon: GraduationCap,
   },
   {
-    title: 'Business staff',
+    title: 'Business teams',
     description:
-      'For professionals who need safe, repeatable AI habits for communication, research, admin, support, planning, and daily work.',
+      'For staff who need a shared AI operating standard across research, communication, admin, support, planning, and workflow execution.',
     icon: BriefcaseBusiness,
   },
   {
     title: 'Future builders',
     description:
-      'For learners preparing to move into prompt systems, tool calling, RAG, agentic workflows, and multi-agent architecture.',
+      'For people preparing to move into prompt systems, RAG, tool calling, agentic workflows, validation, and multi-agent architecture.',
     icon: Workflow,
   },
 ]
 
 const businessValue: Card[] = [
   {
-    title: 'Staff start from the same map',
+    title: 'One operating language for AI',
     description:
-      'A shared fundamentals layer gives teams common language around AI capability, limits, review habits, and safe usage.',
+      'Give staff a shared map for model behaviour, tool limits, privacy boundaries, review standards, and safe workplace use.',
     icon: BookOpenCheck,
   },
   {
-    title: 'Managers get safer adoption',
+    title: 'Safer adoption before scale',
     description:
-      'Business teams can build AI habits around approved workflows, privacy boundaries, and output validation from the beginning.',
+      'Build the habits that keep AI away from sensitive data, unsupported decisions, uncontrolled outputs, and unmanaged workflow risk.',
     icon: LockKeyhole,
   },
   {
-    title: 'Tool spend becomes more deliberate',
+    title: 'Better tool decisions',
     description:
-      'Teams learn to define the job first, then choose the tool, reducing wasted subscriptions and unsupported adoption.',
+      'Train teams to define the workflow first, then select the AI system by production value, governance need, and measurable capability.',
     icon: Target,
   },
 ]
 
 const faqItems: FaqItem[] = [
   {
-    question: 'Is this the actual training lesson page?',
+    question: 'How does this pathway stay current?',
     answer:
-      'No. This is the public overview for the AI Fundamentals pathway. The deeper lesson pages, progress tracking, assessments, and member training flow come later.',
+      'DeepMind Resources tracks meaningful AI shifts and translates them into verified guidance, refreshed pathway context, and new sandbox practice where the change affects real capability.',
   },
   {
-    question: 'Who should start with AI Fundamentals?',
+    question: 'What does this pathway prepare users to do?',
     answer:
-      'Anyone who needs a reliable foundation before using AI seriously: beginners, business staff, managers, and future builders moving toward prompt systems, agents, RAG, or workflow automation.',
+      'It prepares users to work with AI deliberately: understand model limits, protect sensitive workflows, structure better prompts, inspect outputs, and choose tools by production fit.',
   },
   {
-    question: 'How does this connect to the Sandbox?',
+    question: 'Where does sandbox practice fit?',
     answer:
-      'The pathway points into verified sandbox tasks where users practise safe prompting, output checking, risk classification, and tool-selection judgement before using AI in real work.',
+      'The Sandbox turns foundation knowledge into controlled execution. Users practise risk classification, prompt structure, output validation, and tool-selection judgement before applying AI to real work.',
   },
   {
-    question: 'How does Live AI Intelligence affect this pathway?',
+    question: 'Is this suitable for business teams?',
     answer:
-      'When important model, platform, or workflow changes affect core AI concepts or safe-use guidance, DeepMind Resources can refresh the pathway and recommend updated practice.',
+      'Yes. The pathway gives teams a shared AI operating standard before they move into role-based workflows, business sandbox tasks, tool intelligence, and workforce training.',
   },
 ]
 
@@ -335,19 +335,15 @@ export default function AIFundamentalsPathwayPage() {
               </span>
 
               <h1 className="mt-6 max-w-5xl text-4xl font-bold tracking-tight text-sand sm:text-5xl lg:text-6xl">
-                AI Fundamentals: build the judgement layer before the tooling layer.
+                AI Fundamentals: the operating base for professional AI competency.
               </h1>
 
               <p className="mt-6 max-w-3xl text-base leading-8 text-sand/70 sm:text-lg">
-                The AI Fundamentals pathway gives learners and teams the operating base for
-                professional AI competency: how modern AI tools work, where they fail, how to
-                prompt with control, and how to use AI without importing risk into real work.
+                The frontier is moving faster than static training can absorb. This pathway gives learners and teams the control layer: clear AI mental models, safe-use boundaries, tool judgement, and the first verified sandbox behaviours needed before AI touches production work.
               </p>
 
               <p className="mt-4 max-w-3xl text-base leading-8 text-sand/70 sm:text-lg">
-                This is not the lesson player. It is the pathway front door: the map for what users
-                will learn, why it matters, and how the Academy connects the concept layer to
-                verified sandbox practice.
+                DeepMind Resources turns model and tool shifts into structured competency. AI Fundamentals is the entry route into that system: the foundation that lets every later pathway stay current, practical, and business-ready.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -385,7 +381,7 @@ export default function AIFundamentalsPathwayPage() {
                       Foundation route
                     </p>
                     <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
-                      From AI confusion to controlled, practical use.
+                      From frontier confusion to controlled AI execution.
                     </h2>
                   </div>
                   <EmblemPulse />
@@ -393,10 +389,10 @@ export default function AIFundamentalsPathwayPage() {
 
                 <div className="mt-6 grid gap-3">
                   {[
-                    'Understand AI capability and limits',
-                    'Build safe-use habits before real workflows',
-                    'Practise prompt and output checks in the sandbox',
-                    'Prepare for prompting, agents, RAG, and tool selection',
+                    'Map AI capability, limits, and failure modes',
+                    'Set privacy and review boundaries before production work',
+                    'Practise controlled prompts and output checks',
+                    'Prepare for prompt systems, agents, RAG, and tool intelligence',
                   ].map((item) => (
                     <div key={item} className="flex items-start gap-3 rounded-2xl bg-white/10 p-4">
                       <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-white" aria-hidden="true" />
@@ -414,8 +410,7 @@ export default function AIFundamentalsPathwayPage() {
                   <div>
                     <h3 className="text-lg font-bold text-sand">Connected to live AI intelligence.</h3>
                     <p className="mt-2 text-sm leading-7 text-sand/65">
-                      As AI tools, models, and safe-use patterns change, this pathway can be
-                      reviewed, refreshed, and connected to new sandbox tasks.
+                      When a meaningful model, protocol, tool, or workflow shift changes what professionals need to know, the Academy can route that update into refreshed guidance and new verified sandbox tasks.
                     </p>
                   </div>
                 </div>
@@ -432,13 +427,11 @@ export default function AIFundamentalsPathwayPage() {
                 </span>
 
                 <h2 id="why-this-pathway-matters" className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
-                  Professional AI skill starts with judgement, not a tool subscription.
+                  The frontier is moving. The foundation has to be engineered.
                 </h2>
 
                 <p className="mt-4 text-base leading-8 text-sand/65">
-                  Most people begin with a chatbot and a vague prompt. DeepMind Resources starts
-                  with the map: what AI can do, what it cannot do, how tool behaviour changes, and
-                  where human judgement belongs before AI reaches business-critical work.
+                  AI adoption fails when teams collect tools before they build judgement. This path gives users a deterministic foundation for model behaviour, tool boundaries, sensitive data, review gates, and production-safe AI use.
                 </p>
               </div>
 
@@ -458,13 +451,11 @@ export default function AIFundamentalsPathwayPage() {
                   </span>
 
                   <h2 id="pathway-outcomes" className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">
-                    What the learner should understand before moving deeper.
+                    From orientation to operational control.
                   </h2>
 
                   <p className="mt-4 text-base leading-8 text-white/80">
-                    AI Fundamentals is the operating base for every later Academy pathway. Prompt
-                    engineering, tool selection, business workflows, agents, RAG, and validation all
-                    become stronger when the learner understands the foundation first.
+                    AI Fundamentals is where users stop treating AI as a magic interface and start using it as a controlled system. Prompting, agents, RAG, automation, and validation all depend on this operating base.
                   </p>
                 </div>
 
@@ -496,13 +487,11 @@ export default function AIFundamentalsPathwayPage() {
                 </span>
 
                 <h2 id="what-this-pathway-covers" className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
-                  A structured foundation for every serious AI user.
+                  The foundation layer for current AI competency.
                 </h2>
 
                 <p className="mt-4 text-base leading-8 text-sand/65">
-                  This overview does not teach the full lessons. It defines the pathway scope so
-                  users know what the AI Fundamentals route is designed to build before they move
-                  into the deeper Academy experience.
+                  This route defines the core operating map before deeper Academy tracks: model behaviour, tool categories, safe-use rules, prompt control, workflow boundaries, and first-pass output validation.
                 </p>
               </div>
 
@@ -521,13 +510,11 @@ export default function AIFundamentalsPathwayPage() {
                 </span>
 
                 <h2 id="sandbox-connection" className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
-                  The pathway becomes useful when the learner practises.
+                  Verify the habit before it reaches the workflow.
                 </h2>
 
                 <p className="mt-4 text-base leading-8 text-sand/65">
-                  Fundamentals should not stay theoretical. The Academy route points into guided
-                  sandbox tasks where users practise safer prompting, output inspection, risk
-                  classification, and tool-selection judgement before using AI in real workflows.
+                  The route points into guided sandbox tasks where users practise decisions they will need at work: classifying risk, structuring prompts, checking unsupported output, and selecting the right tool for the job.
                 </p>
 
                 <Link
@@ -566,13 +553,11 @@ export default function AIFundamentalsPathwayPage() {
                 </span>
 
                 <h2 id="who-this-is-for" className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
-                  Built for people who need competence before complexity.
+                  Built for serious learners, staff, and future AI operators.
                 </h2>
 
                 <p className="mt-4 text-base leading-8 text-sand/65">
-                  AI Fundamentals supports beginners, workplace users, and future builders. It gives
-                  each audience the same reliable base before they branch into prompt engineering,
-                  tool intelligence, business AI workflows, or technical builder paths.
+                  This pathway gives individuals and teams the same professional base before they move into prompt engineering, tool intelligence, business workflows, agents, RAG, and multi-agent systems.
                 </p>
               </div>
 
@@ -604,13 +589,11 @@ export default function AIFundamentalsPathwayPage() {
                   </span>
 
                   <h2 id="business-value" className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">
-                    Current AI training starts with shared judgement.
+                    Give the workforce a current AI operating standard.
                   </h2>
 
                   <p className="mt-4 text-base leading-8 text-white/80">
-                    For businesses, the fundamentals layer creates a common operating standard:
-                    staff know what AI can do, where it fails, what data should stay out of tools,
-                    and how to review outputs before they enter workflows.
+                    For businesses, AI Fundamentals creates the baseline your team needs before wider adoption: shared language, safe-use boundaries, output validation, tool judgement, and a route into role-based workflow training.
                   </p>
 
                   <Link
@@ -649,11 +632,11 @@ export default function AIFundamentalsPathwayPage() {
             <div className="rounded-[2rem] border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
               <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
                 <FileCheck2 className="h-4 w-4" aria-hidden="true" />
-                Pathway questions
+                Current competency notes
               </span>
 
               <h2 id="fundamentals-faq" className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
-                What professionals and teams need to know.
+                How the AI Fundamentals route works.
               </h2>
 
               <div className="mt-8 grid gap-4 md:grid-cols-2">
@@ -677,12 +660,11 @@ export default function AIFundamentalsPathwayPage() {
                   </span>
 
                   <h2 className="mt-5 max-w-4xl text-3xl font-bold tracking-tight sm:text-4xl">
-                    Start with AI Fundamentals, then move into prompt systems, tool intelligence, and verified sandbox practice.
+                    Start with the operating base, then move into verified AI execution.
                   </h2>
 
                   <p className="mt-4 max-w-3xl text-base leading-8 text-white/80">
-                    Build the base layer first. Then use the Academy and Sandbox to turn that
-                    understanding into practical, production-ready AI competency.
+                    Use AI Fundamentals to establish the standard. Then move into prompt systems, tool intelligence, agents, RAG, validation, and verified sandbox practice.
                   </p>
                 </div>
 
