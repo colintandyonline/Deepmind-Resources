@@ -520,3 +520,55 @@
     box-shadow: 0 24px 70px rgba(6, 27, 91, 0.10);
   }
 }
+
+/* Sitewide mobile popup safety */
+@media (max-width: 767px) {
+  [id*="popup"][role="dialog"],
+  [id*="popup"][aria-modal="true"],
+  #homepage-cta-popup,
+  #academy-onboarding-popup,
+  #prompting-onboarding-popup {
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    padding: max(0.75rem, env(safe-area-inset-top)) 0.75rem max(1rem, env(safe-area-inset-bottom)) !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  [id*="popup"][role="dialog"] > div,
+  [id*="popup"][aria-modal="true"] > div,
+  #homepage-cta-popup > div,
+  #academy-onboarding-popup > div,
+  #prompting-onboarding-popup > div {
+    max-height: calc(100dvh - 1.5rem) !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    border-radius: 1.35rem !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  [id*="popup"] button[aria-label*="Close"],
+  [id*="popup"] button[id*="close"],
+  #homepage-cta-popup-close,
+  #academy-onboarding-close,
+  #prompting-onboarding-close {
+    position: sticky !important;
+    top: 0.75rem !important;
+    z-index: 20 !important;
+    margin-left: auto !important;
+  }
+
+  [id*="popup"] h1,
+  [id*="popup"] h2,
+  [id*="popup"] h3 {
+    overflow-wrap: anywhere;
+  }
+
+  [id*="popup"] a,
+  [id*="popup"] button {
+    min-height: 3.25rem;
+  }
+}
