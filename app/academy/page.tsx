@@ -340,7 +340,7 @@ export default function AcademyPage() {
             className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-sand/10 bg-white text-sand/60 shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
             aria-label="Close Academy onboarding"
           >
-            Ã—
+            Ãƒâ€”
           </button>
 
           <div className="grid gap-0 md:grid-cols-[0.95fr_1.05fr]">
@@ -524,51 +524,6 @@ export default function AcademyPage() {
 
       <div className="relative z-10 px-4 py-5 sm:px-6 lg:px-8">
         <div className="mx-auto w-full max-w-7xl">
-          <nav className="flex items-center justify-between rounded-3xl border border-sand/10 bg-white/90 px-5 py-4 shadow-sm backdrop-blur sm:px-6">
-            <Link href="/" className="flex items-center gap-3">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF] shadow-sm">
-                <BrainCircuit className="h-6 w-6" aria-hidden="true" />
-              </span>
-              <span className="text-sm font-bold tracking-tight text-sand sm:text-base">
-                DeepMind<span className="text-[#123BFF]">Resources</span>
-              </span>
-            </Link>
-
-            <div className="hidden items-center gap-6 text-sm font-bold text-sand/65 lg:flex">
-              <Link href="/" className="transition hover:text-[#123BFF]">
-                Home
-              </Link>
-              <Link href="/platform" className="transition hover:text-[#123BFF]">
-                Platform
-              </Link>
-              <Link href="/syllabus" className="transition hover:text-[#123BFF]">
-                Syllabus
-              </Link>
-              <Link href="/sandbox" className="transition hover:text-[#123BFF]">
-                Sandbox
-              </Link>
-              <Link href="/business-ai-training" className="transition hover:text-[#123BFF]">
-                Business
-              </Link>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Link
-                href="/syllabus"
-                className="hidden rounded-2xl border border-sand/10 bg-white px-4 py-2.5 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF] sm:inline-flex"
-              >
-                View syllabus
-              </Link>
-              <Link
-                href="/auth/signup"
-                className="inline-flex items-center gap-2 rounded-2xl bg-[#123BFF] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
-              >
-                Create workspace
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </Link>
-            </div>
-          </nav>
-
           <section className="grid gap-10 py-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:py-16">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
