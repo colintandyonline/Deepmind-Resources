@@ -196,6 +196,196 @@ export default function HomePage() {
         aria-hidden="true"
       />
 
+      <div
+        id="homepage-cta-popup"
+        className="hidden fixed inset-0 z-50 items-center justify-center bg-sand/35 px-4 py-6 backdrop-blur-sm"
+        aria-hidden="true"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="homepage-cta-popup-title"
+      >
+        <div className="relative w-full max-w-3xl overflow-hidden rounded-[2rem] border border-sand/10 bg-white shadow-2xl">
+          <div className="absolute inset-x-0 top-0 h-1.5 bg-[#123BFF]" />
+
+          <button
+            id="homepage-cta-popup-close"
+            type="button"
+            className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-sand/10 bg-white text-sand/60 shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
+            aria-label="Close signup prompt"
+          >
+            ×
+          </button>
+
+          <div className="grid md:grid-cols-[0.95fr_1.05fr]">
+            <div className="bg-[#123BFF] p-6 text-white sm:p-8">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF] shadow-sm">
+                <Sparkles className="h-4 w-4" aria-hidden="true" />
+                Live AI Intelligence
+              </span>
+
+              <h2 id="homepage-cta-popup-title" className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">
+                Stop chasing AI updates. Turn them into workforce capability.
+              </h2>
+
+              <p className="mt-4 text-sm leading-7 text-white/82 sm:text-base">
+                DeepMind Resources maps frontier AI change into deterministic learning paths,
+                verified sandbox tasks, tool intelligence, and production-ready skills.
+              </p>
+
+              <div className="mt-6 grid gap-3">
+                {[
+                  'AI update to verified meaning',
+                  'Verified sandbox tasks',
+                  'Business-ready training paths',
+                ].map((item) => (
+                  <div key={item} className="flex items-start gap-3 rounded-2xl bg-white/10 p-3">
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-white" aria-hidden="true" />
+                    <p className="text-sm font-semibold leading-6 text-white/90">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-6 sm:p-8">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF]">
+                Choose your route
+              </p>
+
+              <h3 className="mt-3 text-2xl font-bold tracking-tight text-sand">
+                Start the Academy, or get your team onboarded.
+              </h3>
+
+              <p className="mt-3 text-sm leading-7 text-sand/65">
+                Build individual AI competency, explore the live Academy, or move your business
+                into structured workforce training.
+              </p>
+
+              <div className="mt-6 grid gap-3">
+                <a
+                  href="/academy"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
+                >
+                  Explore the Academy
+                  <span aria-hidden="true">→</span>
+                </a>
+
+                <a
+                  href="/auth/signup"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-sand/10 bg-white px-5 py-4 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
+                >
+                  Sign up and create workspace
+                  <span aria-hidden="true">→</span>
+                </a>
+
+                <a
+                  href="/contact"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#EAF7FF] px-5 py-4 text-sm font-bold text-[#123BFF] shadow-sm transition hover:bg-[#DDF2FF]"
+                >
+                  Get your business onboarded
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+
+              <p className="mt-5 text-xs leading-6 text-sand/45">
+                Close this and keep exploring if you are not ready yet.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            (() => {
+              const popup = document.getElementById('homepage-cta-popup');
+              const closeButton = document.getElementById('homepage-cta-popup-close');
+              const storageKey = 'dmr_homepage_cta_popup_dismissed';
+              let shown = false;
+              let timerId = null;
+
+              if (!popup) return;
+
+              const hasDismissed = () => {
+                try {
+                  return window.sessionStorage.getItem(storageKey) === 'true';
+                } catch {
+                  return false;
+                }
+              };
+
+              const markDismissed = () => {
+                try {
+                  window.sessionStorage.setItem(storageKey, 'true');
+                } catch {}
+              };
+
+              const showPopup = () => {
+                if (shown || hasDismissed()) return;
+
+                shown = true;
+                popup.classList.remove('hidden');
+                popup.classList.add('flex');
+                popup.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+
+                if (timerId) {
+                  window.clearTimeout(timerId);
+                }
+
+                window.removeEventListener('scroll', handleScroll);
+              };
+
+              const closePopup = () => {
+                markDismissed();
+                popup.classList.add('hidden');
+                popup.classList.remove('flex');
+                popup.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+              };
+
+              const handleScroll = () => {
+                const doc = document.documentElement;
+                const scrollableHeight = doc.scrollHeight - window.innerHeight;
+
+                if (scrollableHeight <= 0) return;
+
+                const scrollPercent = (window.scrollY / scrollableHeight) * 100;
+
+                if (scrollPercent >= 20) {
+                  showPopup();
+                }
+              };
+
+              if (hasDismissed()) return;
+
+              timerId = window.setTimeout(showPopup, 20000);
+              window.addEventListener('scroll', handleScroll, { passive: true });
+
+              if (closeButton) {
+                closeButton.addEventListener('click', closePopup);
+              }
+
+              popup.addEventListener('click', (event) => {
+                if (event.target === popup) {
+                  closePopup();
+                }
+              });
+
+              popup.querySelectorAll('a').forEach((link) => {
+                link.addEventListener('click', markDismissed);
+              });
+
+              window.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && !popup.classList.contains('hidden')) {
+                  closePopup();
+                }
+              });
+            })();
+          `,
+        }}
+      />
+
       <Sidebar />
 
       <main className="relative z-10 min-h-screen pt-16 md:pl-64 md:pt-0">
@@ -540,8 +730,8 @@ export default function HomePage() {
 
               <div className="mt-8 rounded-2xl bg-[#123BFF] px-5 py-4 text-white shadow-sm">
                 <div className="flex flex-col gap-3 text-center text-xs sm:flex-row sm:items-center sm:justify-between sm:text-left">
-                  <p>Â© 2026 DeepMind Resources. Built for verified AI skill gain.</p>
-                  <p>AI update â†’ verified meaning â†’ practical lesson â†’ sandbox task.</p>
+                  <p>Ã‚Â© 2026 DeepMind Resources. Built for verified AI skill gain.</p>
+                  <p>AI update Ã¢â€ â€™ verified meaning Ã¢â€ â€™ practical lesson Ã¢â€ â€™ sandbox task.</p>
                 </div>
               </div>
             </div>
