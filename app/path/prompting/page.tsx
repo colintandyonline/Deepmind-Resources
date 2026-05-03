@@ -65,20 +65,38 @@ export default function PromptEngineeringPage() {
 
   useEffect(() => {
     const storageKey = 'dmr_prompting_popup_closed'
-    if (window.sessionStorage.getItem(storageKey) === 'true') return
+    const hasClosed = () => window.sessionStorage.getItem(storageKey) === 'true'
 
-    const openPopup = () => setShowPopup(true)
-    const timer = window.setTimeout(openPopup, 20000)
+    if (hasClosed()) return
+
+    let hasOpened = false
+    let timer: number | undefined
+
+    const openPopup = () => {
+      if (hasOpened || hasClosed()) return
+
+      hasOpened = true
+      setShowPopup(true)
+
+      if (timer) {
+        window.clearTimeout(timer)
+      }
+
+      window.removeEventListener('scroll', onScroll)
+    }
 
     const onScroll = () => {
       const total = document.documentElement.scrollHeight - window.innerHeight
       if (total > 0 && (window.scrollY / total) * 100 >= 20) openPopup()
     }
 
+    timer = window.setTimeout(openPopup, 20000)
     window.addEventListener('scroll', onScroll, { passive: true })
 
     return () => {
-      window.clearTimeout(timer)
+      if (timer) {
+        window.clearTimeout(timer)
+      }
       window.removeEventListener('scroll', onScroll)
     }
   }, [])
