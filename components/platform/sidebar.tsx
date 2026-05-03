@@ -99,7 +99,7 @@ export function Sidebar() {
       </div>
       {showText && (
         <span className="font-semibold text-sand tracking-tight">
-          DeepMind<span className="text-signal-green">Resources</span>
+          DeepMind <span className="text-signal-green">Resources</span>
         </span>
       )}
     </Link>
