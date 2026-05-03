@@ -34,6 +34,7 @@ interface NavItem {
 
 const mainNavItems: NavItem[] = [
   { icon: Home, label: 'Home', href: '/' },
+  { icon: BookOpen, label: 'Academy', href: '/academy' },
   { icon: Layers, label: 'Platform', href: '/platform' },
   { icon: BookOpen, label: 'Syllabus', href: '/syllabus' },
   { icon: Mail, label: 'Contact', href: '/contact' },
