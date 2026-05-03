@@ -376,3 +376,40 @@
     opacity: 1 !important;
   }
 }
+
+/* Emergency popup control sanitisation */
+#homepage-cta-popup-close,
+#academy-onboarding-close,
+[id*="popup"] button[id*="close"] {
+  font-size: 0 !important;
+  line-height: 0 !important;
+}
+
+#homepage-cta-popup-close::after,
+#academy-onboarding-close::after,
+[id*="popup"] button[id*="close"]::after {
+  content: "\00d7";
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+#homepage-cta-popup a span[aria-hidden="true"],
+[id*="popup"] a span[aria-hidden="true"] {
+  display: inline-flex;
+  width: 1rem;
+  height: 1rem;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: transparent !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+}
+
+#homepage-cta-popup a span[aria-hidden="true"]::after,
+[id*="popup"] a span[aria-hidden="true"]::after {
+  content: "\2192";
+  color: currentColor;
+  font-size: 1rem;
+  line-height: 1;
+}
