@@ -46,7 +46,7 @@ const learningPaths: NavItem[] = [
   { icon: Brain, label: 'AI Fundamentals', href: '/path/fundamentals' },
   { icon: Zap, label: 'Prompt Engineering', href: '/path/prompting' },
   { icon: Layers, label: 'Agent Architecture', href: '/path/agents' },
-  { icon: Network, label: 'Multi-Agent Systems', href: '/path/multi-agent' },
+  { icon: Network, label: 'Multi-Agent Systems', href: '/path/multi-agent-systems' },
 ]
 
 export function Sidebar() {
