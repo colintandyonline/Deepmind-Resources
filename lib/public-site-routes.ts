@@ -1,4 +1,4 @@
-﻿import fs from 'node:fs'
+import fs from 'node:fs'
 import path from 'node:path'
 
 export const SITE_URL = 'https://deepmindresources.pro'
@@ -38,6 +38,7 @@ const PRIVATE_ROUTE_SEGMENTS = new Set([
   'admin',
   'api',
   'auth',
+  'brain',
   'dashboard',
   'editor',
   'onboarding',
