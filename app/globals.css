@@ -589,3 +589,153 @@
     pointer-events: none !important;
   }
 }
+
+/* DeepMind Resources ambient signal background test */
+@keyframes dmr-ambient-signal-drift {
+  0% {
+    background-position:
+      0 0,
+      0 0,
+      0 0;
+    opacity: 0.42;
+  }
+
+  50% {
+    background-position:
+      110px 72px,
+      -90px 46px,
+      52px -68px;
+    opacity: 0.58;
+  }
+
+  100% {
+    background-position:
+      220px 144px,
+      -180px 92px,
+      104px -136px;
+    opacity: 0.42;
+  }
+}
+
+@keyframes dmr-ambient-packet-flow {
+  0% {
+    transform: translate3d(-12vw, 0, 0) rotate(9deg);
+    opacity: 0;
+  }
+
+  14% {
+    opacity: 0.34;
+  }
+
+  50% {
+    opacity: 0.26;
+  }
+
+  86% {
+    opacity: 0.16;
+  }
+
+  100% {
+    transform: translate3d(112vw, 18vh, 0) rotate(9deg);
+    opacity: 0;
+  }
+}
+
+@keyframes dmr-ambient-packet-flow-reverse {
+  0% {
+    transform: translate3d(112vw, 0, 0) rotate(-11deg);
+    opacity: 0;
+  }
+
+  16% {
+    opacity: 0.28;
+  }
+
+  58% {
+    opacity: 0.22;
+  }
+
+  100% {
+    transform: translate3d(-18vw, 22vh, 0) rotate(-11deg);
+    opacity: 0;
+  }
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(112deg, transparent 0%, rgba(18, 59, 255, 0.085) 42%, transparent 64%),
+    linear-gradient(68deg, transparent 0%, rgba(69, 201, 255, 0.075) 46%, transparent 68%),
+    radial-gradient(circle at 22% 18%, rgba(18, 59, 255, 0.075), transparent 18rem);
+  background-size:
+    34rem 18rem,
+    42rem 22rem,
+    38rem 38rem;
+  animation: dmr-ambient-signal-drift 18s ease-in-out infinite;
+}
+
+html::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  top: 18vh;
+  z-index: 0;
+  width: 8rem;
+  height: 1px;
+  pointer-events: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(18, 59, 255, 0.34), rgba(69, 201, 255, 0.24), transparent);
+  box-shadow: 0 0 22px rgba(18, 59, 255, 0.16);
+  animation: dmr-ambient-packet-flow 9s ease-in-out infinite;
+}
+
+html::before {
+  content: "";
+  position: fixed;
+  right: 0;
+  top: 52vh;
+  z-index: 0;
+  width: 7rem;
+  height: 1px;
+  pointer-events: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(69, 201, 255, 0.24), rgba(18, 59, 255, 0.30), transparent);
+  box-shadow: 0 0 22px rgba(69, 201, 255, 0.14);
+  animation: dmr-ambient-packet-flow-reverse 11s ease-in-out 1.8s infinite;
+}
+
+@media (max-width: 767px) {
+  body::after {
+    opacity: 0.45;
+    background-size:
+      26rem 16rem,
+      30rem 18rem,
+      28rem 28rem;
+  }
+
+  html::before {
+    display: none;
+  }
+
+  html::after {
+    width: 5rem;
+    opacity: 0.75;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after,
+  html::before,
+  html::after {
+    animation: none !important;
+  }
+
+  html::before,
+  html::after {
+    display: none;
+  }
+}
