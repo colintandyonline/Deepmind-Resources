@@ -23,37 +23,37 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'AI Fundamentals Pathway | DeepMind Resources Academy',
+  title: 'AI Fundamentals Training Path | DeepMind Resources',
   description:
-    'Start the DeepMind Resources Academy with AI Fundamentals: a professional pathway for building practical AI competency, safe-use habits, prompt foundations, tool judgement, and verified sandbox practice.',
+    'Build core AI competency with source-aware foundations, safe-use judgement, prompt basics, tool selection, validation habits, and verified sandbox practice.',
   alternates: {
-    canonical: '/path/fundamentals',
+    canonical: 'https://deepmindresources.pro/path/fundamentals',
   },
   keywords: [
-    'AI fundamentals',
-    'AI training pathway',
-    'AI competency',
+    'AI fundamentals training',
     'AI basics for professionals',
-    'business AI fundamentals',
+    'AI competency foundations',
     'AI safety basics',
-    'prompt foundations',
-    'AI tool selection',
-    'verified sandbox tasks',
-    'DeepMind Resources Academy',
+    'AI tool selection basics',
+    'prompt engineering foundations',
+    'AI validation training',
+    'source-aware AI training',
+    'business AI foundations',
+    'AI sandbox practice',
   ],
   openGraph: {
-    title: 'AI Fundamentals Pathway | DeepMind Resources Academy',
+    title: 'AI Fundamentals Training Path | DeepMind Resources',
     description:
-      'Build the judgement layer before the tooling layer with source-aware AI fundamentals, verified sandbox practice, and production-ready AI competency.',
+      'A practical AI fundamentals path for building safe-use judgement, prompt foundations, tool awareness, validation habits, and production-ready AI competency.',
     url: 'https://deepmindresources.pro/path/fundamentals',
     siteName: 'DeepMind Resources',
     type: 'website',
   },
   twitter: {
-    card: 'summary',
-    title: 'AI Fundamentals Pathway | DeepMind Resources Academy',
+    card: 'summary_large_image',
+    title: 'AI Fundamentals Training Path | DeepMind Resources',
     description:
-      'A professional AI fundamentals pathway for learners and teams who need practical skill, safe-use habits, and verified sandbox practice.',
+      'Build AI competency from the ground up with source-aware foundations, safe-use judgement, prompt basics, validation habits, and verified sandbox practice.',
   },
 }
 

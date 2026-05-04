@@ -2,37 +2,37 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
 export const metadata: Metadata = {
-  title: 'Prompt Engineering Pathway | DeepMind Resources Academy',
+  title: 'Prompt Engineering Training Path | DeepMind Resources',
   description:
-    'Learn prompt engineering with DeepMind Resources: structured instructions, context, constraints, reusable prompt systems, output validation, workflow control, and verified sandbox practice.',
+    'Learn prompt engineering as a production skill: structured instructions, context control, constraints, examples, evaluation loops, reusable systems, and verified sandbox tasks.',
   alternates: {
-    canonical: '/path/prompting',
+    canonical: 'https://deepmindresources.pro/path/prompting',
   },
   keywords: [
-    'prompt engineering pathway',
     'prompt engineering training',
+    'prompt engineering course',
     'AI prompt systems',
     'structured prompting',
-    'prompt validation',
+    'prompt evaluation',
     'AI workflow prompts',
-    'reusable prompt patterns',
-    'verified sandbox tasks',
-    'AI competency',
-    'DeepMind Resources Academy',
+    'business prompt engineering',
+    'prompt sandbox tasks',
+    'AI output control',
+    'production-ready prompting',
   ],
   openGraph: {
-    title: 'Prompt Engineering Pathway | DeepMind Resources Academy',
+    title: 'Prompt Engineering Training Path | DeepMind Resources',
     description:
-      'Build production-ready prompt systems with structured instructions, workflow context, validation rules, and verified sandbox practice.',
+      'A professional prompt engineering path for building structured instructions, context control, reusable prompt systems, evaluation loops, and verified sandbox practice.',
     url: 'https://deepmindresources.pro/path/prompting',
     siteName: 'DeepMind Resources',
     type: 'website',
   },
   twitter: {
-    card: 'summary',
-    title: 'Prompt Engineering Pathway | DeepMind Resources Academy',
+    card: 'summary_large_image',
+    title: 'Prompt Engineering Training Path | DeepMind Resources',
     description:
-      'A professional pathway for prompt control, reusable instruction systems, workflow-ready AI output, and verified sandbox practice.',
+      'Move from casual prompting to production-ready prompt systems with context, constraints, examples, evaluation loops, and verified sandbox tasks.',
   },
 }
 

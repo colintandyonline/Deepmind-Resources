@@ -25,37 +25,37 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Agent Architecture Pathway | DeepMind Resources Academy',
+  title: 'AI Agent Architecture Training Path | DeepMind Resources',
   description:
-    'Learn controlled AI agent architecture with DeepMind Resources: goals, tools, memory, boundaries, human review gates, workflow orchestration, and verified sandbox practice for production-ready AI competency.',
+    'Learn AI agent architecture with bounded goals, tool permissions, memory rules, RAG context, review gates, validation layers, and production-ready workflow design.',
   alternates: {
-    canonical: '/path/agents',
+    canonical: 'https://deepmindresources.pro/path/agents',
   },
   keywords: [
     'AI agent architecture',
     'AI agents training',
-    'agentic workflows',
-    'tool calling training',
-    'AI workflow orchestration',
+    'agentic AI systems',
+    'AI tool calling',
+    'agent workflow design',
+    'RAG agents',
+    'AI agent safety',
     'human review gates',
-    'agent safety',
-    'AI competency',
-    'verified sandbox tasks',
-    'DeepMind Resources Academy',
+    'agent sandbox tasks',
+    'production AI agents',
   ],
   openGraph: {
-    title: 'Agent Architecture Pathway | DeepMind Resources Academy',
+    title: 'AI Agent Architecture Training Path | DeepMind Resources',
     description:
-      'Build controlled AI agent systems with clear goals, tool boundaries, memory rules, review gates, and verified sandbox practice.',
+      'A practical training path for designing bounded AI agents with tools, memory, RAG context, permissions, review gates, validation, and production workflow discipline.',
     url: 'https://deepmindresources.pro/path/agents',
     siteName: 'DeepMind Resources',
     type: 'website',
   },
   twitter: {
-    card: 'summary',
-    title: 'Agent Architecture Pathway | DeepMind Resources Academy',
+    card: 'summary_large_image',
+    title: 'AI Agent Architecture Training Path | DeepMind Resources',
     description:
-      'A professional pathway for controlled AI agents, tool boundaries, orchestration patterns, and production-ready workflow judgement.',
+      'Learn bounded AI agent architecture with tool permissions, memory rules, RAG context, review gates, validation layers, and verified sandbox practice.',
   },
 }
 

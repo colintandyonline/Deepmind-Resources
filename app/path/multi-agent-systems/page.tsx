@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import type { LucideIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -26,38 +26,37 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Multi-Agent Systems Pathway | DeepMind Resources Academy',
+  title: 'Multi-Agent Systems Training Path | DeepMind Resources',
   description:
-    'Learn multi-agent systems with DeepMind Resources: specialist agent roles, handoffs, shared state, validation layers, orchestration controls, and verified sandbox practice for production-ready AI competency.',
+    'Learn multi-agent systems with specialist roles, handoffs, shared state, orchestration logic, validation layers, escalation paths, and reviewable AI workflows.',
   alternates: {
-    canonical: '/path/multi-agent-systems',
+    canonical: 'https://deepmindresources.pro/path/multi-agent-systems',
   },
   keywords: [
-    'multi-agent systems',
-    'multi-agent AI training',
-    'AI agent teams',
+    'multi-agent systems training',
+    'multi-agent AI workflows',
     'agent orchestration',
-    'AI workflow orchestration',
+    'AI agent handoffs',
     'specialist AI agents',
-    'agent validation',
-    'agent handoffs',
-    'AI competency',
-    'verified sandbox tasks',
-    'DeepMind Resources Academy',
+    'multi-agent architecture',
+    'AI workflow validation',
+    'human-in-the-loop agents',
+    'agentic orchestration training',
+    'production multi-agent systems',
   ],
   openGraph: {
-    title: 'Multi-Agent Systems Pathway | DeepMind Resources Academy',
+    title: 'Multi-Agent Systems Training Path | DeepMind Resources',
     description:
-      'Build controlled multi-agent AI systems with specialist roles, explicit handoffs, validation layers, shared state, and verified sandbox practice.',
+      'A professional training path for multi-agent systems: specialist roles, handoffs, orchestration logic, shared state, validation layers, escalation, and reviewable workflows.',
     url: 'https://deepmindresources.pro/path/multi-agent-systems',
     siteName: 'DeepMind Resources',
     type: 'website',
   },
   twitter: {
-    card: 'summary',
-    title: 'Multi-Agent Systems Pathway | DeepMind Resources Academy',
+    card: 'summary_large_image',
+    title: 'Multi-Agent Systems Training Path | DeepMind Resources',
     description:
-      'A professional pathway for controlled multi-agent architecture, specialist agent roles, handoffs, validation layers, and production-ready orchestration judgement.',
+      'Build multi-agent system competency with specialist roles, handoffs, orchestration logic, validation layers, escalation paths, and verified sandbox practice.',
   },
 }
 
