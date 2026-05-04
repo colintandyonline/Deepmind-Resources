@@ -1,5 +1,4 @@
-import type { LucideIcon } from 'lucide-react'
-import Image from 'next/image'
+﻿import type { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import {
   ArrowRight,
@@ -266,7 +265,7 @@ export default function HomePage() {
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
                 >
                   Explore the Academy
-                  <span aria-hidden="true">Ã¢â€ â€™</span>
+                  <span aria-hidden="true">Ã¢â€ â€™</span>
                 </a>
 
                 <a
@@ -274,7 +273,7 @@ export default function HomePage() {
                   className="inline-flex items-center justify-center gap-2 rounded-2xl border border-sand/10 bg-white px-5 py-4 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
                 >
                   Sign up and create workspace
-                  <span aria-hidden="true">Ã¢â€ â€™</span>
+                  <span aria-hidden="true">Ã¢â€ â€™</span>
                 </a>
 
                 <a
@@ -282,7 +281,7 @@ export default function HomePage() {
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#EAF7FF] px-5 py-4 text-sm font-bold text-[#123BFF] shadow-sm transition hover:bg-[#DDF2FF]"
                 >
                   Get your business onboarded
-                  <span aria-hidden="true">Ã¢â€ â€™</span>
+                  <span aria-hidden="true">Ã¢â€ â€™</span>
                 </a>
               </div>
 
@@ -627,115 +626,6 @@ export default function HomePage() {
             </div>
             <CodeSandbox />
           </section>
-
-          <footer className="mt-12 border-t border-sand/10 pt-8 pb-8 lg:mt-16">
-            <div className="rounded-[2rem] border border-sand/10 bg-white/85 p-6 shadow-sm backdrop-blur sm:p-8 lg:p-10">
-              <div className="grid gap-8 lg:grid-cols-[auto_1fr_auto] lg:items-start">
-                <div className="flex justify-center lg:justify-start">
-                  <Link
-                    href="/"
-                    aria-label="DeepMind Resources home"
-                    className="relative h-28 w-28 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-sand/10 transition hover:ring-[#123BFF]/30 sm:h-32 sm:w-32"
-                  >
-                    <Image
-                      src="/brand/deepmind-resources-logo.png"
-                      alt="DeepMind Resources logo"
-                      fill
-                      sizes="128px"
-                      className="object-contain p-2"
-                      priority={false}
-                    />
-                  </Link>
-                </div>
-
-                <div className="text-center lg:text-left">
-                  <span className="inline-flex rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-white shadow-sm">
-                    Verified AI learning intelligence
-                  </span>
-
-                  <h2 className="mt-4 text-2xl font-bold tracking-tight text-sand">
-                    DeepMind Resources
-                  </h2>
-
-                  <p className="mt-3 max-w-2xl text-sm leading-7 text-sand/60 sm:text-base">
-                    A living AI training and tool-intelligence platform that turns verified AI
-                    updates into practical lessons, sandbox tasks, and business-ready learning
-                    paths.
-                  </p>
-
-                  <div className="mt-5 flex flex-wrap justify-center gap-2 lg:justify-start">
-                    <span className="rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold text-[#123BFF] shadow-sm">
-                      Live AI Intelligence
-                    </span>
-                    <Link
-                      href="/syllabus"
-                      className="rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
-                    >
-                      AI Syllabus
-                    </Link>
-                    <a
-                      href="#sandbox"
-                      className="rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
-                    >
-                      Agentic Sandbox
-                    </a>
-                    <Link
-                      href="/business-ai-training"
-                      className="rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
-                    >
-                      Business AI Training
-                    </Link>
-                  </div>
-                </div>
-
-                <nav aria-label="Footer navigation" className="grid gap-3 text-center text-sm sm:grid-cols-2 lg:grid-cols-1 lg:text-right">
-                  <Link
-                    href="/"
-                    className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
-                  >
-                    Home
-                  </Link>
-                  <Link
-                    href="/platform"
-                    className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
-                  >
-                    Platform
-                  </Link>
-                  <Link
-                    href="/syllabus"
-                    className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
-                  >
-                    Syllabus
-                  </Link>
-                  <Link
-                    href="/business-ai-training"
-                    className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
-                  >
-                    Business Training
-                  </Link>
-                  <Link
-                    href="/privacy"
-                    className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
-                  >
-                    Privacy
-                  </Link>
-                  <Link
-                    href="/terms"
-                    className="rounded-full bg-[#EAF7FF] px-4 py-2 font-bold text-[#123BFF] shadow-sm transition hover:bg-[#123BFF] hover:text-white"
-                  >
-                    Terms
-                  </Link>
-                </nav>
-              </div>
-
-              <div className="mt-8 rounded-2xl bg-[#123BFF] px-5 py-4 text-white shadow-sm">
-                <div className="flex flex-col gap-3 text-center text-xs sm:flex-row sm:items-center sm:justify-between sm:text-left">
-                  <p>© 2026 DeepMind Resources. Built for verified AI skill gain.</p>
-                  <p>AI update â†’ verified meaning â†’ practical lesson â†’ sandbox task.</p>
-                </div>
-              </div>
-            </div>
-          </footer>
         </div>
       </main>
     </div>

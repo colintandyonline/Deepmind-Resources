@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import type { ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
@@ -28,11 +28,6 @@ export function NavigationShell({ children }: NavigationShellProps) {
   if (pathname === '/') {
     return (
       <>
-        <style>{`
-          main > div > footer {
-            display: none !important;
-          }
-        `}</style>
         {children}
         <div className="relative z-10 md:pl-64">
           <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
