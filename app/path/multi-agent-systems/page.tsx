@@ -347,7 +347,7 @@ export default function MultiAgentSystemsPathwayPage() {
                   Move beyond agent hype into controlled orchestration: specialist roles, shared state, review layers, and production-aware workflow design.
                 </p>
 
-                <div className="mt-6 grid gap-3">
+                <div className="mt-4 grid gap-2 sm:mt-6 sm:gap-3">
                   {[
                     'Specialist agents with clear authority',
                     'Handoff contracts and shared state rules',
@@ -374,7 +374,7 @@ export default function MultiAgentSystemsPathwayPage() {
                   Start the pathway, test coordination in the Sandbox, or bring multi-agent workflow judgement into team training.
                 </p>
 
-                <div className="mt-6 grid gap-3">
+                <div className="mt-4 grid gap-2 sm:mt-6 sm:gap-3">
                   <Link
                     href="/auth/signup"
                     className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
@@ -558,28 +558,28 @@ export default function MultiAgentSystemsPathwayPage() {
               </div>
             </div>
 
-            <div className="hidden rounded-[2rem] border border-sand/10 bg-[#EAF7FF] p-5 shadow-sm sm:p-6 lg:block lg:p-7">
-              <div className="rounded-[1.5rem] bg-[#123BFF] p-6 text-white shadow-sm">
+            <div className="rounded-[1.5rem] border border-sand/10 bg-[#EAF7FF] p-4 shadow-sm sm:rounded-[2rem] sm:p-6 lg:p-7">
+              <div className="rounded-[1.35rem] bg-[#123BFF] p-4 text-white shadow-sm sm:rounded-[1.5rem] sm:p-6">
                 <div className="flex items-start justify-between gap-5">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/75">
                       Orchestration route
                     </p>
-                    <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
+                    <h2 className="mt-3 text-xl font-bold tracking-tight sm:text-3xl">
                       From agent sprawl to coordinated AI execution.
                     </h2>
                   </div>
                   <EmblemPulse />
                 </div>
 
-                <div className="mt-6 grid gap-3">
+                <div className="mt-4 grid gap-2 sm:mt-6 sm:gap-3">
                   {[
                     'Assign specialist roles with clear authority',
                     'Control handoffs, state, and evidence flow',
                     'Validate claims before actions move forward',
                     'Practise orchestration inside verified sandbox tasks',
                   ].map((item) => (
-                    <div key={item} className="flex items-start gap-3 rounded-2xl bg-white/10 p-4">
+                    <div key={item} className="flex items-start gap-3 rounded-2xl bg-white/10 p-3 sm:p-4">
                       <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-white" aria-hidden="true" />
                       <p className="text-sm font-semibold leading-6 text-white/90">{item}</p>
                     </div>
@@ -877,4 +877,5 @@ export default function MultiAgentSystemsPathwayPage() {
     </main>
   )
 }
+
 
