@@ -25,6 +25,24 @@ export function NavigationShell({ children }: NavigationShellProps) {
   const pathname = usePathname()
   const useStandardSidebar = shouldUseStandardSidebar(pathname)
 
+  if (pathname === '/') {
+    return (
+      <>
+        <style>{`
+          main > div > footer {
+            display: none !important;
+          }
+        `}</style>
+        {children}
+        <div className="relative z-10 md:pl-64">
+          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
+            <SiteFooter />
+          </div>
+        </div>
+      </>
+    )
+  }
+
   if (!useStandardSidebar) {
     return <>{children}</>
   }
