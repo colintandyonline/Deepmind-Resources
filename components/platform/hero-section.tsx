@@ -425,29 +425,10 @@ export function HeroSection() {
               as new models, tools, and platform updates change what matters.
             </p>
 
-            <p className="mx-auto mb-9 max-w-3xl text-pretty text-base leading-relaxed text-sand/55 sm:mb-10 sm:text-lg">
+            <p className="mx-auto mb-10 max-w-3xl text-pretty text-base leading-relaxed text-sand/55 sm:text-lg">
               DeepMind Resources cuts through hype, compares AI tools for real scenarios, and turns
               trusted updates into practical sandbox training for individuals, teams, and businesses.
             </p>
-
-            <div className="mx-auto mb-9 grid max-w-3xl gap-3 sm:mb-10 sm:grid-cols-3">
-              {[
-                'AI update',
-                'Verified meaning',
-                'Sandbox deployment',
-              ].map((item, index) => (
-                <div
-                  key={item}
-                  className="group relative overflow-hidden rounded-2xl border border-[#123BFF]/10 bg-white/80 px-4 py-3 text-left shadow-sm backdrop-blur"
-                >
-                  <span className="absolute inset-y-0 left-0 w-1 bg-[#123BFF]" />
-                  <span className="text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF]">
-                    0{index + 1}
-                  </span>
-                  <p className="mt-1 text-sm font-bold text-sand">{item}</p>
-                </div>
-              ))}
-            </div>
 
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button
