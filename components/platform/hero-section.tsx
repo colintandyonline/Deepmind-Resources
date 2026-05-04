@@ -1,6 +1,5 @@
-﻿'use client'
+'use client'
 
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
   ArrowRight,
@@ -48,324 +47,324 @@ const academyPaths = [
   },
 ]
 
-const signalNodes = [
-  {
-    label: 'AI update',
-    className: 'left-[9%] top-[22%] hidden sm:flex',
-  },
-  {
-    label: 'Verified meaning',
-    className: 'right-[10%] top-[26%] hidden md:flex',
-  },
-  {
-    label: 'Sandbox deployment',
-    className: 'left-[13%] bottom-[24%] hidden lg:flex',
-  },
-  {
-    label: 'Skill gain',
-    className: 'right-[14%] bottom-[20%] hidden sm:flex',
-  },
-]
-
-function SignalNetworkLayer() {
+function IntelligenceBurstField() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-      <div className="absolute inset-0 opacity-[0.045]">
+      <div className="absolute inset-0 opacity-[0.055]">
         <div
           className="absolute inset-0"
           style={{
             backgroundImage: `
-              linear-gradient(rgba(18, 59, 255, 0.22) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(18, 59, 255, 0.22) 1px, transparent 1px)
+              linear-gradient(rgba(18, 59, 255, 0.18) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(18, 59, 255, 0.18) 1px, transparent 1px)
             `,
-            backgroundSize: '44px 44px',
+            backgroundSize: '46px 46px',
           }}
         />
       </div>
 
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_24%,rgba(18,59,255,0.16),transparent_30rem)]" />
+      <div className="absolute left-1/2 top-16 h-[32rem] w-[42rem] -translate-x-1/2 rounded-full bg-[#123BFF]/[0.075] blur-3xl" />
+      <div className="absolute right-[8%] top-24 h-64 w-64 rounded-full bg-[#45C9FF]/[0.11] blur-3xl" />
+      <div className="absolute left-[6%] top-44 h-56 w-56 rounded-full bg-[#0A63FF]/[0.08] blur-3xl" />
 
       <svg
-        className="absolute inset-x-[-12%] top-8 h-[25rem] w-[124%] opacity-80 sm:top-4 sm:h-[32rem]"
-        viewBox="0 0 1200 520"
+        className="absolute left-1/2 top-6 h-[34rem] w-[118%] -translate-x-1/2 opacity-75"
+        viewBox="0 0 1200 560"
         preserveAspectRatio="none"
       >
         <defs>
-          <linearGradient id="signalRoutePrimary" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#45C9FF" stopOpacity="0" />
-            <stop offset="38%" stopColor="#123BFF" stopOpacity="0.32" />
-            <stop offset="72%" stopColor="#0A63FF" stopOpacity="0.24" />
+          <linearGradient id="dmrBurstLineA" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#123BFF" stopOpacity="0" />
+            <stop offset="48%" stopColor="#123BFF" stopOpacity="0.28" />
             <stop offset="100%" stopColor="#45C9FF" stopOpacity="0" />
           </linearGradient>
-
-          <linearGradient id="signalRouteSecondary" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#123BFF" stopOpacity="0" />
-            <stop offset="45%" stopColor="#45C9FF" stopOpacity="0.24" />
+          <linearGradient id="dmrBurstLineB" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#45C9FF" stopOpacity="0" />
+            <stop offset="50%" stopColor="#45C9FF" stopOpacity="0.22" />
             <stop offset="100%" stopColor="#123BFF" stopOpacity="0" />
           </linearGradient>
         </defs>
 
         <path
-          className="dmr-signal-route dmr-signal-route-one"
-          d="M-40 235 C 190 120, 290 355, 520 244 S 920 122, 1240 230"
+          className="dmr-burst-route dmr-burst-route-a"
+          d="M-80 250 C 160 112, 344 330, 560 224 S 945 120, 1280 238"
           fill="none"
-          stroke="url(#signalRoutePrimary)"
-          strokeWidth="2"
+          stroke="url(#dmrBurstLineA)"
+          strokeWidth="1.6"
         />
-
         <path
-          className="dmr-signal-route dmr-signal-route-two"
-          d="M-30 335 C 210 408, 370 155, 620 282 S 930 390, 1230 300"
+          className="dmr-burst-route dmr-burst-route-b"
+          d="M-70 366 C 190 460, 382 170, 630 304 S 950 416, 1270 314"
           fill="none"
-          stroke="url(#signalRouteSecondary)"
-          strokeWidth="2"
+          stroke="url(#dmrBurstLineB)"
+          strokeWidth="1.4"
         />
-
         <path
-          className="dmr-signal-route dmr-signal-route-three"
-          d="M120 90 C 330 165, 400 52, 612 132 S 940 260, 1130 94"
+          className="dmr-burst-route dmr-burst-route-c"
+          d="M95 102 C 302 162, 440 56, 640 144 S 950 286, 1130 108"
           fill="none"
-          stroke="url(#signalRoutePrimary)"
-          strokeWidth="1.5"
+          stroke="url(#dmrBurstLineA)"
+          strokeWidth="1.2"
         />
       </svg>
 
-      <span className="dmr-signal-packet dmr-signal-packet-one" />
-      <span className="dmr-signal-packet dmr-signal-packet-two" />
-      <span className="dmr-signal-packet dmr-signal-packet-three" />
-      <span className="dmr-signal-packet dmr-signal-packet-four" />
+      <span className="dmr-data-burst dmr-data-burst-one" />
+      <span className="dmr-data-burst dmr-data-burst-two" />
+      <span className="dmr-data-burst dmr-data-burst-three" />
+      <span className="dmr-data-burst dmr-data-burst-four" />
+      <span className="dmr-data-burst dmr-data-burst-five" />
+      <span className="dmr-data-burst dmr-data-burst-six" />
 
-      {signalNodes.map((node) => (
-        <span
-          key={node.label}
-          className={`absolute items-center gap-2 rounded-full border border-[#123BFF]/15 bg-white/70 px-3 py-2 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-[#123BFF] shadow-sm backdrop-blur ${node.className}`}
-        >
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#123BFF] opacity-40" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#123BFF]" />
-          </span>
-          {node.label}
-        </span>
-      ))}
+      <span className="dmr-signal-node dmr-signal-node-one" />
+      <span className="dmr-signal-node dmr-signal-node-two" />
+      <span className="dmr-signal-node dmr-signal-node-three" />
+      <span className="dmr-signal-node dmr-signal-node-four" />
 
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#123BFF]/30 to-transparent dmr-scan-line" />
+      <span className="dmr-data-shard left-[12%] top-[26%] rotate-[13deg]" />
+      <span className="dmr-data-shard right-[16%] top-[31%] rotate-[-12deg]" />
+      <span className="dmr-data-shard left-[21%] bottom-[27%] rotate-[-8deg]" />
+      <span className="dmr-data-shard right-[24%] bottom-[31%] rotate-[9deg]" />
+      <span className="dmr-data-shard left-[42%] top-[19%] rotate-[6deg]" />
+      <span className="dmr-data-shard right-[38%] bottom-[21%] rotate-[-6deg]" />
 
       <style>{`
-        .dmr-signal-route {
-          stroke-dasharray: 18 26;
-          animation: dmr-route-flow 11s linear infinite;
+        .dmr-burst-route {
+          stroke-dasharray: 10 30;
+          animation: dmr-route-drift 16s linear infinite;
         }
 
-        .dmr-signal-route-two {
-          animation-duration: 14s;
+        .dmr-burst-route-b {
+          animation-duration: 19s;
           animation-direction: reverse;
         }
 
-        .dmr-signal-route-three {
-          animation-duration: 16s;
+        .dmr-burst-route-c {
+          animation-duration: 23s;
         }
 
-        .dmr-signal-packet {
+        .dmr-data-burst {
           position: absolute;
-          z-index: 1;
           display: block;
-          height: 0.7rem;
-          width: 0.7rem;
-          border-radius: 9999px;
-          background: #123BFF;
-          box-shadow:
-            0 0 0 0.45rem rgba(18, 59, 255, 0.08),
-            0 0 1.5rem rgba(18, 59, 255, 0.38),
-            0 0 2.75rem rgba(69, 201, 255, 0.28);
+          height: 0.34rem;
+          width: 2.8rem;
+          border-radius: 999px;
+          background: linear-gradient(90deg, transparent, rgba(18, 59, 255, 0.52), rgba(69, 201, 255, 0.34), transparent);
+          box-shadow: 0 0 20px rgba(18, 59, 255, 0.18), 0 0 34px rgba(69, 201, 255, 0.12);
           opacity: 0;
         }
 
-        .dmr-signal-packet::after {
+        .dmr-data-burst::before,
+        .dmr-data-burst::after {
           content: '';
           position: absolute;
-          inset: -0.55rem;
-          border-radius: 9999px;
-          border: 1px solid rgba(69, 201, 255, 0.28);
+          top: 50%;
+          height: 1px;
+          border-radius: 999px;
+          background: rgba(18, 59, 255, 0.22);
+          transform: translateY(-50%);
         }
 
-        .dmr-signal-packet-one {
-          left: 8%;
-          top: 32%;
-          animation: dmr-packet-one 7s ease-in-out infinite;
+        .dmr-data-burst::before {
+          left: -1.25rem;
+          width: 1rem;
         }
 
-        .dmr-signal-packet-two {
-          right: 12%;
-          top: 36%;
-          animation: dmr-packet-two 8.5s ease-in-out 1.4s infinite;
+        .dmr-data-burst::after {
+          right: -1.55rem;
+          width: 1.25rem;
         }
 
-        .dmr-signal-packet-three {
-          left: 20%;
-          bottom: 28%;
-          animation: dmr-packet-three 9s ease-in-out 0.7s infinite;
+        .dmr-data-burst-one {
+          left: -6%;
+          top: 29%;
+          animation: dmr-burst-one 8s ease-in-out infinite;
         }
 
-        .dmr-signal-packet-four {
-          right: 24%;
-          bottom: 34%;
-          animation: dmr-packet-four 10s ease-in-out 2.1s infinite;
+        .dmr-data-burst-two {
+          right: -8%;
+          top: 35%;
+          animation: dmr-burst-two 9.5s ease-in-out 1.1s infinite;
         }
 
-        .dmr-scan-line {
-          animation: dmr-scan-line 7s ease-in-out infinite;
+        .dmr-data-burst-three {
+          left: 14%;
+          bottom: 31%;
+          animation: dmr-burst-three 10.5s ease-in-out 0.6s infinite;
         }
 
-        @keyframes dmr-route-flow {
+        .dmr-data-burst-four {
+          right: 20%;
+          bottom: 26%;
+          animation: dmr-burst-four 11s ease-in-out 2s infinite;
+        }
+
+        .dmr-data-burst-five {
+          left: 38%;
+          top: 16%;
+          animation: dmr-burst-five 12s ease-in-out 1.7s infinite;
+        }
+
+        .dmr-data-burst-six {
+          right: 38%;
+          top: 48%;
+          animation: dmr-burst-six 13s ease-in-out 2.8s infinite;
+        }
+
+        .dmr-signal-node {
+          position: absolute;
+          display: block;
+          height: 0.48rem;
+          width: 0.48rem;
+          border-radius: 999px;
+          background: #123BFF;
+          box-shadow: 0 0 0 0.42rem rgba(18, 59, 255, 0.06), 0 0 1.6rem rgba(18, 59, 255, 0.26);
+          opacity: 0.34;
+          animation: dmr-node-pulse 5.5s ease-in-out infinite;
+        }
+
+        .dmr-signal-node-one {
+          left: 18%;
+          top: 33%;
+        }
+
+        .dmr-signal-node-two {
+          right: 20%;
+          top: 38%;
+          animation-delay: 1.2s;
+        }
+
+        .dmr-signal-node-three {
+          left: 31%;
+          bottom: 29%;
+          animation-delay: 2.1s;
+        }
+
+        .dmr-signal-node-four {
+          right: 34%;
+          bottom: 35%;
+          animation-delay: 3s;
+        }
+
+        .dmr-data-shard {
+          position: absolute;
+          display: block;
+          height: 1px;
+          width: 3.4rem;
+          border-radius: 999px;
+          background: linear-gradient(90deg, transparent, rgba(18, 59, 255, 0.24), transparent);
+          animation: dmr-shard-flash 7s ease-in-out infinite;
+          opacity: 0.18;
+        }
+
+        @keyframes dmr-route-drift {
           from {
             stroke-dashoffset: 0;
           }
           to {
-            stroke-dashoffset: -220;
+            stroke-dashoffset: -260;
           }
         }
 
-        @keyframes dmr-packet-one {
-          0% {
-            transform: translate3d(-1rem, 0, 0) scale(0.7);
-            opacity: 0;
-          }
-          12% {
-            opacity: 0.72;
-          }
-          58% {
-            transform: translate3d(18vw, 5.5rem, 0) scale(1);
-            opacity: 0.72;
-          }
-          78% {
-            transform: translate3d(29vw, 2.25rem, 0) scale(0.9);
-            opacity: 0.16;
-          }
-          100% {
-            transform: translate3d(35vw, 1rem, 0) scale(0.7);
-            opacity: 0;
-          }
+        @keyframes dmr-burst-one {
+          0% { transform: translate3d(0, 0, 0) rotate(8deg) scaleX(0.7); opacity: 0; }
+          10% { opacity: 0.54; }
+          22% { opacity: 0.18; }
+          36% { opacity: 0.58; }
+          64% { transform: translate3d(44vw, 4.5rem, 0) rotate(8deg) scaleX(1); opacity: 0.42; }
+          100% { transform: translate3d(72vw, 1rem, 0) rotate(8deg) scaleX(0.78); opacity: 0; }
         }
 
-        @keyframes dmr-packet-two {
-          0% {
-            transform: translate3d(0, 0, 0) scale(0.7);
-            opacity: 0;
-          }
-          14% {
-            opacity: 0.62;
-          }
-          54% {
-            transform: translate3d(-20vw, 4rem, 0) scale(1);
-            opacity: 0.66;
-          }
-          82% {
-            transform: translate3d(-35vw, -1.5rem, 0) scale(0.86);
-            opacity: 0.18;
-          }
-          100% {
-            transform: translate3d(-42vw, -2.5rem, 0) scale(0.7);
-            opacity: 0;
-          }
+        @keyframes dmr-burst-two {
+          0% { transform: translate3d(0, 0, 0) rotate(-9deg) scaleX(0.72); opacity: 0; }
+          14% { opacity: 0.44; }
+          31% { opacity: 0.12; }
+          45% { opacity: 0.48; }
+          70% { transform: translate3d(-46vw, 4rem, 0) rotate(-9deg) scaleX(1); opacity: 0.34; }
+          100% { transform: translate3d(-76vw, -0.6rem, 0) rotate(-9deg) scaleX(0.78); opacity: 0; }
         }
 
-        @keyframes dmr-packet-three {
-          0% {
-            transform: translate3d(0, 0, 0) scale(0.7);
-            opacity: 0;
-          }
-          12% {
-            opacity: 0.56;
-          }
-          50% {
-            transform: translate3d(22vw, -5rem, 0) scale(1);
-            opacity: 0.64;
-          }
-          82% {
-            transform: translate3d(42vw, -2rem, 0) scale(0.84);
-            opacity: 0.14;
-          }
-          100% {
-            transform: translate3d(50vw, -3rem, 0) scale(0.7);
-            opacity: 0;
-          }
+        @keyframes dmr-burst-three {
+          0% { transform: translate3d(0, 0, 0) rotate(-7deg) scaleX(0.68); opacity: 0; }
+          16% { opacity: 0.42; }
+          40% { opacity: 0.16; }
+          57% { opacity: 0.5; }
+          78% { transform: translate3d(38vw, -4.2rem, 0) rotate(-7deg) scaleX(1); opacity: 0.24; }
+          100% { transform: translate3d(62vw, -2rem, 0) rotate(-7deg) scaleX(0.76); opacity: 0; }
         }
 
-        @keyframes dmr-packet-four {
-          0% {
-            transform: translate3d(0, 0, 0) scale(0.7);
-            opacity: 0;
-          }
-          18% {
-            opacity: 0.58;
-          }
-          56% {
-            transform: translate3d(-16vw, -5rem, 0) scale(1);
-            opacity: 0.68;
-          }
-          84% {
-            transform: translate3d(-34vw, 0.5rem, 0) scale(0.86);
-            opacity: 0.16;
-          }
-          100% {
-            transform: translate3d(-40vw, 1.5rem, 0) scale(0.7);
-            opacity: 0;
-          }
+        @keyframes dmr-burst-four {
+          0% { transform: translate3d(0, 0, 0) rotate(10deg) scaleX(0.68); opacity: 0; }
+          15% { opacity: 0.38; }
+          35% { opacity: 0.12; }
+          52% { opacity: 0.46; }
+          78% { transform: translate3d(-34vw, -4.8rem, 0) rotate(10deg) scaleX(1); opacity: 0.22; }
+          100% { transform: translate3d(-58vw, -1rem, 0) rotate(10deg) scaleX(0.76); opacity: 0; }
         }
 
-        @keyframes dmr-scan-line {
-          0%,
-          100% {
-            transform: translateY(0);
-            opacity: 0;
-          }
-          18% {
-            opacity: 0.5;
-          }
-          50% {
-            transform: translateY(18rem);
-            opacity: 0.25;
-          }
-          80% {
-            opacity: 0;
-          }
+        @keyframes dmr-burst-five {
+          0% { transform: translate3d(-18vw, 0, 0) rotate(6deg) scaleX(0.7); opacity: 0; }
+          18% { opacity: 0.34; }
+          36% { opacity: 0.12; }
+          54% { opacity: 0.42; }
+          76% { transform: translate3d(12vw, 5.2rem, 0) rotate(6deg) scaleX(1); opacity: 0.22; }
+          100% { transform: translate3d(34vw, 2rem, 0) rotate(6deg) scaleX(0.76); opacity: 0; }
         }
 
-        @media (max-width: 640px) {
-          .dmr-signal-route {
-            stroke-width: 1.25;
-            stroke-dasharray: 12 32;
+        @keyframes dmr-burst-six {
+          0% { transform: translate3d(20vw, 0, 0) rotate(-6deg) scaleX(0.7); opacity: 0; }
+          18% { opacity: 0.32; }
+          42% { opacity: 0.1; }
+          58% { opacity: 0.4; }
+          78% { transform: translate3d(-12vw, -3.8rem, 0) rotate(-6deg) scaleX(1); opacity: 0.22; }
+          100% { transform: translate3d(-34vw, -1rem, 0) rotate(-6deg) scaleX(0.76); opacity: 0; }
+        }
+
+        @keyframes dmr-node-pulse {
+          0%, 100% { transform: scale(0.86); opacity: 0.24; }
+          42% { transform: scale(1.18); opacity: 0.62; }
+          58% { transform: scale(0.92); opacity: 0.32; }
+        }
+
+        @keyframes dmr-shard-flash {
+          0%, 100% { opacity: 0.08; transform: translate3d(0, 0, 0); }
+          44% { opacity: 0.34; transform: translate3d(0.8rem, -0.35rem, 0); }
+          62% { opacity: 0.12; }
+        }
+
+        @media (max-width: 767px) {
+          .dmr-burst-route {
+            stroke-dasharray: 8 34;
+            stroke-width: 1;
           }
 
-          .dmr-signal-packet {
-            height: 0.5rem;
-            width: 0.5rem;
+          .dmr-data-burst {
+            height: 0.28rem;
+            width: 2rem;
           }
 
-          .dmr-signal-packet-one {
-            left: 6%;
-            top: 27%;
-          }
-
-          .dmr-signal-packet-two,
-          .dmr-signal-packet-four {
+          .dmr-data-burst-two,
+          .dmr-data-burst-four,
+          .dmr-data-burst-six,
+          .dmr-signal-node-two,
+          .dmr-signal-node-four {
             display: none;
           }
 
-          .dmr-signal-packet-three {
-            left: 14%;
-            bottom: 31%;
+          .dmr-data-shard {
+            width: 2.2rem;
+            opacity: 0.12;
           }
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .dmr-signal-route,
-          .dmr-signal-packet,
-          .dmr-scan-line {
+          .dmr-burst-route,
+          .dmr-data-burst,
+          .dmr-signal-node,
+          .dmr-data-shard {
             animation: none !important;
           }
 
-          .dmr-signal-packet {
+          .dmr-data-burst {
             display: none;
           }
         }
@@ -375,34 +374,19 @@ function SignalNetworkLayer() {
 }
 
 export function HeroSection() {
-  const [isLive, setIsLive] = useState(true)
-  const [systemStatus] = useState('LIVE AI INTELLIGENCE ONLINE')
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsLive((prev) => !prev)
-    }, 2000)
-
-    return () => clearInterval(interval)
-  }, [])
-
   return (
     <section className="relative overflow-hidden">
-      <SignalNetworkLayer />
+      <IntelligenceBurstField />
 
       <div className="relative z-10 py-14 sm:py-16 lg:py-24">
         <div className="mb-7 flex items-center justify-center sm:mb-8">
           <div className="flex max-w-[calc(100vw-2rem)] items-center gap-3 rounded-full border border-[#123BFF]/20 bg-white/80 px-4 py-2 shadow-sm backdrop-blur">
             <span className="relative flex h-2.5 w-2.5 shrink-0">
-              <span
-                className={`absolute inline-flex h-full w-full rounded-full bg-[#123BFF] ${
-                  isLive ? 'animate-ping' : ''
-                } opacity-75`}
-              />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#123BFF] opacity-75" />
               <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#123BFF]" />
             </span>
             <span className="text-center text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF] sm:text-sm">
-              {systemStatus}
+              LIVE AI INTELLIGENCE ONLINE
             </span>
           </div>
         </div>
