@@ -423,3 +423,21 @@ At minimum, check:
 The skill files are the operating system for DeepMindResources.
 
 When in doubt, follow the relevant skill file before adding new content, features, pages, agents, data models, or public claims.
+
+---
+
+### `docs/skills/LAYOUT_AND_SPATIAL_DESIGN.md`
+
+Use this when reviewing or improving page layout, spacing, visual hierarchy, card-grid rhythm, density, responsive structure, and spatial polish.
+
+Covers:
+
+- Spacing rhythm
+- Visual hierarchy
+- Grid and flex layout choices
+- Card-grid monotony
+- Responsive density
+- Asymmetric layout opportunities
+- Squint-test review
+- Layout QA before visual polish
+
