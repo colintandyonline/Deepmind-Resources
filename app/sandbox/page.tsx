@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { SandboxGuideAgent } from '@/components/sandbox/sandbox-guide-agent'
 import {
@@ -21,25 +21,25 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'AI Sandbox Practice | DeepMind Resources',
+  title: 'AI Sandbox: Agents, RAG & Workflows | DeepMind Resources',
   description:
-    'Explore the DeepMind Resources AI sandbox layer for prompt practice, workflow simulations, RAG exercises, agent tasks, validation drills, and business-ready AI skill development.',
+    'Build production-ready AI skills through verified sandbox tasks for prompts, tool calling, RAG, agent workflows, validation drills, and business scenarios.',
   alternates: {
     canonical: 'https://deepmindresources.pro/sandbox',
   },
   openGraph: {
-    title: 'AI Sandbox Practice | DeepMind Resources',
+    title: 'AI Sandbox: Agents, RAG & Workflows | DeepMind Resources',
     description:
-      'Practise AI skills through verified sandbox tasks for prompts, workflows, agents, retrieval, validation, and business-ready AI training.',
+      'The execution layer for DeepMind Resources: verified sandbox tasks for prompt systems, tool calling, RAG, agent workflows, validation, and business practice.',
     url: 'https://deepmindresources.pro/sandbox',
     siteName: 'DeepMind Resources',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AI Sandbox Practice | DeepMind Resources',
+    title: 'AI Sandbox: Agents, RAG & Workflows | DeepMind Resources',
     description:
-      'Practise AI skills through verified sandbox tasks for prompts, workflows, agents, retrieval, validation, and business-ready AI training.',
+      'The execution layer for DeepMind Resources: verified sandbox tasks for prompt systems, tool calling, RAG, agent workflows, validation, and business practice.',
   },
 }
 
