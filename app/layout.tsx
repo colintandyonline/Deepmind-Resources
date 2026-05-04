@@ -10,13 +10,13 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 export const metadata: Metadata = {
   metadataBase: new URL('https://deepmindresources.pro'),
   title: {
-    default: 'DeepMindResources | Live AI Training and Tool Intelligence',
-    template: '%s | DeepMindResources',
+    default: 'Master Agentic AI Systems | DeepMind Resources',
+    template: '%s | DeepMind Resources',
   },
   description:
-    'DeepMindResources is a living AI training and tool-intelligence platform that turns verified AI updates into practical lessons, sandbox tasks, and business-ready learning paths.',
-  applicationName: 'DeepMindResources',
-  generator: 'DeepMindResources',
+    'DeepMind Resources turns verified AI updates into practical lessons, sandbox tasks, tool intelligence, and business-ready AI training paths.',
+  applicationName: 'DeepMind Resources',
+  generator: 'DeepMind Resources',
   keywords: [
     'AI training',
     'agentic AI systems',
@@ -28,19 +28,27 @@ export const metadata: Metadata = {
     'AI sandbox',
     'AI skills',
     'live AI intelligence',
+    'verified AI learning',
+    'AI competency',
+    'tool intelligence',
+    'verified sandbox tasks',
+    'workforce AI training',
   ],
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
-    title: 'DeepMindResources | Live AI Training and Tool Intelligence',
+    title: 'Master Agentic AI Systems | DeepMind Resources',
     description:
-      'Learn AI from beginner to agentic systems with verified lessons, live AI intelligence, tool comparisons, and practical sandbox training.',
+      'DeepMind Resources is a living AI training and tool-intelligence platform for verified guidance, practical lessons, sandbox tasks, and business-ready AI competency.',
     url: 'https://deepmindresources.pro',
-    siteName: 'DeepMindResources',
+    siteName: 'DeepMind Resources',
     images: [
       {
         url: '/brand/deepmind-resources-logo.png',
         width: 512,
         height: 512,
-        alt: 'DeepMindResources logo',
+        alt: 'DeepMind Resources logo',
       },
     ],
     locale: 'en_GB',
@@ -48,7 +56,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary',
-    title: 'DeepMindResources | Live AI Training and Tool Intelligence',
+    title: 'Master Agentic AI Systems | DeepMind Resources',
     description:
       'Verified AI updates turned into practical lessons, sandbox tasks, tool intelligence, and business-ready learning paths.',
     images: ['/brand/deepmind-resources-logo.png'],
