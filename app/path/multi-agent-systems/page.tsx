@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import type { LucideIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -512,18 +512,18 @@ export default function MultiAgentSystemsPathwayPage() {
 
       <div className="relative z-10 px-4 py-5 sm:px-6 lg:px-8">
         <div className="mx-auto w-full max-w-7xl">
-          <section className="grid gap-10 rounded-[2rem] border border-sand/10 bg-white/90 p-6 shadow-sm backdrop-blur sm:p-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:p-10">
+          <section className="grid gap-6 rounded-[1.5rem] border border-sand/10 bg-white/90 p-5 shadow-sm backdrop-blur sm:gap-10 sm:rounded-[2rem] sm:p-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:p-10">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
                 <UsersRound className="h-4 w-4" aria-hidden="true" />
                 Multi-Agent Systems Pathway
               </span>
 
-              <h1 className="mt-6 max-w-5xl text-4xl font-bold tracking-tight text-sand sm:text-5xl lg:text-6xl">
+              <h1 className="mt-5 max-w-5xl text-3xl font-bold tracking-tight text-sand sm:mt-6 sm:text-5xl lg:text-6xl">
                 Multi-Agent Systems: orchestrated AI teams with controlled handoffs.
               </h1>
 
-              <p className="mt-6 max-w-3xl text-base leading-8 text-sand/70 sm:text-lg">
+              <p className="mt-4 max-w-3xl text-base leading-8 text-sand/70 sm:mt-6 sm:text-lg">
                 Multi-agent systems should not be a pile of bots talking to each other. They need specialist roles, handoff contracts, shared state rules, validation layers, and human approval before they influence production work.
               </p>
 
@@ -558,7 +558,7 @@ export default function MultiAgentSystemsPathwayPage() {
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-sand/10 bg-[#EAF7FF] p-5 shadow-sm sm:p-6 lg:p-7">
+            <div className="hidden rounded-[2rem] border border-sand/10 bg-[#EAF7FF] p-5 shadow-sm sm:p-6 lg:block lg:p-7">
               <div className="rounded-[1.5rem] bg-[#123BFF] p-6 text-white shadow-sm">
                 <div className="flex items-start justify-between gap-5">
                   <div>
@@ -877,3 +877,4 @@ export default function MultiAgentSystemsPathwayPage() {
     </main>
   )
 }
+
