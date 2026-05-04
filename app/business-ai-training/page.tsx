@@ -20,35 +20,39 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Business AI Training | DeepMind Resources',
+  title: 'Business AI Training for Workforce Capability | DeepMind Resources',
   description:
-    'Professional business AI training for teams: practical AI skills, tool intelligence, sandbox practice, workflow confidence, and business-ready learning paths.',
+    'Train teams with source-aware AI guidance, verified sandbox tasks, role-based workflows, tool intelligence, and release-aware learning paths built for business AI competency.',
   alternates: {
-    canonical: '/business-ai-training',
+    canonical: 'https://deepmindresources.pro/business-ai-training',
   },
   keywords: [
     'business AI training',
-    'professional AI training',
+    'workforce AI training',
     'AI training for teams',
-    'AI tool intelligence',
-    'AI sandbox practice',
+    'AI competency training',
+    'business AI competency',
+    'role-based AI training',
+    'AI tool intelligence for business',
     'AI workflow training',
-    'AI skills for business',
-    'enterprise AI training',
+    'staff AI onboarding',
+    'AI safety training for teams',
+    'release-aware AI learning',
+    'verified AI sandbox tasks',
   ],
   openGraph: {
-    title: 'Business AI Training | DeepMind Resources',
+    title: 'Business AI Training for Workforce Capability | DeepMind Resources',
     description:
-      'Train teams to use AI confidently with practical lessons, tool intelligence, sandbox tasks, and business-ready learning paths.',
+      'DeepMind Resources turns AI change into workforce capability with business-ready training, verified sandbox tasks, tool intelligence, safe-use guidance, and team learning paths.',
     url: 'https://deepmindresources.pro/business-ai-training',
     siteName: 'DeepMind Resources',
     type: 'website',
   },
   twitter: {
-    card: 'summary',
-    title: 'Business AI Training | DeepMind Resources',
+    card: 'summary_large_image',
+    title: 'Business AI Training for Workforce Capability | DeepMind Resources',
     description:
-      'Professional AI training for teams that need practical skills, safer workflows, tool intelligence, and sandbox practice.',
+      'Build workforce AI competency with business-ready training, verified sandbox tasks, source-aware guidance, tool intelligence, and role-based workflow practice.',
   },
 }
 
@@ -294,7 +298,7 @@ export default function BusinessAiTrainingPage() {
                       Built for .pro learning
                     </p>
                     <h2 className="mt-1 text-xl font-bold text-sand">
-                      AI update → lesson → sandbox task → skill gain
+                      AI update â†’ lesson â†’ sandbox task â†’ skill gain
                     </h2>
                   </div>
                 </div>
