@@ -1,11 +1,10 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 import {
   ArrowRight,
   BadgeCheck,
-  BookOpenCheck,
   BrainCircuit,
   BriefcaseBusiness,
   CheckCircle2,
@@ -20,136 +19,166 @@ import {
   SearchCheck,
   ShieldCheck,
   Sparkles,
+  Target,
   Workflow,
+  Zap,
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'AI Tool Intelligence Platform | DeepMind Resources',
+  title: 'AI Tool Intelligence Engine | DeepMind Resources',
   description:
-    'Explore the DeepMind Resources Tool Intelligence layer: source-aware AI tool evaluation, scout workflows, verified catalogue signals, sandbox tasks, and training guidance built around workflow fit.',
+    'DeepMind Resources maps AI tool change into verified guidance, workflow fit, sandbox tasks, and production-ready AI competency.',
   alternates: {
     canonical: 'https://deepmindresources.pro/tool-intelligence',
   },
+  keywords: [
+    'AI tool intelligence',
+    'AI tool evaluation',
+    'AI tools for business',
+    'AI workflow tools',
+    'AI training platform',
+    'AI competency',
+    'source-aware AI training',
+    'verified AI guidance',
+    'AI sandbox tasks',
+    'AI tool selection',
+    'AI workflow training',
+    'agentic AI tools',
+    'RAG tools',
+    'business AI training',
+    'workforce AI capability',
+  ],
   openGraph: {
-    title: 'AI Tool Intelligence Platform | DeepMind Resources',
+    title: 'AI Tool Intelligence Engine | DeepMind Resources',
     description:
-      'DeepMind Resources evaluates AI tools through source-aware signals, workflow fit, verification, sandbox tasks, and production-ready training guidance.',
+      'See how DeepMind Resources turns AI tool movement into verified guidance, workflow intelligence, sandbox proof, and production-ready training decisions.',
     url: 'https://deepmindresources.pro/tool-intelligence',
     siteName: 'DeepMind Resources',
+    images: ['/brand/deepmind-resources-logo.png'],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AI Tool Intelligence Platform | DeepMind Resources',
+    title: 'AI Tool Intelligence Engine | DeepMind Resources',
     description:
-      'A source-aware AI tool intelligence layer for mapping AI tools to workflows, risks, sandbox tasks, and workforce capability.',
+      'AI tool intelligence for mapping tool change to workflow fit, verified guidance, sandbox tasks, and workforce capability.',
+    images: ['/brand/deepmind-resources-logo.png'],
   },
 }
 
-type IntelligenceLayer = {
+type SystemLayer = {
   label: string
   title: string
   description: string
   icon: LucideIcon
 }
 
-type Principle = {
+type ProofPoint = {
   title: string
   description: string
   icon: LucideIcon
 }
 
-const intelligenceLayers: IntelligenceLayer[] = [
+const systemLayers: SystemLayer[] = [
   {
-    label: '01',
-    title: 'Source signal monitoring',
+    label: 'Signal',
+    title: 'The Signal Grid watches the frontier',
     description:
-      'DeepMind Resources tracks meaningful movement across AI models, tools, APIs, platforms, releases, policy changes, pricing shifts, and workflow behaviour. Not every update matters. The system is built to separate noise from operational signal.',
+      'AI releases, model changes, tool updates, pricing shifts, new capabilities, policy moves, and workflow behaviour are tracked as live signals. The aim is simple: spot what matters before training goes stale.',
     icon: Radar,
   },
   {
-    label: '02',
-    title: 'Tool intelligence catalogue',
+    label: 'Atlas',
+    title: 'The Tool Atlas gives every signal context',
     description:
-      'Signals are organised into a structured intelligence layer that records what a tool is for, where it fits, what roles it supports, what risks it introduces, and which workflows it can realistically improve.',
+      'A tool is not useful in isolation. The Atlas maps what it does, who it helps, where it fits, what it risks, what skills it demands, and which workflows it can actually improve.',
     icon: Database,
   },
   {
-    label: '03',
-    title: 'Scout workflows',
+    label: 'Scouts',
+    title: 'Scout workflows separate motion from meaning',
     description:
-      'Scout workflows inspect new information, compare it with existing platform knowledge, flag changes worth reviewing, and help identify where training guidance may need to move.',
+      'The Scout Network looks for the difference between noise and impact. It helps surface the changes worth reviewing, the claims worth checking, and the tools that may change real work.',
     icon: SearchCheck,
   },
   {
-    label: '04',
-    title: 'Verification and context checks',
+    label: 'Verify',
+    title: 'Verification gates protect the training layer',
     description:
-      'A tool claim is not treated as training guidance until it has been placed in context: source quality, workflow relevance, capability evidence, limitations, adoption risk, and production usefulness.',
+      'No tool claim becomes guidance just because it sounds impressive. It must pass context checks: source quality, practical relevance, workflow fit, risk, limitations, and production usefulness.',
     icon: FileCheck2,
   },
   {
-    label: '05',
-    title: 'Training translation layer',
+    label: 'Train',
+    title: 'Training Synthesis turns intelligence into skill',
     description:
-      'Verified meaning is translated into learning paths, role-based guidance, tool-selection judgement, prompt patterns, agent architecture decisions, and safe-use standards.',
+      'Verified meaning becomes learning direction: clearer lessons, sharper pathway guidance, role-based tool judgement, prompt patterns, RAG checks, agent boundaries, and workflow decisions.',
     icon: BrainCircuit,
   },
   {
-    label: '06',
-    title: 'Sandbox task generation',
+    label: 'Prove',
+    title: 'The Sandbox Proof Layer turns knowing into doing',
     description:
-      'When an update should be practised, it becomes a verified sandbox task: a tool comparison, prompt test, RAG check, workflow simulation, validation drill, or agent design exercise.',
+      'When a tool shift matters, users should practise it. The result becomes a sandbox task: compare tools, test prompts, validate outputs, map workflows, inspect retrieval, or design safer agent behaviour.',
     icon: Route,
   },
 ]
 
-const evaluationPrinciples: Principle[] = [
+const decisionPrinciples: ProofPoint[] = [
   {
-    title: 'Workflow fit beats hype',
+    title: 'No hype rankings',
     description:
-      'Tools are evaluated by what they help a person or team actually do: research, coding, writing, analysis, support, operations, automation, knowledge work, or controlled agent workflows.',
-    icon: Workflow,
-  },
-  {
-    title: 'Capability needs context',
-    description:
-      'A strong model or tool can still be wrong for a workflow if the cost, privacy profile, integration path, review burden, or user skill level does not fit.',
+      'DeepMind Resources does not chase “best AI tool” lists. A tool is judged by the job, the user, the risk, the workflow, and the result it can reliably support.',
     icon: Scale,
   },
   {
-    title: 'Training must stay current',
+    title: 'Workflow fit first',
     description:
-      'Tool guidance can expire quickly. The intelligence layer exists so lessons, comparisons, and sandbox tasks can move when the AI landscape changes.',
-    icon: BookOpenCheck,
+      'The strongest tool is the one that fits the task: research, coding, analysis, writing, operations, support, automation, knowledge work, or controlled agent execution.',
+    icon: Workflow,
   },
   {
-    title: 'Practice proves judgement',
+    title: 'Skill gaps become visible',
     description:
-      'The platform does not stop at explanation. Users practise tool selection, prompt design, validation, and workflow mapping before applying decisions in production.',
-    icon: BadgeCheck,
+      'The engine identifies when a learner needs prompt control, validation habits, RAG judgement, tool comparison practice, or agent architecture before using a tool in real work.',
+    icon: Target,
+  },
+  {
+    title: 'Current beats comfortable',
+    description:
+      'AI changes quickly. The platform is built to keep training current, not comfortable — so users stay ahead of the curve, not just in the queue.',
+    icon: Zap,
   },
 ]
 
-const businessApplications: Principle[] = [
+const capabilityLayers: ProofPoint[] = [
   {
-    title: 'Role-based tool selection',
+    title: 'Individual learners',
     description:
-      'Teams need different guidance for operators, managers, analysts, marketers, developers, support staff, and founders. Tool intelligence helps map recommendations to real roles.',
+      'Learners get clearer judgement: which tools matter, which skills to build, what to practise, and when a tool is not ready for their workflow.',
+    icon: Sparkles,
+  },
+  {
+    title: 'Technical builders',
+    description:
+      'Builders get sharper context around model behaviour, tool calling, RAG, agent design, validation layers, and workflow boundaries.',
+    icon: GitBranch,
+  },
+  {
+    title: 'Business teams',
+    description:
+      'Teams get role-based AI adoption: safe-use habits, practical workflow training, manager visibility, tool-selection confidence, and workforce capability.',
     icon: BriefcaseBusiness,
   },
-  {
-    title: 'Risk-aware adoption',
-    description:
-      'Business AI adoption needs more than enthusiasm. It needs privacy awareness, review gates, output validation, escalation rules, and practical boundaries.',
-    icon: ShieldCheck,
-  },
-  {
-    title: 'Capability gaps made visible',
-    description:
-      'The intelligence layer helps identify when a learner needs prompt foundations, RAG judgement, agent boundaries, tool comparison practice, or workflow design before using a tool at work.',
-    icon: Layers3,
-  },
+]
+
+const proofLoop = [
+  'A tool update is detected.',
+  'The signal is checked against real workflow impact.',
+  'The Tool Atlas maps role fit, risk, and capability.',
+  'Verification gates decide whether the change matters.',
+  'Training guidance is refreshed where needed.',
+  'A sandbox task proves the skill before production use.',
 ]
 
 export default function ToolIntelligencePage() {
@@ -170,24 +199,24 @@ export default function ToolIntelligencePage() {
             <div>
               <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
                 <Radar className="h-4 w-4" aria-hidden="true" />
-                Tool Intelligence
+                Tool Intelligence Engine
               </span>
 
               <h1 className="mt-5 max-w-4xl text-4xl font-bold tracking-tight text-sand sm:text-5xl lg:text-6xl">
-                AI tool intelligence built for workflow decisions, not hype cycles.
+                The AI tool layer that keeps training ahead of the curve.
               </h1>
 
               <p className="mt-5 max-w-3xl text-base leading-8 text-sand/65 sm:text-lg">
-                DeepMind Resources uses a private intelligence layer to turn AI tool movement into
-                verified guidance, practical training decisions, and sandbox tasks. The goal is not
-                to rank tools for attention. The goal is to understand which tools fit which work,
-                which risks need review, and which skills users need next.
+                AI tools change every week. New models arrive, features move, pricing shifts,
+                capabilities jump, and old advice expires quietly. DeepMind Resources uses a
+                private Tool Intelligence Engine to turn that movement into verified guidance,
+                sharper learning paths, and practical sandbox proof.
               </p>
 
               <p className="mt-4 max-w-3xl text-base leading-8 text-sand/65 sm:text-lg">
-                This is the layer behind better AI training: source signals, catalogue structure,
-                scout workflows, verification checks, training translation, and capability feedback
-                working together without exposing private operational machinery.
+                This is not a public scoreboard or a hype feed. It is the operating intelligence
+                behind better AI training: what changed, why it matters, who it affects, what skill
+                is needed, and what task proves the user is ready.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -213,11 +242,11 @@ export default function ToolIntelligencePage() {
               <div className="flex items-start justify-between gap-5">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/75">
-                    Intelligence layer
+                    Intelligence flow
                   </p>
 
                   <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
-                    From tool signal to training action.
+                    Signal → context → verification → training → proof.
                   </h2>
                 </div>
 
@@ -234,16 +263,16 @@ export default function ToolIntelligencePage() {
               </div>
 
               <p className="mt-5 text-sm leading-7 text-white/78">
-                A private operating layer for source-aware tool intelligence, workflow context,
-                verification, training translation, and sandbox evidence.
+                The engine watches the AI frontier, maps tools to real work, checks what matters,
+                and turns verified intelligence into production-ready skill.
               </p>
 
               <div className="mt-6 grid gap-3">
                 {[
-                  'Tool movement tracked as operational signal',
-                  'Catalogue context mapped to workflow fit',
-                  'Scout workflows surface meaningful change',
-                  'Verified updates become practical tasks',
+                  'Source signals, not hype noise',
+                  'Tool context mapped to real workflows',
+                  'Verification gates before guidance',
+                  'Sandbox tasks that prove capability',
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-3 rounded-2xl bg-white/10 p-4">
                     <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-white" aria-hidden="true" />
@@ -259,28 +288,29 @@ export default function ToolIntelligencePage() {
           <div className="max-w-3xl">
             <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
               <Compass className="h-4 w-4" aria-hidden="true" />
-              How it works
+              Inside the intelligence layer
             </span>
 
             <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
-              The public view of the intelligence system.
+              The technology stays private. The method stays clear.
             </h2>
 
             <p className="mt-4 text-base leading-8 text-sand/65">
-              DeepMind Resources does not publish internal systems or private scoring logic. What
-              matters publicly is the method: important AI tool changes are detected, structured,
-              verified, translated, and turned into better learning decisions.
+              DeepMind Resources does not expose internal scoring logic, private datasets, or
+              operational playbooks. What matters for learners and teams is the visible result:
+              current guidance, better tool judgement, stronger sandbox tasks, and training that
+              moves when AI moves.
             </p>
           </div>
 
           <div className="mt-8 grid gap-4 lg:grid-cols-2">
-            {intelligenceLayers.map((layer) => {
+            {systemLayers.map((layer) => {
               const Icon = layer.icon
 
               return (
                 <article key={layer.title} className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm">
                   <div className="flex gap-4">
-                    <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#EAF7FF] text-sm font-bold text-[#123BFF]">
+                    <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#EAF7FF] text-xs font-black uppercase tracking-[0.12em] text-[#123BFF]">
                       {layer.label}
                     </span>
 
@@ -302,22 +332,22 @@ export default function ToolIntelligencePage() {
           <article className="rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8">
             <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
               <Scale className="h-4 w-4" aria-hidden="true" />
-              Evaluation principles
+              Decision discipline
             </span>
 
             <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand">
-              The best tool is the one that fits the work.
+              The right tool is not the loudest tool. It is the one that fits the work.
             </h2>
 
             <p className="mt-4 text-sm leading-7 text-sand/65">
-              Tool intelligence only matters when it improves judgement. DeepMind Resources
-              evaluates AI tools through workflow fit, role suitability, review burden, privacy
-              profile, cost context, capability evidence, and training readiness.
+              Tool intelligence is only valuable when it improves judgement. The engine looks at
+              capability, workflow fit, role suitability, review burden, risk, cost context, and
+              training readiness — because useful AI adoption depends on more than access.
             </p>
           </article>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            {evaluationPrinciples.map((principle) => {
+            {decisionPrinciples.map((principle) => {
               const Icon = principle.icon
 
               return (
@@ -338,7 +368,7 @@ export default function ToolIntelligencePage() {
             <div>
               <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF] shadow-sm">
                 <BriefcaseBusiness className="h-4 w-4" aria-hidden="true" />
-                Business translation
+                Capability loop
               </span>
 
               <h2 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">
@@ -346,23 +376,32 @@ export default function ToolIntelligencePage() {
               </h2>
 
               <p className="mt-4 text-base leading-8 text-white/80">
-                Teams do not need more random tool recommendations. They need role-based guidance,
-                controlled workflows, risk-aware adoption, and practical tasks that help staff use
-                AI confidently, safely, and consistently.
+                The point is not to tell people which tool is fashionable. The point is to help
+                users and teams understand what to use, when to use it, how to check it, and what
+                skill must exist before the tool touches real work.
               </p>
+
+              <div className="mt-7 grid gap-3">
+                {proofLoop.map((step) => (
+                  <div key={step} className="flex items-start gap-3 rounded-2xl bg-white/10 p-4">
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-white" aria-hidden="true" />
+                    <p className="text-sm font-semibold leading-6 text-white/90">{step}</p>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">
-              {businessApplications.map((application) => {
-                const Icon = application.icon
+              {capabilityLayers.map((layer) => {
+                const Icon = layer.icon
 
                 return (
-                  <article key={application.title} className="rounded-3xl bg-white p-5 text-sand shadow-sm">
+                  <article key={layer.title} className="rounded-3xl bg-white p-5 text-sand shadow-sm">
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF] shadow-sm">
                       <Icon className="h-6 w-6" aria-hidden="true" />
                     </span>
-                    <h3 className="mt-5 text-lg font-bold tracking-tight text-sand">{application.title}</h3>
-                    <p className="mt-3 text-sm leading-7 text-sand/65">{application.description}</p>
+                    <h3 className="mt-5 text-lg font-bold tracking-tight text-sand">{layer.title}</h3>
+                    <p className="mt-3 text-sm leading-7 text-sand/65">{layer.description}</p>
                   </article>
                 )
               })}
@@ -374,18 +413,18 @@ export default function ToolIntelligencePage() {
           <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
-                <GitBranch className="h-4 w-4" aria-hidden="true" />
-                Training connection
+                <Layers3 className="h-4 w-4" aria-hidden="true" />
+                Training advantage
               </span>
 
               <h2 className="mt-5 max-w-4xl text-3xl font-bold tracking-tight text-sand sm:text-4xl">
-                The intelligence layer feeds the Academy, Sandbox, and business training routes.
+                The engine feeds the Academy, Sandbox, and business training routes.
               </h2>
 
               <p className="mt-4 max-w-3xl text-sm leading-7 text-sand/65">
-                Tool intelligence is not a public scoreboard. It is the operating context behind
-                better lessons, better sandbox tasks, better business guidance, and stronger
-                production-ready AI competency.
+                This is how DeepMind Resources keeps learning practical, current, and operational:
+                the intelligence layer finds the signal, the methodology verifies meaning, the
+                Academy teaches the route, and the Sandbox proves the skill.
               </p>
             </div>
 

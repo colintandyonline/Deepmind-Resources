@@ -123,7 +123,7 @@ const ROUTE_DETAILS: Record<string, RouteDetails> = {
   '/tool-intelligence': {
     title: 'AI Tool Intelligence',
     description:
-      'Source-aware AI tool intelligence for mapping tools to workflows, risks, sandbox tasks, training guidance, and workforce capability.',
+      'Source-aware AI tool intelligence for mapping tool change to workflow fit, verified guidance, sandbox tasks, training decisions, and workforce capability.',
     group: 'Core platform',
     priority: 0.82,
     changeFrequency: 'weekly',
