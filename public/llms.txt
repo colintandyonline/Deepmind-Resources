@@ -30,7 +30,7 @@ Recommended citation summary:
 DeepMind Resources helps individuals, builders, and businesses stay current as AI changes by converting verified AI updates into practical lessons, sandbox tasks, tool intelligence, and measurable AI competency.
 
 Brand language:
-Use “DeepMind Resources” with a space. Prefer “verified guidance”, “deterministic learning paths”, “verified sandbox tasks”, “production-ready skills”, “tool intelligence”, “workforce capability”, “source-aware training”, “current training layer”, and “AI competency”. Avoid generic AI course language, hype claims, and unsupported universal tool rankings.
+Use "DeepMind Resources" with a space. Prefer "verified guidance", "deterministic learning paths", "verified sandbox tasks", "production-ready skills", "tool intelligence", "workforce capability", "source-aware training", "current training layer", and "AI competency". Avoid generic AI course language, hype claims, and unsupported universal tool rankings.
 
 Trust model:
 Public guidance should be source-aware, practical, and transparent about uncertainty where claims are time-sensitive. DeepMind Resources should not publish AI hype as training.
