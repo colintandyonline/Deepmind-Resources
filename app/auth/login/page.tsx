@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
@@ -119,8 +120,14 @@ export default function LoginPage() {
         <div className="grid w-full gap-8 lg:grid-cols-[1.03fr_0.97fr] lg:items-center">
           <section className="rounded-[2rem] border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
             <Link href="/" className="inline-flex items-center gap-3">
-              <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#123BFF] text-white shadow-sm">
-                <Brain className="h-6 w-6" aria-hidden="true" />
+              <span className="relative inline-flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-sand/10">
+                <Image
+                  src="/brand/deepmind-resources-emblem.png"
+                  alt="DeepMind Resources"
+                  fill
+                  sizes="48px"
+                  className="object-contain p-1.5"
+                />
               </span>
               <span className="text-base font-bold tracking-tight text-sand">
                 DeepMind Resources
@@ -141,6 +148,13 @@ export default function LoginPage() {
                 Access your DeepMind Resources dashboard with your email and password. Your
                 workspace connects structured AI learning, verified sandbox practice, and
                 release-aware training.
+              </p>
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-[#123BFF]/15 bg-[#EAF7FF] p-4 text-sm leading-7 text-sand/72">
+              <p>
+                You are signing in on <span className="font-bold text-sand">deepmindresources.pro</span>.
+                This is an independent training platform and is <span className="font-bold text-sand">not affiliated with Google DeepMind</span>.
               </p>
             </div>
 
@@ -220,6 +234,21 @@ export default function LoginPage() {
               <Link href="/auth/signup" className="font-bold text-[#123BFF] hover:text-[#0A63FF]">
                 Create an account
               </Link>
+            </div>
+
+            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-sand/55">
+              <Link href="/privacy" className="font-semibold text-[#123BFF] hover:text-[#0A63FF]">
+                Privacy
+              </Link>
+              <Link href="/terms" className="font-semibold text-[#123BFF] hover:text-[#0A63FF]">
+                Terms
+              </Link>
+              <Link href="/contact" className="font-semibold text-[#123BFF] hover:text-[#0A63FF]">
+                Contact support
+              </Link>
+              <a href="mailto:support@deepmindresources.pro" className="font-semibold text-[#123BFF] hover:text-[#0A63FF]">
+                support@deepmindresources.pro
+              </a>
             </div>
           </section>
 

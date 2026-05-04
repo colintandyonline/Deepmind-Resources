@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, type FormEvent } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
@@ -93,17 +94,25 @@ export default function ResetPasswordPage() {
         <div className="grid w-full gap-8 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
           <section className="rounded-[2rem] border border-sand/10 bg-white/92 p-6 shadow-sm sm:p-8 lg:p-10">
             <Link href="/" className="inline-flex items-center gap-3">
-              <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#123BFF] p-2 shadow-sm">
-                <img
+              <span className="relative inline-flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-white p-1.5 shadow-sm ring-1 ring-sand/10">
+                <Image
                   src="/brand/deepmind-resources-emblem.png"
                   alt="DeepMind Resources"
-                  className="h-8 w-8 rounded-xl object-contain"
+                  fill
+                  sizes="48px"
+                  className="object-contain"
                 />
               </span>
               <span className="text-base font-bold tracking-tight text-sand">
                 DeepMind Resources
               </span>
             </Link>
+
+            <div className="mt-6 rounded-2xl border border-[#123BFF]/15 bg-[#EAF7FF] p-4 text-sm leading-7 text-sand/72">
+              <p>
+                Password recovery runs only on <span className="font-bold text-sand">deepmindresources.pro</span> and this service is <span className="font-bold text-sand">not affiliated with Google DeepMind</span>.
+              </p>
+            </div>
 
             <div className="mt-8">
               <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
@@ -208,6 +217,21 @@ export default function ResetPasswordPage() {
                 Sign in
               </Link>
             </div>
+
+            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-sand/55">
+              <Link href="/privacy" className="font-semibold text-[#123BFF] hover:text-[#0A63FF]">
+                Privacy
+              </Link>
+              <Link href="/terms" className="font-semibold text-[#123BFF] hover:text-[#0A63FF]">
+                Terms
+              </Link>
+              <Link href="/contact" className="font-semibold text-[#123BFF] hover:text-[#0A63FF]">
+                Contact support
+              </Link>
+              <a href="mailto:support@deepmindresources.pro" className="font-semibold text-[#123BFF] hover:text-[#0A63FF]">
+                support@deepmindresources.pro
+              </a>
+            </div>
           </section>
 
           <aside className="rounded-[2rem] border border-sand/10 bg-white/88 p-6 shadow-sm sm:p-8">
@@ -217,11 +241,13 @@ export default function ResetPasswordPage() {
                 Secure recovery
               </span>
 
-              <a href="https://deepmindresources.pro" className="shrink-0">
-                <img
+              <a href="https://deepmindresources.pro" className="relative block h-14 w-14 shrink-0 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-sand/10">
+                <Image
                   src="/brand/deepmind-resources-emblem.png"
                   alt="DeepMind Resources"
-                  className="h-14 w-14 rounded-2xl object-contain shadow-sm"
+                  fill
+                  sizes="56px"
+                  className="object-contain p-1.5"
                 />
               </a>
             </div>

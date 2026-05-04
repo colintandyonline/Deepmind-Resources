@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
@@ -36,7 +36,14 @@ function passwordMeetsRequirements(value: string) {
 }
 
 export default function SignupPage() {
-  const [accountType, setAccountType] = useState<AccountType>('individual')
+  const [accountType, setAccountType] = useState<AccountType>(() => {
+    if (typeof window === 'undefined') {
+      return 'individual'
+    }
+
+    const requestedType = new URLSearchParams(window.location.search).get('type')
+    return requestedType === 'business' ? 'business' : 'individual'
+  })
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
@@ -46,19 +53,6 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [status, setStatus] = useState<FormStatus>('idle')
   const [message, setMessage] = useState('')
-
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return
-    }
-
-    const searchParams = new URLSearchParams(window.location.search)
-    const requestedType = searchParams.get('type')
-
-    if (requestedType === 'business') {
-      setAccountType('business')
-    }
-  }, [])
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -228,6 +222,13 @@ export default function SignupPage() {
               <span className="hidden rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF] sm:inline-flex">
                 Secure signup
               </span>
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-[#123BFF]/15 bg-[#EAF7FF] p-4 text-sm leading-7 text-sand/72">
+              <p>
+                Account creation happens on <span className="font-bold text-sand">deepmindresources.pro</span>.
+                This platform is <span className="font-bold text-sand">independent and not affiliated with Google DeepMind</span>.
+              </p>
             </div>
 
             <div className="mt-8">
@@ -481,6 +482,21 @@ export default function SignupPage() {
               <Link href="/auth/login" className="font-bold text-[#123BFF] hover:text-[#0A63FF]">
                 Sign in
               </Link>
+            </div>
+
+            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-sand/55">
+              <Link href="/privacy" className="font-semibold text-[#123BFF] hover:text-[#0A63FF]">
+                Privacy
+              </Link>
+              <Link href="/terms" className="font-semibold text-[#123BFF] hover:text-[#0A63FF]">
+                Terms
+              </Link>
+              <Link href="/contact" className="font-semibold text-[#123BFF] hover:text-[#0A63FF]">
+                Contact support
+              </Link>
+              <a href="mailto:support@deepmindresources.pro" className="font-semibold text-[#123BFF] hover:text-[#0A63FF]">
+                support@deepmindresources.pro
+              </a>
             </div>
           </section>
 
