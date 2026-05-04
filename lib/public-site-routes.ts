@@ -120,6 +120,14 @@ const ROUTE_DETAILS: Record<string, RouteDetails> = {
     priority: 0.85,
     changeFrequency: 'weekly',
   },
+  '/methodology': {
+    title: 'AI Training Methodology',
+    description:
+      'The DeepMind Resources methodology for turning verified AI updates into practical lessons, sandbox tasks, tool intelligence, and measurable AI competency.',
+    group: 'Trust',
+    priority: 0.75,
+    changeFrequency: 'monthly',
+  },
   '/business-ai-training': {
     title: 'Business AI Training',
     description:
@@ -276,21 +284,6 @@ export function getPublicSiteRoutes(): PublicSiteRoute[] {
 
   discoveredRoutes.forEach((route) => {
     routeMap.set(route.path, route)
-  })
-
-  Object.entries(ROUTE_DETAILS).forEach(([routePath, details]) => {
-    if (!routeMap.has(routePath)) {
-      routeMap.set(routePath, {
-        path: routePath,
-        url: new URL(routePath, SITE_URL).toString(),
-        title: details.title,
-        description: details.description,
-        group: details.group,
-        priority: details.priority,
-        changeFrequency: details.changeFrequency,
-        lastModified: new Date(),
-      })
-    }
   })
 
   return Array.from(routeMap.values()).sort((a, b) => {
