@@ -507,12 +507,12 @@ export default function HomePage() {
                   </span>
 
                   <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand sm:text-3xl">
-                    AI update to verified meaning to practical skill actions.
+                    AI update → verified meaning → Agentic Sandbox Deployment.
                   </h2>
 
                   <p className="mt-3 max-w-3xl text-sm leading-7 text-sand/65 sm:text-base">
-                    DeepMind Resources turns important AI changes into clearer lessons, sandbox
-                    tasks, tool comparisons, and business-ready workflow guidance.
+                    DeepMind Resources transforms verified AI updates into Agentic Systems,
+                    sandbox tasks, and tool-intelligence training paths.
                   </p>
                 </div>
 
@@ -631,3 +631,4 @@ export default function HomePage() {
     </div>
   )
 }
+
