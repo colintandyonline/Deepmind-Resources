@@ -1,4 +1,40 @@
+import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
+
+export const metadata: Metadata = {
+  title: 'Prompt Engineering Pathway | DeepMind Resources Academy',
+  description:
+    'Learn prompt engineering with DeepMind Resources: structured instructions, context, constraints, reusable prompt systems, output validation, workflow control, and verified sandbox practice.',
+  alternates: {
+    canonical: '/path/prompting',
+  },
+  keywords: [
+    'prompt engineering pathway',
+    'prompt engineering training',
+    'AI prompt systems',
+    'structured prompting',
+    'prompt validation',
+    'AI workflow prompts',
+    'reusable prompt patterns',
+    'verified sandbox tasks',
+    'AI competency',
+    'DeepMind Resources Academy',
+  ],
+  openGraph: {
+    title: 'Prompt Engineering Pathway | DeepMind Resources Academy',
+    description:
+      'Build production-ready prompt systems with structured instructions, workflow context, validation rules, and verified sandbox practice.',
+    url: 'https://deepmindresources.pro/path/prompting',
+    siteName: 'DeepMind Resources',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Prompt Engineering Pathway | DeepMind Resources Academy',
+    description:
+      'A professional pathway for prompt control, reusable instruction systems, workflow-ready AI output, and verified sandbox practice.',
+  },
+}
 
 type PromptingLayoutProps = {
   children: ReactNode
