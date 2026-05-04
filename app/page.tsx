@@ -1,4 +1,5 @@
-﻿import type { LucideIcon } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import {
   ArrowRight,
@@ -10,12 +11,12 @@ import {
   Code2,
   Database,
   Radar,
+  ShieldCheck,
   Route,
   Sparkles,
   Workflow,
 } from 'lucide-react'
 import { Sidebar } from '@/components/platform/sidebar'
-import { HeroSection } from '@/components/platform/hero-section'
 import { CodeSandbox } from '@/components/platform/code-sandbox'
 import { ContentCardGrid, type LessonModule } from '@/components/platform/content-card'
 
@@ -105,6 +106,7 @@ const pathwayStages: PathwayStage[] = [
     description: 'Choose the right AI tools for coding, research, writing, automation, and knowledge work.',
     label: 'Tools',
     icon: Radar,
+  ShieldCheck,
   },
   {
     title: 'Workflow Design',
@@ -145,6 +147,7 @@ const intelligenceSignals: IntelligenceSignal[] = [
       'A major model, product, or platform change is checked for practical learning impact.',
     label: 'Track',
     icon: Radar,
+  ShieldCheck,
   },
   {
     title: 'Practical meaning mapped',
@@ -389,7 +392,136 @@ export default function HomePage() {
 
       <main className="relative z-10 min-h-screen pt-16 md:pl-64 md:pt-0">
         <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-          <HeroSection />
+          <section className="relative overflow-hidden rounded-[2rem] border border-sand/10 bg-white shadow-[0_26px_90px_rgba(6,27,91,0.12)]">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(18,59,255,0.18),transparent_24rem),radial-gradient(circle_at_bottom_left,rgba(69,201,255,0.24),transparent_26rem)]" aria-hidden="true" />
+
+            <div className="relative grid gap-0 lg:grid-cols-[1.02fr_0.98fr] lg:items-stretch">
+              <div className="flex min-h-[38rem] flex-col justify-center px-5 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-14">
+                <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                  <Radar className="h-4 w-4" aria-hidden="true" />
+                  Live AI Intelligence Online
+                </span>
+
+                <h1 className="mt-6 max-w-4xl text-4xl font-black tracking-[-0.045em] text-sand sm:text-6xl lg:text-7xl">
+                  Master agentic AI before the frontier moves again.
+                </h1>
+
+                <p className="mt-6 max-w-2xl text-base leading-8 text-sand/68 sm:text-lg">
+                  DeepMind Resources turns verified AI change into practical lessons, tool
+                  intelligence, sandbox tasks, and production-ready AI competency for individuals,
+                  builders, and teams.
+                </p>
+
+                <div className="mt-7 grid gap-3 sm:flex sm:flex-wrap">
+                  <Link
+                    href="/academy"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-6 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
+                  >
+                    Explore Academy
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </Link>
+
+                  <Link
+                    href="/tool-intelligence"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-sand/10 bg-white px-6 py-4 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
+                  >
+                    View Tool Intelligence
+                    <Radar className="h-4 w-4" aria-hidden="true" />
+                  </Link>
+                </div>
+
+                <div className="mt-8 grid gap-3 sm:grid-cols-3">
+                  {[
+                    'Verified guidance',
+                    'Sandbox proof',
+                    'Workforce capability',
+                  ].map((item) => (
+                    <div key={item} className="rounded-2xl border border-[#123BFF]/10 bg-[#F8FCFF] px-4 py-3 shadow-sm">
+                      <p className="text-sm font-bold text-sand">{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="relative min-h-[34rem] bg-[#123BFF] p-5 text-white sm:p-8 lg:p-10">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,rgba(255,255,255,0.20),transparent_17rem),radial-gradient(circle_at_88%_76%,rgba(69,201,255,0.32),transparent_18rem)]" aria-hidden="true" />
+
+                <div className="relative flex h-full flex-col justify-between rounded-[1.75rem] border border-white/15 bg-white/10 p-5 shadow-2xl shadow-[#061B5B]/20 backdrop-blur sm:p-6">
+                  <div className="flex items-start justify-between gap-5">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/75">
+                        Intelligence Layer
+                      </p>
+                      <h2 className="mt-3 max-w-md text-3xl font-black tracking-tight sm:text-4xl">
+                        Signal → verification → training → proof.
+                      </h2>
+                    </div>
+
+                    <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[1.35rem] bg-white p-2 shadow-xl shadow-[#061B5B]/20 ring-1 ring-white/50 sm:h-24 sm:w-24">
+                      <Image
+                        src="/brand/deepmind-resources-logo.png"
+                        alt="DeepMind Resources"
+                        fill
+                        sizes="96px"
+                        className="object-contain p-1"
+                        priority
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-8 grid gap-3">
+                    {[
+                      {
+                        label: 'Signal Grid',
+                        copy: 'AI releases, model changes, tool movement, and workflow shifts are tracked as live learning signals.',
+                        icon: Radar,
+                      },
+                      {
+                        label: 'Verification Gates',
+                        copy: 'Important changes are checked for source context, practical meaning, risk, and production usefulness.',
+                        icon: ShieldCheck,
+                      },
+                      {
+                        label: 'Academy Pathways',
+                        copy: 'Verified meaning becomes sharper lessons, route guidance, tool judgement, and role-based skill development.',
+                        icon: BookOpenCheck,
+                      },
+                      {
+                        label: 'Sandbox Proof',
+                        copy: 'Users prove capability through prompt tests, workflow simulations, validation drills, and agent design tasks.',
+                        icon: Code2,
+                      },
+                    ].map((layer) => {
+                      const Icon = layer.icon
+
+                      return (
+                        <article key={layer.label} className="rounded-2xl border border-white/12 bg-white p-4 text-sand shadow-sm">
+                          <div className="flex gap-4">
+                            <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
+                              <Icon className="h-5 w-5" aria-hidden="true" />
+                            </span>
+                            <div>
+                              <h3 className="text-sm font-black uppercase tracking-[0.12em] text-[#123BFF]">
+                                {layer.label}
+                              </h3>
+                              <p className="mt-2 text-sm leading-6 text-sand/66">{layer.copy}</p>
+                            </div>
+                          </div>
+                        </article>
+                      )
+                    })}
+                  </div>
+
+                  <div className="mt-8 rounded-2xl border border-white/12 bg-white/10 p-4">
+                    <p className="text-sm font-bold leading-7 text-white/90">
+                      Built for people who need AI competency that keeps moving: current guidance,
+                      practical training, and proof before production use.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
 
           <section className="mt-8 lg:mt-12">
             <div className="rounded-3xl border border-sand/10 bg-[#123BFF] p-6 text-white shadow-sm sm:p-8 lg:p-10">
