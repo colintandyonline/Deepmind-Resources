@@ -21,6 +21,7 @@ Core public routes:
 - /sandbox: Agentic Sandbox overview for prompt practice, workflow simulations, RAG exercises, tool-calling tasks, agent design, and validation drills.
 - /platform: Platform overview for structured AI learning, tool intelligence, sandbox practice, release-aware refreshers, and business-ready AI skill development.
 - /methodology: Source-aware AI training methodology explaining how verified AI updates become practical lessons, sandbox tasks, tool intelligence, and measurable AI competency.
+- /tool-intelligence: Public explanation of the DeepMind Resources intelligence layer for source-aware AI tool evaluation, scout workflows, catalogue context, workflow fit, sandbox tasks, and workforce capability.
 - /business-ai-training: Business AI training for staff onboarding, workforce capability, role-based workflow practice, privacy-aware adoption, and team readiness.
 - /syllabus: Public syllabus map for learning paths, modules, AI competency areas, and future version-aware lesson structure.
 - /contact: Contact route for business onboarding, platform questions, and support.

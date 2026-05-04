@@ -120,6 +120,14 @@ const ROUTE_DETAILS: Record<string, RouteDetails> = {
     priority: 0.85,
     changeFrequency: 'weekly',
   },
+  '/tool-intelligence': {
+    title: 'AI Tool Intelligence',
+    description:
+      'Source-aware AI tool intelligence for mapping tools to workflows, risks, sandbox tasks, training guidance, and workforce capability.',
+    group: 'Core platform',
+    priority: 0.82,
+    changeFrequency: 'weekly',
+  },
   '/methodology': {
     title: 'AI Training Methodology',
     description:
