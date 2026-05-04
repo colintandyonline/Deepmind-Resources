@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { NavigationShell } from '@/components/platform/navigation-shell'
@@ -74,6 +74,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {process.env.NODE_ENV === 'production' ? (
+          <>
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-WDBS5XWMYN"></script>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', 'G-WDBS5XWMYN');
+                `,
+              }}
+            />
+          </>
+        ) : null}
+      </head>
       <body className="font-sans antialiased">
         <NavigationShell>{children}</NavigationShell>
         {process.env.NODE_ENV === 'production' && <Analytics />}
