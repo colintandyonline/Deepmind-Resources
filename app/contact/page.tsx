@@ -15,11 +15,25 @@ import {
 import { Sidebar } from '@/components/platform/sidebar'
 
 export const metadata: Metadata = {
-  title: 'Contact | DeepMind Resources',
+  title: 'Contact DeepMind Resources | AI Training & Business Support',
   description:
-    'Contact DeepMind Resources for general enquiries, business intelligence, system support, privacy requests, and workspace questions.',
+    'Contact DeepMind Resources for business AI training, workforce capability planning, platform support, privacy requests, and professional AI competency enquiries.',
   alternates: {
-    canonical: '/contact',
+    canonical: 'https://deepmindresources.pro/contact',
+  },
+  openGraph: {
+    title: 'Contact DeepMind Resources | AI Training & Business Support',
+    description:
+      'Reach DeepMind Resources for business AI training, workforce capability planning, platform support, workspace questions, and professional AI competency enquiries.',
+    url: 'https://deepmindresources.pro/contact',
+    siteName: 'DeepMind Resources',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Contact DeepMind Resources | AI Training & Business Support',
+    description:
+      'Contact DeepMind Resources for business AI training, platform support, workspace questions, and professional AI competency enquiries.',
   },
 }
 
@@ -130,7 +144,7 @@ export default function ContactPage() {
                 <p className="mt-5 max-w-3xl text-base leading-8 text-sand/65">
                   Ensure your communication reaches the intended workspace by selecting the
                   appropriate routing channel. DeepMind Resources provides dedicated pathways for
-                  platform architecture, enterprise training, and system support—maintaining a
+                  platform architecture, enterprise training, and system supportâ€”maintaining a
                   deterministic and traceable record for every interaction.
                 </p>
               </div>
@@ -143,7 +157,7 @@ export default function ContactPage() {
                   The Right Message for the Right Workspace.
                 </h2>
                 <p className="mt-4 text-sm leading-7 text-white/82">
-                  To ensure clarity and alignment with our platform’s core architecture, we utilize
+                  To ensure clarity and alignment with our platformâ€™s core architecture, we utilize
                   specialized addresses. Select the route that corresponds to your specific
                   requirement:
                 </p>
