@@ -1,0 +1,223 @@
+/* DeepMind Resources full-page signal background
+   Purpose: page-wide motion layer only. Keeps the existing blue/white palette. */
+
+/* Disable the earlier hero-only animation experiment so the motion is not trapped inside the header card. */
+.dmr-page-burst,
+.dmr-hero-route,
+.dmr-hero-packet,
+.dmr-ring,
+.dmr-bit,
+.dmr-hero-scan {
+  display: none !important;
+  animation: none !important;
+}
+
+.bg-obsidian.text-sand {
+  isolation: isolate;
+}
+
+.bg-obsidian.text-sand::before,
+.bg-obsidian.text-sand::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.bg-obsidian.text-sand::before {
+  opacity: 0.78;
+  background:
+    radial-gradient(circle at 16% 18%, rgba(18, 59, 255, 0.18) 0 0.32rem, transparent 0.42rem),
+    radial-gradient(circle at 82% 24%, rgba(69, 201, 255, 0.18) 0 0.30rem, transparent 0.42rem),
+    radial-gradient(circle at 28% 62%, rgba(18, 59, 255, 0.15) 0 0.24rem, transparent 0.36rem),
+    radial-gradient(circle at 74% 72%, rgba(69, 201, 255, 0.15) 0 0.24rem, transparent 0.36rem),
+    linear-gradient(105deg, transparent 0%, rgba(18, 59, 255, 0.13) 46%, transparent 56%),
+    linear-gradient(72deg, transparent 0%, rgba(69, 201, 255, 0.12) 42%, transparent 54%);
+  background-size:
+    42rem 34rem,
+    46rem 36rem,
+    38rem 32rem,
+    40rem 34rem,
+    28rem 12rem,
+    34rem 14rem;
+  filter: blur(0.1px);
+  animation: dmr-fullpage-field-drift 12s ease-in-out infinite;
+}
+
+.bg-obsidian.text-sand::after {
+  top: 4.5rem;
+  left: -28rem;
+  right: auto;
+  bottom: auto;
+  width: 20rem;
+  height: 3px;
+  border-radius: 999px;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(18, 59, 255, 0.95), rgba(69, 201, 255, 0.76), transparent);
+  box-shadow:
+    0 0 24px rgba(18, 59, 255, 0.46),
+    0 0 48px rgba(69, 201, 255, 0.28),
+    18vw 11vh 0 0 rgba(18, 59, 255, 0.18),
+    34vw 22vh 0 1px rgba(69, 201, 255, 0.22),
+    52vw 6vh 0 0 rgba(18, 59, 255, 0.16),
+    68vw 31vh 0 1px rgba(69, 201, 255, 0.20),
+    82vw 18vh 0 0 rgba(18, 59, 255, 0.14),
+    26vw 52vh 0 1px rgba(69, 201, 255, 0.18),
+    48vw 69vh 0 0 rgba(18, 59, 255, 0.14),
+    74vw 58vh 0 1px rgba(69, 201, 255, 0.18);
+  animation: dmr-fullpage-packet-burst 4.8s cubic-bezier(0.18, 0.84, 0.26, 1) infinite;
+}
+
+.bg-obsidian.text-sand main {
+  position: relative;
+  z-index: 10;
+}
+
+.bg-obsidian.text-sand main::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.62;
+  background:
+    linear-gradient(118deg, transparent 0 42%, rgba(18, 59, 255, 0.22) 48%, transparent 54% 100%),
+    linear-gradient(62deg, transparent 0 43%, rgba(69, 201, 255, 0.18) 49%, transparent 55% 100%),
+    repeating-linear-gradient(90deg, transparent 0 4.8rem, rgba(18, 59, 255, 0.055) 4.85rem 4.9rem, transparent 4.95rem 9.6rem);
+  background-size: 42rem 16rem, 48rem 18rem, 18rem 18rem;
+  animation: dmr-fullpage-route-sweep 9s linear infinite;
+}
+
+.bg-obsidian.text-sand main::after {
+  content: "";
+  position: fixed;
+  left: -18rem;
+  top: 18vh;
+  z-index: -1;
+  width: 11rem;
+  height: 2px;
+  pointer-events: none;
+  border-radius: 999px;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(69, 201, 255, 0.92), rgba(18, 59, 255, 0.86), transparent);
+  box-shadow:
+    0 0 22px rgba(69, 201, 255, 0.38),
+    22vw 15vh 0 0 rgba(18, 59, 255, 0.32),
+    44vw -4vh 0 0 rgba(69, 201, 255, 0.28),
+    66vw 23vh 0 0 rgba(18, 59, 255, 0.30),
+    86vw 7vh 0 0 rgba(69, 201, 255, 0.26),
+    34vw 51vh 0 0 rgba(18, 59, 255, 0.24),
+    70vw 62vh 0 0 rgba(69, 201, 255, 0.24);
+  animation: dmr-fullpage-secondary-burst 5.9s cubic-bezier(0.2, 0.82, 0.25, 1) 1.2s infinite;
+}
+
+@keyframes dmr-fullpage-field-drift {
+  0% {
+    background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
+    transform: scale(1);
+  }
+  45% {
+    background-position: 8rem 3rem, -7rem 5rem, 5rem -4rem, -6rem -3rem, 13rem 5rem, -10rem 7rem;
+    transform: scale(1.015);
+  }
+  100% {
+    background-position: 16rem 6rem, -14rem 10rem, 10rem -8rem, -12rem -6rem, 26rem 10rem, -20rem 14rem;
+    transform: scale(1);
+  }
+}
+
+@keyframes dmr-fullpage-route-sweep {
+  0% {
+    background-position: -28rem 0, 28rem 0, 0 0;
+    opacity: 0.38;
+  }
+  50% {
+    opacity: 0.72;
+  }
+  100% {
+    background-position: 42rem 16rem, -44rem 18rem, 18rem 0;
+    opacity: 0.38;
+  }
+}
+
+@keyframes dmr-fullpage-packet-burst {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(8deg) scaleX(0.58);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.9;
+  }
+  32% {
+    opacity: 0.42;
+  }
+  58% {
+    transform: translate3d(72vw, 18vh, 0) rotate(8deg) scaleX(1.08);
+    opacity: 0.72;
+  }
+  100% {
+    transform: translate3d(134vw, 4vh, 0) rotate(8deg) scaleX(0.7);
+    opacity: 0;
+  }
+}
+
+@keyframes dmr-fullpage-secondary-burst {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(-9deg) scaleX(0.6);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.78;
+  }
+  46% {
+    transform: translate3d(62vw, 14vh, 0) rotate(-9deg) scaleX(1);
+    opacity: 0.48;
+  }
+  100% {
+    transform: translate3d(128vw, -2vh, 0) rotate(-9deg) scaleX(0.72);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .bg-obsidian.text-sand::before {
+    opacity: 0.58;
+    background-size: 28rem 26rem, 32rem 28rem, 26rem 24rem, 28rem 24rem, 20rem 10rem, 24rem 11rem;
+  }
+
+  .bg-obsidian.text-sand::after {
+    width: 9rem;
+    height: 2px;
+    animation-duration: 5.8s;
+    box-shadow:
+      0 0 18px rgba(18, 59, 255, 0.38),
+      0 0 32px rgba(69, 201, 255, 0.22),
+      26vw 14vh 0 0 rgba(18, 59, 255, 0.18),
+      56vw 28vh 0 0 rgba(69, 201, 255, 0.18),
+      78vw 51vh 0 0 rgba(18, 59, 255, 0.14);
+  }
+
+  .bg-obsidian.text-sand main::after {
+    width: 7rem;
+    animation-duration: 7s;
+    box-shadow:
+      0 0 18px rgba(69, 201, 255, 0.30),
+      36vw 16vh 0 0 rgba(18, 59, 255, 0.22),
+      70vw 42vh 0 0 rgba(69, 201, 255, 0.20);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-obsidian.text-sand::before,
+  .bg-obsidian.text-sand::after,
+  .bg-obsidian.text-sand main::before,
+  .bg-obsidian.text-sand main::after {
+    animation: none !important;
+  }
+
+  .bg-obsidian.text-sand::after,
+  .bg-obsidian.text-sand main::after {
+    display: none !important;
+  }
+}
