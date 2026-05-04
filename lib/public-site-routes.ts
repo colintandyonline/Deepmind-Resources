@@ -1,4 +1,4 @@
-import fs from 'node:fs'
+﻿import fs from 'node:fs'
 import path from 'node:path'
 
 export const SITE_URL = 'https://deepmindresources.pro'
@@ -312,3 +312,4 @@ export function getPublicSiteRouteGroups() {
     return groups
   }, {})
 }
+
