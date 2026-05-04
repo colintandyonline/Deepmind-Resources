@@ -24,7 +24,7 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Platform | DeepMind Resources',
+  title: 'AI Training Platform & Tool Intelligence | DeepMind Resources',
   description:
     'Discover the DeepMind Resources platform: professional AI training, tool intelligence, structured learning paths, sandbox practice, release-aware refreshers, and business-ready AI skill development.',
   alternates: {
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     'release aware AI training',
   ],
   openGraph: {
-    title: 'Platform | DeepMind Resources',
+    title: 'AI Training Platform & Tool Intelligence | DeepMind Resources',
     description:
       'A professional AI training and tool-intelligence platform that turns important AI changes into clearer lessons, sandbox practice, and business-ready skills.',
     url: 'https://deepmindresources.pro/platform',
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary',
-    title: 'Platform | DeepMind Resources',
+    title: 'AI Training Platform & Tool Intelligence | DeepMind Resources',
     description:
       'Explore the DeepMind Resources platform for professional AI training, tool intelligence, sandbox practice, and practical AI skill development.',
   },
