@@ -10,7 +10,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 export const metadata: Metadata = {
   metadataBase: new URL('https://deepmindresources.pro'),
   title: {
-    default: 'Master Agentic AI Systems | DeepMind Resources',
+    default: 'Mastering Agentic AI: Systems & Sandboxes | DeepMind Resources',
     template: '%s | DeepMind Resources',
   },
   description:
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'Master Agentic AI Systems | DeepMind Resources',
+    title: 'Mastering Agentic AI: Systems & Sandboxes | DeepMind Resources',
     description:
       'DeepMind Resources is a living AI training and tool-intelligence platform for verified guidance, practical lessons, sandbox tasks, and business-ready AI competency.',
     url: 'https://deepmindresources.pro',
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary',
-    title: 'Master Agentic AI Systems | DeepMind Resources',
+    title: 'Mastering Agentic AI: Systems & Sandboxes | DeepMind Resources',
     description:
       'Verified AI updates turned into practical lessons, sandbox tasks, tool intelligence, and business-ready learning paths.',
     images: ['/brand/deepmind-resources-logo.png'],
