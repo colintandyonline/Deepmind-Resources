@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation'
 import {
   Home,
   BookOpen,
+  Compass,
   Code,
   Activity,
   User,
@@ -36,6 +37,7 @@ const mainNavItems: NavItem[] = [
   { icon: Home, label: 'Home', href: '/' },
   { icon: BookOpen, label: 'Academy', href: '/academy' },
   { icon: Layers, label: 'Platform', href: '/platform' },
+  { icon: Compass, label: 'Methodology', href: '/methodology' },
   { icon: BookOpen, label: 'Syllabus', href: '/syllabus' },
   { icon: Mail, label: 'Contact', href: '/contact' },
   { icon: Code, label: 'Sandbox', href: '/sandbox', badge: 'LIVE' },

@@ -1,4 +1,4 @@
-﻿import Image from 'next/image'
+import Image from 'next/image'
 import Link from 'next/link'
 import {
   ArrowRight,
@@ -15,6 +15,7 @@ const footerColumns = [
     links: [
       { label: 'Academy', href: '/academy' },
       { label: 'Platform', href: '/platform' },
+      { label: 'Methodology', href: '/methodology' },
       { label: 'Syllabus', href: '/syllabus' },
       { label: 'Sandbox', href: '/sandbox' },
     ],
