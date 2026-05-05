@@ -12,7 +12,7 @@ type NavigationShellProps = {
 export function NavigationShell({ children }: NavigationShellProps) {
   const pathname = usePathname()
 
-  if (pathname.startsWith('/auth')) {
+  if (pathname.startsWith('/auth') || pathname.startsWith('/academy/learn')) {
     return <>{children}</>
   }
 
