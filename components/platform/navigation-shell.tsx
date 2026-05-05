@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import type { ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
@@ -9,37 +9,41 @@ type NavigationShellProps = {
   children: ReactNode
 }
 
-function shouldUseStandardSidebar(pathname: string) {
-  if (pathname === '/') {
-    return false
-  }
+const publicRoutes = [
+  '/',
+  '/academy',
+  '/business-ai-training',
+  '/contact',
+  '/methodology',
+  '/platform',
+  '/sandbox',
+  '/syllabus',
+  '/tool-intelligence',
+]
 
+function isPublicMarketingRoute(pathname: string) {
   if (pathname.startsWith('/auth')) {
-    return false
+    return true
   }
 
-  return true
+  return publicRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`))
 }
 
 export function NavigationShell({ children }: NavigationShellProps) {
   const pathname = usePathname()
-  const useStandardSidebar = shouldUseStandardSidebar(pathname)
+  const usePublicMarketingShell = isPublicMarketingRoute(pathname)
 
-  if (pathname === '/') {
+  if (usePublicMarketingShell) {
     return (
       <>
         {children}
-        <div className="relative z-10 md:pl-64">
+        <div className="relative z-10">
           <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
             <SiteFooter />
           </div>
         </div>
       </>
     )
-  }
-
-  if (!useStandardSidebar) {
-    return <>{children}</>
   }
 
   return (
