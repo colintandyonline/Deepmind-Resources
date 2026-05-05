@@ -1,4 +1,4 @@
-﻿import type { LucideIcon } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import {
   ArrowRight,
@@ -14,7 +14,6 @@ import {
   Sparkles,
   Workflow,
 } from 'lucide-react'
-import { Sidebar } from '@/components/platform/sidebar'
 import { HeroSection } from '@/components/platform/hero-section'
 import { CodeSandbox } from '@/components/platform/code-sandbox'
 import { ContentCardGrid, type LessonModule } from '@/components/platform/content-card'
@@ -385,9 +384,8 @@ export default function HomePage() {
         }}
       />
 
-      <Sidebar />
 
-      <main className="relative z-10 min-h-screen pt-16 md:pl-64 md:pt-0">
+      <main className="relative z-10 min-h-screen">
         <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
           <HeroSection />
 
