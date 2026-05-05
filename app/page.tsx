@@ -212,7 +212,7 @@ export default function HomePage() {
             className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-sand/10 bg-white text-sand/60 shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
             aria-label="Close signup prompt"
           >
-            ÃƒÆ’Ã¢â‚¬â€
+            ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â
           </button>
 
           <div className="grid md:grid-cols-[0.95fr_1.05fr]">
@@ -265,7 +265,7 @@ export default function HomePage() {
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
                 >
                   Explore the Academy
-                  <span aria-hidden="true">ÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬â„¢</span>
+                  <span aria-hidden="true">ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢</span>
                 </a>
 
                 <a
@@ -273,7 +273,7 @@ export default function HomePage() {
                   className="inline-flex items-center justify-center gap-2 rounded-2xl border border-sand/10 bg-white px-5 py-4 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
                 >
                   Sign up and create workspace
-                  <span aria-hidden="true">ÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬â„¢</span>
+                  <span aria-hidden="true">ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢</span>
                 </a>
 
                 <a
@@ -281,7 +281,7 @@ export default function HomePage() {
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#EAF7FF] px-5 py-4 text-sm font-bold text-[#123BFF] shadow-sm transition hover:bg-[#DDF2FF]"
                 >
                   Get your business onboarded
-                  <span aria-hidden="true">ÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬â„¢</span>
+                  <span aria-hidden="true">ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢</span>
                 </a>
               </div>
 
@@ -390,28 +390,14 @@ export default function HomePage() {
       <main className="relative z-10 min-h-screen pt-16 md:pl-64 md:pt-0">
         <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
           <section className="relative overflow-hidden rounded-[2rem] border border-sand/10 bg-white shadow-[0_26px_90px_rgba(6,27,91,0.12)]">
-            <div className="grid lg:min-h-[39rem] lg:grid-cols-[0.92fr_1.08fr]">
-              <div className="relative min-h-[17rem] overflow-hidden bg-[#EAF7FF] lg:order-2 lg:min-h-[39rem]">
-                <Image
-                  src="/brand/publicbrandhomepage-intelligence-layer.png"
-                  alt="DeepMind Resources intelligence layer showing Signal Grid, Verification Gates, Tool Intelligence, Academy Pathways, Sandbox Proof, and Workforce Capability"
-                  fill
-                  sizes="(min-width: 1024px) 58vw, 100vw"
-                  className="object-cover object-[58%_center]"
-                  priority
-                />
-
-                <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/90 to-transparent lg:hidden" aria-hidden="true" />
-                <div className="absolute inset-y-0 left-0 hidden w-24 bg-gradient-to-r from-white to-transparent lg:block" aria-hidden="true" />
-              </div>
-
-              <div className="relative z-10 flex flex-col justify-center px-5 py-7 sm:px-8 sm:py-10 lg:px-12 lg:py-14">
+            <div className="grid lg:grid-cols-[0.82fr_1.18fr]">
+              <div className="relative flex flex-col justify-center px-5 py-7 sm:px-8 sm:py-10 lg:px-12 lg:py-14">
                 <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-[0.68rem] font-black uppercase tracking-[0.16em] text-white shadow-sm sm:text-xs">
                   <Radar className="h-4 w-4" aria-hidden="true" />
                   Live AI Intelligence Online
                 </span>
 
-                <h1 className="mt-5 max-w-2xl text-[2.45rem] font-black leading-[0.96] tracking-[-0.055em] text-sand sm:text-5xl lg:text-6xl">
+                <h1 className="mt-5 max-w-2xl text-[2.35rem] font-black leading-[0.98] tracking-[-0.052em] text-sand sm:text-5xl lg:text-6xl">
                   Master agentic AI as the frontier moves.
                 </h1>
 
@@ -447,6 +433,21 @@ export default function HomePage() {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              <div className="relative order-first overflow-hidden bg-[#EAF7FF] px-3 py-4 sm:px-5 sm:py-6 lg:order-last lg:flex lg:min-h-[38rem] lg:items-center lg:justify-center lg:px-6 lg:py-8">
+                <div className="relative aspect-[1672/941] w-full">
+                  <Image
+                    src="/brand/publicbrandhomepage-intelligence-layer.png"
+                    alt="DeepMind Resources intelligence layer showing Signal Grid, Verification Gates, Tool Intelligence, Academy Pathways, Sandbox Proof, and Workforce Capability"
+                    fill
+                    sizes="(min-width: 1024px) 60vw, 100vw"
+                    className="object-contain"
+                    priority
+                  />
+                </div>
+
+                <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-16 bg-gradient-to-r from-white/90 to-transparent lg:block" aria-hidden="true" />
               </div>
             </div>
           </section>
@@ -567,7 +568,7 @@ export default function HomePage() {
                   </span>
 
                   <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand sm:text-3xl">
-                    AI update â†’ verified meaning â†’ Agentic Sandbox Deployment.
+                    AI update Ã¢â€ â€™ verified meaning Ã¢â€ â€™ Agentic Sandbox Deployment.
                   </h2>
 
                   <p className="mt-3 max-w-3xl text-sm leading-7 text-sand/65 sm:text-base">
