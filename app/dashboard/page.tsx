@@ -1,11 +1,16 @@
-﻿import Link from 'next/link'
+﻿import type { ReactNode } from 'react'
+import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createServerClient } from '@supabase/ssr'
 
 type LessonProgressRow = {
   status: string | null
+  progress_percentage: number | null
+  started_at: string | null
   completed_at: string | null
+  last_seen_at: string | null
+  refresher_recommended_at: string | null
   lesson_id: string | null
   lesson_version_id: string | null
 }
@@ -16,6 +21,19 @@ type SandboxAttemptRow = {
   reviewed_at: string | null
   sandbox_task_id: string | null
   sandbox_task_version_id: string | null
+}
+
+type SubscriptionRow = {
+  plan_key: string | null
+  status: string | null
+  current_period_end: string | null
+  cancel_at_period_end: boolean | null
+}
+
+type EntitlementRow = {
+  entitlement_key: string | null
+  status: string | null
+  ends_at: string | null
 }
 
 type DashboardMetric = {
@@ -145,8 +163,36 @@ async function signOut() {
   redirect('/auth/login')
 }
 
+function formatCount(count: number, singular: string, plural: string) {
+  return `${count} ${count === 1 ? singular : plural}`
+}
+
 function getCompletedLessons(rows: LessonProgressRow[]) {
   return rows.filter((row) => row.status === 'completed' || row.completed_at).length
+}
+
+function getStartedLessons(rows: LessonProgressRow[]) {
+  return rows.filter(
+    (row) =>
+      row.status === 'in_progress' ||
+      row.started_at ||
+      row.last_seen_at ||
+      (row.progress_percentage ?? 0) > 0,
+  ).length
+}
+
+function getAverageLessonProgress(rows: LessonProgressRow[]) {
+  if (rows.length === 0) {
+    return 0
+  }
+
+  const total = rows.reduce((sum, row) => sum + (row.progress_percentage ?? 0), 0)
+
+  return Math.min(Math.round(total / rows.length), 100)
+}
+
+function getRefresherCount(rows: LessonProgressRow[]) {
+  return rows.filter((row) => row.refresher_recommended_at).length
 }
 
 function getSubmittedSandboxAttempts(rows: SandboxAttemptRow[]) {
@@ -164,29 +210,35 @@ function getReviewedSandboxAttempts(rows: SandboxAttemptRow[]) {
     .length
 }
 
-function getOverallProgress(completedLessons: number) {
-  const totalLaunchLessons = 4
-  const percentage = Math.min(Math.round((completedLessons / totalLaunchLessons) * 100), 100)
-
-  return {
-    totalLaunchLessons,
-    percentage,
-  }
-}
-
-function getProgressLabel(progressStorageAvailable: boolean, completedLessons: number) {
+function getProgressLabel(progressStorageAvailable: boolean, completedLessons: number, startedLessons: number) {
   if (!progressStorageAvailable) {
     return 'No saved records'
   }
 
-  if (completedLessons === 0) {
-    return 'Not started'
+  if (completedLessons > 0) {
+    return 'In progress'
   }
 
-  return 'In progress'
+  if (startedLessons > 0) {
+    return 'Started'
+  }
+
+  return 'Not started'
 }
 
-function StatusBadge({ state, children }: { state: DashboardMetric['state']; children: React.ReactNode }) {
+function getBillingLabel(subscription: SubscriptionRow | null, activeEntitlements: EntitlementRow[]) {
+  if (subscription?.plan_key) {
+    return subscription.plan_key
+  }
+
+  if (activeEntitlements.length > 0) {
+    return formatCount(activeEntitlements.length, 'active entitlement', 'active entitlements')
+  }
+
+  return 'No billing record'
+}
+
+function StatusBadge({ state, children }: { state: DashboardMetric['state']; children: ReactNode }) {
   const className =
     state === 'active'
       ? 'border-blue-200 bg-blue-600 text-white'
@@ -253,27 +305,59 @@ export default async function DashboardPage() {
     redirect('/auth/login')
   }
 
-  const [{ data: lessonRows, error: lessonError }, { data: sandboxRows, error: sandboxError }] =
-    await Promise.all([
-      supabase
-        .from('lesson_progress')
-        .select('status, completed_at, lesson_id, lesson_version_id')
-        .eq('user_id', user.id),
-      supabase
-        .from('sandbox_attempts')
-        .select('status, submitted_at, reviewed_at, sandbox_task_id, sandbox_task_version_id')
-        .eq('user_id', user.id),
-    ])
+  const [
+    { data: lessonRows, error: lessonError },
+    { data: sandboxRows, error: sandboxError },
+    { data: subscriptionRows, error: subscriptionError },
+    { data: entitlementRows, error: entitlementError },
+  ] = await Promise.all([
+    supabase
+      .from('user_lesson_progress')
+      .select(
+        'status, progress_percentage, started_at, completed_at, last_seen_at, refresher_recommended_at, lesson_id, lesson_version_id',
+      )
+      .eq('user_id', user.id),
+    supabase
+      .from('sandbox_attempts')
+      .select('status, submitted_at, reviewed_at, sandbox_task_id, sandbox_task_version_id')
+      .eq('user_id', user.id),
+    supabase
+      .from('subscriptions')
+      .select('plan_key, status, current_period_end, cancel_at_period_end')
+      .eq('user_id', user.id)
+      .is('organisation_id', null)
+      .order('created_at', { ascending: false })
+      .limit(1),
+    supabase
+      .from('entitlements')
+      .select('entitlement_key, status, ends_at')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .order('created_at', { ascending: false }),
+  ])
 
   const lessonProgressRows = (lessonRows ?? []) as LessonProgressRow[]
   const sandboxAttemptRows = (sandboxRows ?? []) as SandboxAttemptRow[]
+  const personalSubscriptions = (subscriptionRows ?? []) as SubscriptionRow[]
+  const activeEntitlements = (entitlementRows ?? []) as EntitlementRow[]
 
   const progressStorageAvailable = !lessonError && !sandboxError
+  const billingStorageAvailable = !subscriptionError && !entitlementError
+
   const completedLessons = getCompletedLessons(lessonProgressRows)
+  const startedLessons = getStartedLessons(lessonProgressRows)
+  const trackedLessons = lessonProgressRows.length
+  const averageLessonProgress = getAverageLessonProgress(lessonProgressRows)
+  const refresherCount = getRefresherCount(lessonProgressRows)
+
   const submittedSandboxAttempts = getSubmittedSandboxAttempts(sandboxAttemptRows)
   const reviewedSandboxAttempts = getReviewedSandboxAttempts(sandboxAttemptRows)
-  const overallProgress = getOverallProgress(completedLessons)
-  const progressLabel = getProgressLabel(progressStorageAvailable, completedLessons)
+  const latestSubscription = personalSubscriptions[0] ?? null
+
+  const progressLabel = getProgressLabel(progressStorageAvailable, completedLessons, startedLessons)
+  const billingLabel = billingStorageAvailable
+    ? getBillingLabel(latestSubscription, activeEntitlements)
+    : 'Billing unavailable'
 
   const displayName =
     user.user_metadata?.full_name ||
@@ -284,16 +368,20 @@ export default async function DashboardPage() {
   const metrics: DashboardMetric[] = [
     {
       label: 'Path progress',
-      value: progressStorageAvailable ? `${overallProgress.percentage}%` : '0%',
-      detail: progressStorageAvailable
-        ? `${completedLessons} of ${overallProgress.totalLaunchLessons} launch lessons completed.`
-        : 'No saved lesson progress records are available yet.',
-      state: completedLessons > 0 ? 'active' : 'empty',
+      value: `${averageLessonProgress}%`,
+      detail:
+        trackedLessons === 0
+          ? 'No saved lesson progress records found yet.'
+          : `Average progress across ${formatCount(trackedLessons, 'saved lesson record', 'saved lesson records')}.`,
+      state: averageLessonProgress > 0 ? 'active' : 'empty',
     },
     {
       label: 'Lessons completed',
       value: String(completedLessons),
-      detail: completedLessons === 0 ? 'Lesson completion has not been recorded yet.' : 'Saved lesson completions.',
+      detail:
+        completedLessons === 0
+          ? 'No versioned lesson completion has been saved yet.'
+          : `${formatCount(completedLessons, 'lesson completion', 'lesson completions')} saved.`,
       state: completedLessons > 0 ? 'active' : 'empty',
     },
     {
@@ -302,14 +390,17 @@ export default async function DashboardPage() {
       detail:
         submittedSandboxAttempts === 0
           ? 'No sandbox task evidence submitted yet.'
-          : `${reviewedSandboxAttempts} reviewed sandbox attempt${reviewedSandboxAttempts === 1 ? '' : 's'}.`,
+          : `${formatCount(reviewedSandboxAttempts, 'reviewed sandbox attempt', 'reviewed sandbox attempts')}.`,
       state: submittedSandboxAttempts > 0 ? 'active' : 'empty',
     },
     {
-      label: 'Award status',
-      value: '0',
-      detail: 'No verified skill award has been earned yet.',
-      state: 'empty',
+      label: 'Refreshers',
+      value: String(refresherCount),
+      detail:
+        refresherCount === 0
+          ? 'No saved lesson is currently marked for refresh.'
+          : `${formatCount(refresherCount, 'saved lesson needs', 'saved lessons need')} a refresher.`,
+      state: refresherCount > 0 ? 'active' : 'empty',
     },
   ]
 
@@ -317,24 +408,26 @@ export default async function DashboardPage() {
     {
       label: 'Current pathway',
       status: 'AI Fundamentals',
-      detail: 'Selected starting path for the individual Academy workspace.',
+      detail: 'Default starting path for the individual Academy workspace.',
     },
     {
-      label: 'Current lesson',
+      label: 'Next lesson',
       status: 'AI Operating Base',
-      detail: 'Lesson 1 is the next learning action.',
+      detail: 'Recommended first lesson in AI Fundamentals.',
     },
     {
       label: 'Progress state',
       status: progressLabel,
       detail: progressStorageAvailable
-        ? 'Progress will update from saved lesson and sandbox records.'
-        : 'Dashboard is ready to show saved progress once records exist.',
+        ? 'Progress is read from saved lesson and sandbox records.'
+        : 'Progress records could not be read for this session.',
     },
     {
-      label: 'Refreshers',
-      status: 'No action required',
-      detail: 'No completed lesson currently needs a refresher.',
+      label: 'Account access',
+      status: billingLabel,
+      detail: billingStorageAvailable
+        ? 'Personal subscription and entitlement records checked.'
+        : 'Billing records could not be read for this session.',
     },
   ]
 
@@ -396,7 +489,7 @@ export default async function DashboardPage() {
               <SectionHeader
                 eyebrow="Overview"
                 title="Progress report"
-                description="Current personal learning status without fake completions or invented activity."
+                description="Current personal learning status from saved lesson and sandbox records."
               />
 
               <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -463,8 +556,7 @@ export default async function DashboardPage() {
             <p className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-100">Training record</p>
             <h2 className="mt-2 text-2xl font-black tracking-tight">Individual record summary</h2>
             <p className="mt-3 text-sm leading-6 text-blue-50">
-              This panel reports the account&apos;s current learning state. It does not include business workspace
-              controls.
+              This panel reports this account&apos;s individual learning state, access state, and next action.
             </p>
 
             <div className="mt-5 space-y-3">
@@ -483,7 +575,7 @@ export default async function DashboardPage() {
           <SectionHeader
             eyebrow="Academy"
             title="Personal pathway map"
-            description="Only personal Academy paths are shown here. Business routing will belong in a separate workspace."
+            description="Only your personal Academy paths are shown here."
           />
 
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
@@ -508,7 +600,7 @@ export default async function DashboardPage() {
             <SectionHeader
               eyebrow="Progress"
               title="Skill evidence"
-              description="Progress is based on completion records and sandbox submissions, not page views."
+              description="Progress is based on saved lesson records and sandbox submissions, not page views."
             />
 
             <div className="space-y-3">
@@ -521,8 +613,8 @@ export default async function DashboardPage() {
                 </div>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
                   {completedLessons === 0
-                    ? 'No lesson completion has been saved yet.'
-                    : `${completedLessons} lesson completion${completedLessons === 1 ? '' : 's'} saved.`}
+                    ? 'No versioned lesson completion has been saved yet.'
+                    : `${formatCount(completedLessons, 'lesson completion', 'lesson completions')} saved.`}
                 </p>
               </article>
 
@@ -536,7 +628,7 @@ export default async function DashboardPage() {
                 <p className="mt-2 text-sm leading-6 text-slate-600">
                   {submittedSandboxAttempts === 0
                     ? 'No practical task evidence has been submitted yet.'
-                    : `${submittedSandboxAttempts} sandbox attempt${submittedSandboxAttempts === 1 ? '' : 's'} submitted.`}
+                    : `${formatCount(submittedSandboxAttempts, 'sandbox attempt', 'sandbox attempts')} submitted.`}
                 </p>
               </article>
 
@@ -556,7 +648,7 @@ export default async function DashboardPage() {
             <SectionHeader
               eyebrow="Intelligence"
               title="Refresh and review status"
-              description="This keeps the dashboard focused on whether any completed training needs another pass."
+              description="This keeps the dashboard focused on whether any saved learning record needs another pass."
             />
 
             <div className="overflow-hidden rounded-2xl border border-slate-200">
@@ -571,13 +663,25 @@ export default async function DashboardPage() {
                 <tbody className="divide-y divide-slate-200 bg-white">
                   <tr>
                     <td className="px-4 py-4 font-bold text-slate-950">AI Fundamentals</td>
-                    <td className="px-4 py-4 text-slate-700">No action required</td>
-                    <td className="px-4 py-4 text-slate-600">No completed lesson is currently marked for refresh.</td>
+                    <td className="px-4 py-4 text-slate-700">
+                      {refresherCount > 0 ? 'Refresher recommended' : 'No action required'}
+                    </td>
+                    <td className="px-4 py-4 text-slate-600">
+                      {refresherCount > 0
+                        ? `${formatCount(refresherCount, 'saved lesson is', 'saved lessons are')} marked for refresh.`
+                        : 'No saved lesson is currently marked for refresh.'}
+                    </td>
                   </tr>
                   <tr>
                     <td className="px-4 py-4 font-bold text-slate-950">Sandbox practice</td>
-                    <td className="px-4 py-4 text-slate-700">Available</td>
-                    <td className="px-4 py-4 text-slate-600">No evidence has been submitted yet.</td>
+                    <td className="px-4 py-4 text-slate-700">
+                      {submittedSandboxAttempts > 0 ? 'Evidence submitted' : 'Available'}
+                    </td>
+                    <td className="px-4 py-4 text-slate-600">
+                      {submittedSandboxAttempts > 0
+                        ? `${formatCount(reviewedSandboxAttempts, 'attempt has', 'attempts have')} been reviewed.`
+                        : 'No evidence has been submitted yet.'}
+                    </td>
                   </tr>
                   <tr>
                     <td className="px-4 py-4 font-bold text-slate-950">Skill trace</td>
@@ -600,8 +704,8 @@ export default async function DashboardPage() {
                 <p className="mt-1 break-words font-black text-slate-950">{user.email ?? 'Verified account'}</p>
               </div>
               <div className="rounded-2xl bg-slate-50 p-4">
-                <p className="font-bold text-slate-500">Access type</p>
-                <p className="mt-1 font-black text-slate-950">Individual account</p>
+                <p className="font-bold text-slate-500">Access state</p>
+                <p className="mt-1 font-black text-slate-950">{billingLabel}</p>
               </div>
             </div>
           </section>
@@ -616,7 +720,9 @@ export default async function DashboardPage() {
               </div>
               <div className="rounded-2xl bg-slate-50 p-4">
                 <p className="font-bold text-slate-500">Notifications</p>
-                <p className="mt-1 text-slate-600">No refresher notifications are active.</p>
+                <p className="mt-1 text-slate-600">
+                  {refresherCount > 0 ? 'One or more saved lessons need review.' : 'No refresher notifications are active.'}
+                </p>
               </div>
             </div>
           </section>
@@ -627,11 +733,15 @@ export default async function DashboardPage() {
             <div className="mt-4 space-y-3 text-sm">
               <div className="rounded-2xl bg-slate-50 p-4">
                 <p className="font-bold text-slate-500">Plan record</p>
-                <p className="mt-1 font-black text-slate-950">No billing record</p>
+                <p className="mt-1 font-black text-slate-950">{billingLabel}</p>
               </div>
               <div className="rounded-2xl bg-slate-50 p-4">
                 <p className="font-bold text-slate-500">Payment action</p>
-                <p className="mt-1 text-slate-600">No payment action is required.</p>
+                <p className="mt-1 text-slate-600">
+                  {latestSubscription?.cancel_at_period_end
+                    ? 'Subscription is marked to cancel at period end.'
+                    : 'No payment action is required.'}
+                </p>
               </div>
             </div>
           </section>
