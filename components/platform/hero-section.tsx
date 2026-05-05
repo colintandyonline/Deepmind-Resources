@@ -49,15 +49,67 @@ const academyPaths = [
 ]
 
 const aiToolStrip = [
-  { name: 'ChatGPT', mark: 'GPT' },
-  { name: 'Claude', mark: 'CL' },
-  { name: 'Gemini', mark: 'GM' },
-  { name: 'Perplexity', mark: 'PX' },
-  { name: 'Grok', mark: 'GK' },
-  { name: 'DeepSeek', mark: 'DS' },
-  { name: 'Llama', mark: 'LA' },
-  { name: 'Cursor', mark: 'CU' },
+  {
+    name: 'ChatGPT',
+    logo: (
+      <svg viewBox="0 0 48 48" className="h-8 w-8" aria-hidden="true">
+        <circle cx="24" cy="24" r="22" fill="#EAF7FF" />
+        <path
+          d="M24 8.5c4.4 0 7.9 2.8 9.2 6.7 3.7.9 6.4 4.1 6.4 8 0 3.2-1.8 6-4.5 7.4-.4 4.2-3.9 7.5-8.2 7.5-2.3 0-4.3-.9-5.8-2.4-4 .5-7.7-2-8.9-5.9-3.1-1.4-5.2-4.5-5.2-8.1 0-3.8 2.4-7.1 5.8-8.3C14.3 10.4 18.8 8.5 24 8.5Zm0 4.2c-2.9 0-5.4 1.4-6.5 3.6l6.9 4 6-3.5c-.7-2.4-3.2-4.1-6.4-4.1Zm-9.7 5.3c-1.8.8-3.1 2.5-3.1 4.7 0 1.8.9 3.4 2.3 4.4v-8.3l.8-.8Zm17.6 1.3-6.8 4v7l6.8-3.9v-7.1Zm-14.9.1v7.5l6.7 3.9v-7.6L17 19.4Zm18.2 1.7v7.1l-6.8 3.9c1 .9 2.3 1.4 3.8 1.4 2.8 0 5.2-2.2 5.2-5.2 0-1.8-.8-3.5-2.2-4.5v-2.7Zm-20 9.2c.7 2.4 3.2 4.1 6.3 4.1 1.5 0 2.9-.4 4-1.1l-6.6-3.8-3.7.8Z"
+          fill="#123BFF"
+        />
+      </svg>
+    ),
+  },
+  {
+    name: 'Claude',
+    logo: (
+      <svg viewBox="0 0 48 48" className="h-8 w-8" aria-hidden="true">
+        <circle cx="24" cy="24" r="22" fill="#EAF7FF" />
+        <path d="M24 9 39 38H29.5l-2.4-5.3H20.7L18.3 38H9L24 9Zm0 10.5-4.1 9.2h8.2L24 19.5Z" fill="#123BFF" />
+      </svg>
+    ),
+  },
+  {
+    name: 'Gemini',
+    logo: (
+      <svg viewBox="0 0 48 48" className="h-8 w-8" aria-hidden="true">
+        <circle cx="24" cy="24" r="22" fill="#EAF7FF" />
+        <path d="M24 7c1.9 8.7 7.3 14.1 17 17-9.7 2.9-15.1 8.3-17 17-1.9-8.7-7.3-14.1-17-17 9.7-2.9 15.1-8.3 17-17Z" fill="#123BFF" />
+        <path d="M24 14.5c1.1 4.7 4.1 7.7 9.5 9.5-5.4 1.8-8.4 4.8-9.5 9.5-1.1-4.7-4.1-7.7-9.5-9.5 5.4-1.8 8.4-4.8 9.5-9.5Z" fill="#45C9FF" />
+      </svg>
+    ),
+  },
+  {
+    name: 'Perplexity',
+    logo: (
+      <svg viewBox="0 0 48 48" className="h-8 w-8" aria-hidden="true">
+        <circle cx="24" cy="24" r="22" fill="#EAF7FF" />
+        <path d="M14 10h20v8h5v20h-8l-7 6-7-6H9V18h5v-8Zm4 4v9l6-5.2L30 23v-9H18Zm-5 8v12h5.4l5.6 4.8 5.6-4.8H35V22h-4.7L24 27.5 17.7 22H13Z" fill="#123BFF" />
+      </svg>
+    ),
+  },
+  {
+    name: 'Grok',
+    logo: (
+      <svg viewBox="0 0 48 48" className="h-8 w-8" aria-hidden="true">
+        <circle cx="24" cy="24" r="22" fill="#EAF7FF" />
+        <path d="M13 12h7.5l5.2 7.2 6.2-7.2H39L29.4 23.2 40 37h-7.6l-6.7-8.9L18 37h-7.1l11.3-13.1L13 12Zm5.3 4 14.3 17h2.1L20.4 16h-2.1Z" fill="#123BFF" />
+      </svg>
+    ),
+  },
+  {
+    name: 'DeepSeek',
+    logo: (
+      <svg viewBox="0 0 48 48" className="h-8 w-8" aria-hidden="true">
+        <circle cx="24" cy="24" r="22" fill="#EAF7FF" />
+        <path d="M9 25.5c4.6-7.8 10.8-11.7 18.5-11.7 5.6 0 9.9 2.2 12.9 6.5-2.5-.9-5.1-1-7.7-.2 2.7 1.8 4.6 4.4 5.7 7.8-3.1-2.2-6.2-3.2-9.4-2.9 1.6 1.6 2.5 3.6 2.7 6-2.8-1.9-5.8-2.8-9-2.8-4.2 0-8.8 1.6-13.7 4.8 1.9-2.3 3.6-4.8 5-7.5H9Z" fill="#123BFF" />
+        <path d="M18 23.2c3.8-1.8 7.5-2.4 11.1-1.6-3.4-3-7.1-3.1-11.1-.3v1.9Z" fill="#45C9FF" />
+      </svg>
+    ),
+  },
 ]
+
 export function HeroSection() {
   return (
     <section className="relative overflow-hidden">
@@ -146,12 +198,7 @@ export function HeroSection() {
                   key={tool.name}
                   className="flex min-h-20 items-center justify-center gap-3 rounded-3xl border border-[#123BFF]/10 bg-white px-5 py-4 text-center shadow-sm transition hover:border-[#123BFF]/25 hover:shadow-md"
                 >
-                  <img
-                    src={tool.icon}
-                    alt=""
-                    aria-hidden="true"
-                    className="h-7 w-7 shrink-0 opacity-70"
-                  />
+                  {tool.logo}
                   <span className="text-lg font-black tracking-[-0.05em] text-sand/62">
                     {tool.name}
                   </span>
