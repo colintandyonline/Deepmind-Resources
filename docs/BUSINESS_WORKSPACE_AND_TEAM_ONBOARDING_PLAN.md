@@ -1,371 +1,525 @@
-# Business Workspace and Team Onboarding Plan
+﻿# Business Workspace and Team Onboarding Plan
 
 ## Purpose
 
-This document defines the business workspace and team onboarding model for DeepMind Resources before business dashboard code, staff invites, assigned training, billing seats, workspace routing, manager reporting, or business progress views are built.
+This document defines the business workspace and team onboarding model for DeepMind Resources.
 
-The goal is to prevent the product from mixing individual learner dashboards with business workspace dashboards.
+Important correction:
 
-DeepMind Resources must support both individual learners and business teams, but those are different product modes with different data, permissions, routes, dashboards, progress views, and monetisation rules.
+The product may use the phrase "business workspace" in user-facing copy, but the database source of truth is the existing organisation model.
 
-The core product loop remains:
+Do not create a separate `workspaces` table.
 
-```text
-AI update -> verified meaning -> practical lesson -> sandbox task -> user skill gain
-```
+Business workspace, in product language, means:
 
-For business accounts, the loop becomes:
+    a signed-in organisation context powered by organisations and organisation_memberships
 
-```text
-AI update -> verified business meaning -> staff training -> workflow practice -> team capability gain
-```
+This document exists to keep future dashboard routing, business onboarding, staff invites, assignments, progress reporting, billing, and retraining work aligned with the database that already exists.
 
-This plan should guide future database design, Supabase row-level security, dashboard routing, business onboarding, staff invitations, assigned training, Stripe seat logic, staff progress reporting, sandbox review, retraining alerts, and workspace-aware product decisions.
+---
+
+## Current Confirmed Database Direction
+
+The Supabase audit confirmed that the project already has a business and learning foundation.
+
+The existing business-related database model includes:
+
+    organisations
+    organisation_memberships
+    entitlements
+    subscriptions
+    training_assignments
+
+The existing learning and practice model includes:
+
+    user_lesson_progress
+    learning_progress
+    sandbox_tasks
+    sandbox_task_versions
+    lesson_sandbox_tasks
+    sandbox_attempts
+    sandbox_sessions
+
+The existing helper function found during audit:
+
+    deepmind_is_org_member(target_organisation_id uuid)
+
+This means the correct next build path is to extend the organisation model, not replace it with workspace tables.
+
+---
+
+## Critical Build Rule
+
+Do not create these duplicate tables:
+
+    workspaces
+    workspace_members
+    workspace_invites
+    workspace_seats
+    workspace_learning_assignments
+    workspace_staff_progress
+    workspace_sandbox_results
+    workspace_retraining_alerts
+
+Those names would duplicate or conflict with the existing organisation-based model.
+
+Use organisation-based naming instead:
+
+    organisations
+    organisation_memberships
+    organisation_invitations
+    organisation_seats
+    organisation_sandbox_reviews
+    organisation_retraining_alerts
+
+Where an existing generic table already supports the feature, use it instead of creating an organisation-specific duplicate.
+
+Examples:
+
+    training_assignments already exists.
+    user_lesson_progress already exists.
+    sandbox_attempts already exists.
+    entitlements already exists.
+    subscriptions already exists.
+
+---
+
+## Product Language vs Database Language
+
+The product may still use "workspace" in the interface because it is a familiar user-facing concept.
+
+For example:
+
+    Personal workspace
+    Business workspace
+    Switch workspace
+    Active workspace
+    Individual Academy workspace
+
+But internally, the database model should map this as:
+
+    Personal workspace -> individual user context
+    Business workspace -> organisation context
+    Workspace member -> organisation_memberships row
+    Workspace role -> organisation_memberships.membership_role
+    Workspace entitlement -> entitlements row scoped to user_id or organisation_id
+    Workspace subscription -> subscriptions row scoped to user_id or organisation_id
+    Workspace assignment -> training_assignments row scoped to organisation_id
+
+The user-facing word "workspace" is allowed.
+
+The database table prefix "workspace_" is not the current direction.
 
 ---
 
 ## Core Product Decision
 
-DeepMind Resources should use a workspace model.
-
-The product should not treat a user as permanently either an individual user or a business user.
-
-That binary model is too limited because one authenticated person may need several contexts.
+DeepMind Resources supports both individual learners and business teams.
 
 The correct model is:
 
-```text
-User account
-  -> personal workspace
-  -> zero, one, or many business workspaces
-  -> role-based access inside each workspace
-```
+    User account
+      -> personal learning context
+      -> zero, one, or many organisation contexts
+      -> role-based access inside each organisation
 
 A single authenticated user may therefore have multiple contexts.
 
 Examples:
 
-```text
-Colin as an individual learner
-Colin as owner of the DeepMind Resources business workspace
-Sarah as a staff member inside Acme Ltd
-A manager as department lead inside Acme Ltd
-An admin managing invites and assignments for Acme Ltd
-```
+    Colin as an individual learner
+    Colin as owner of the DeepMind Resources organisation
+    Sarah as a staff learner inside Acme Ltd
+    A manager supervising a team inside Acme Ltd
+    An admin managing invites and assignments for Acme Ltd
 
-This keeps the product flexible and prevents business logic being hard-coded into the personal dashboard.
-
----
-
-## Product Boundary
-
-A personal dashboard and a business dashboard are not the same product screen.
-
-### Personal dashboard
-
-A personal dashboard answers:
-
-- What am I learning?
-- What is my current pathway?
-- What lesson should I do next?
-- How far through my own path am I?
-- What sandbox evidence have I submitted?
-- Do I need a refresher?
-- Have I earned any individual award or verified skill proof?
-- What is my own account or payment state?
-
-### Business dashboard
-
-A business dashboard answers:
-
-- Who is onboarded?
-- Who has accepted an invite?
-- Who has started training?
-- Who has completed assigned training?
-- Which staff submitted sandbox evidence?
-- Which submissions require manager review?
-- Which staff need refreshers after an AI update?
-- Which roles or departments are behind?
-- Are we within our seat limit?
-- What should the owner, admin, or manager do next?
-
-These questions require different data models and different permissions.
-
----
-
-## What This Model Prevents
-
-The workspace model prevents these mistakes:
-
-- building one giant dashboard that tries to serve every user type
-- showing business panels to individual learners
-- showing personal learning cards to business admins when they need staff reports
-- giving users business access because they clicked a business signup button
-- losing the ability for one user to belong to multiple companies later
-- tying billing only to a user when business billing should belong to an organisation or workspace
-- exposing team progress to staff who should only see their own training
-- building seat logic before membership logic exists
-- faking business dashboard data before database records support it
-- using frontend labels as the security model
-- mixing business onboarding into the personal Academy experience
-
-The business product must be built from workspace records, membership records, entitlements, and row-level security.
+This allows one user account to move between personal learning and business training without duplicating identity.
 
 ---
 
 ## Current Dashboard Position
 
-The current `/dashboard` route is personal-only while the individual learning product is being built.
+The current `/dashboard` route is personal-only while the individual learning experience is being built.
 
 Current personal dashboard scope:
 
-- current learning pathway
-- current lesson
-- lesson progress
-- sandbox evidence
-- refresher status
-- awards or skill proof
-- account state
-- settings
-- payments
+    current learning pathway
+    current lesson
+    lesson progress
+    sandbox evidence
+    refresher status
+    awards or skill proof
+    account state
+    settings
+    payments
 
 The personal dashboard must not include:
 
-- business workspace controls
-- staff progress panels
-- team onboarding
-- seat management
-- manager reports
-- staff invite controls
-- business billing owner controls
-- business assignment panels
-- fake team statistics
-- fake company activity
-- business placeholder cards
+    business workspace controls
+    staff progress panels
+    team onboarding
+    seat management
+    manager reports
+    staff invite controls
+    business billing owner controls
+    business assignment panels
+    fake team statistics
+    fake company activity
 
-Business dashboards should be planned and built separately.
+Business dashboard work should be separate.
 
-Later, `/dashboard` may become workspace-aware once workspace and membership tables exist.
-
-Until then, `/dashboard` remains the individual learner dashboard.
+Later, `/dashboard` may become context-aware, but only after organisation membership routing is implemented properly.
 
 ---
 
-## Long-Term Dashboard Routing Model
+## Existing Organisation Model
 
-Once workspace tables exist, dashboard behaviour should depend on the user's active workspace and role.
+The existing `organisations` table is the business workspace table.
 
-### Individual Learner
+Confirmed fields include:
 
-Default route:
+    id
+    name
+    slug
+    organisation_type
+    status
+    created_by
+    created_at
+    updated_at
 
-```text
-/dashboard
-```
+Purpose:
 
-Shows:
+    Stores businesses, teams, or organisation-level learning contexts.
 
-- individual Academy workspace
-- personal learning paths
-- own lesson progress
-- own sandbox evidence
-- own awards
-- own refresher status
-- own payment/account state
+Likely usage:
 
-This dashboard answers:
+    organisation_type distinguishes the kind of organisation or account.
+    status controls whether the organisation is active, suspended, cancelled, or similar.
+    created_by identifies the user who created or initiated the organisation.
 
-- What am I learning?
-- How far through it am I?
-- What lesson should I do next?
-- What sandbox evidence have I submitted?
-- Do I need a refresher?
-- Have I earned any verified skill proof?
-
-### Business Owner or Admin
-
-Possible route:
-
-```text
-/business/dashboard
-```
-
-Alternative workspace-aware route later:
-
-```text
-/dashboard?workspace={workspace_id}
-```
-
-Shows:
-
-- team overview
-- staff onboarding
-- seats used
-- invites pending
-- assigned learning paths
-- staff progress
-- sandbox review queue
-- retraining alerts
-- business billing status
-
-This dashboard answers:
-
-- Who is onboarded?
-- Who has started training?
-- Who is falling behind?
-- Which staff submitted sandbox evidence?
-- What needs manager review?
-- Which staff need retraining after AI updates?
-- Are we within our seat limit?
-- What should the business do next?
-
-### Staff Member
-
-Possible route:
-
-```text
-/workspace/learning
-```
-
-Alternative workspace-aware route later:
-
-```text
-/dashboard?workspace={workspace_id}
-```
-
-Shows:
-
-- assigned company training
-- personal progress inside the business workspace
-- required lessons
-- assigned sandbox tasks
-- manager review status
-- refresher requirements
-- own skill evidence
-
-This dashboard answers:
-
-- What has my company assigned me?
-- What do I need to complete?
-- What sandbox task do I need to submit?
-- Has my submission been reviewed?
-- Do I need to refresh anything?
-
-The exact route structure can be decided later.
-
-The access model must be workspace-driven.
+Do not add a separate `workspaces` table to represent the same concept.
 
 ---
 
-## Workspace Model
+## Existing Organisation Membership Model
 
-The core object is a workspace.
+The existing `organisation_memberships` table connects users to organisations.
 
-A workspace represents a learning context.
+Confirmed fields include:
 
-A workspace can be:
+    id
+    organisation_id
+    user_id
+    membership_role
+    status
+    invited_by
+    joined_at
+    created_at
+    updated_at
 
-- an individual learning context
-- a business/team training context
+Purpose:
 
-### Workspace Types
+    Stores who belongs to which organisation and what role they have.
 
-Initial workspace types:
+This table should power:
 
-```text
-individual
-business
-```
+    business dashboard access
+    staff dashboard access
+    staff progress visibility
+    invite acceptance
+    owner/admin/manager permissions
+    organisation-scoped learning assignments
 
-### Individual Workspace
+Do not add `workspace_members`.
 
-Every standard learner should have a personal workspace.
-
-The personal workspace stores or scopes:
-
-- personal learning progress
-- personal sandbox attempts
-- personal awards
-- personal payment entitlement
-- personal settings
-
-The individual workspace is owned by the user.
-
-### Business Workspace
-
-A business workspace represents a company, organisation, or team account.
-
-The business workspace stores or scopes:
-
-- staff members
-- business roles
-- staff invites
-- assigned training
-- team progress
-- sandbox submissions
-- manager reviews
-- retraining alerts
-- business entitlements
-- seat limits
-- billing owner state
-
-The business workspace is owned by a business owner user.
+Use `organisation_memberships`.
 
 ---
 
-## Workspace Membership Model
+## Existing Entitlement Model
 
-Users belong to workspaces through membership records.
+The existing `entitlements` table controls access.
 
-A user should not receive business dashboard access because they selected a business option during signup.
+Confirmed fields include:
 
-Business access must come from an active workspace membership.
+    id
+    user_id
+    organisation_id
+    entitlement_key
+    source
+    status
+    starts_at
+    ends_at
+    created_at
+    updated_at
 
-A membership should define:
+Purpose:
 
-- which workspace the user belongs to
-- which user belongs to it
-- what role the user has
-- whether membership is active, invited, suspended, or removed
-- who invited the user
-- when the user joined
+    Stores what a user or organisation is allowed to access.
 
-This makes permissions explicit.
+This is important because roles and entitlements are different.
+
+A role answers:
+
+    What can this person do inside this organisation?
+
+An entitlement answers:
+
+    What paid or gated product access is active?
+
+Examples of possible entitlement keys:
+
+    academy_free
+    academy_pro
+    sandbox_basic
+    sandbox_pro
+    business_dashboard
+    team_training
+    live_ai_intelligence
+    tool_intelligence
+
+Business access should require both:
+
+    active organisation membership
+    required organisation entitlement
 
 ---
 
-## Required Business Roles
+## Existing Subscription Model
 
-Business workspaces need role-based access.
+The existing `subscriptions` table supports Stripe or billing-backed access.
 
-The full role model should eventually support:
+Confirmed fields include:
 
-```text
-owner
-admin
-manager
-member
-```
+    id
+    user_id
+    organisation_id
+    plan_key
+    status
+    stripe_customer_id
+    stripe_subscription_id
+    stripe_price_id
+    stripe_product_id
+    current_period_start
+    current_period_end
+    trial_end
+    cancel_at_period_end
+    created_at
+    updated_at
+
+Purpose:
+
+    Stores subscription state for users or organisations.
+
+Business subscriptions should normally be attached to `organisation_id`.
+
+Individual subscriptions may be attached to `user_id`.
+
+Do not let browser clients directly modify subscription or entitlement state.
+
+Billing writes should be server-side only.
+
+---
+
+## Existing Training Assignment Model
+
+The existing `training_assignments` table already supports business learning assignments.
+
+Confirmed fields include:
+
+    id
+    organisation_id
+    assigned_by_user_id
+    assigned_to_user_id
+    target_type
+    target_id
+    required
+    due_at
+    status
+    created_at
+    updated_at
+
+Purpose:
+
+    Stores assigned learning paths, lessons, modules, or other training targets.
+
+This table should power:
+
+    staff assigned training
+    required lessons
+    optional training
+    due dates
+    owner/admin assignment flows
+    staff dashboard assignment lists
+    business dashboard assignment reports
+
+Do not create `workspace_learning_assignments`.
+
+Use `training_assignments`.
+
+---
+
+## Existing Lesson Progress Model
+
+The audit found both `learning_progress` and `user_lesson_progress`.
+
+The better future-facing table is `user_lesson_progress`.
+
+Confirmed `user_lesson_progress` fields include:
+
+    id
+    user_id
+    lesson_id
+    lesson_version_id
+    status
+    progress_percentage
+    started_at
+    completed_at
+    last_seen_at
+    score
+    notes
+    refresher_recommended_at
+    refresher_reason
+    created_at
+    updated_at
+
+Purpose:
+
+    Tracks lesson progress against specific lesson versions.
+
+This is important because DeepMind Resources is a living learning system.
+
+A user may complete version 1 of a lesson, then later need a refresher when version 2 is published.
+
+Dashboard work should prefer `user_lesson_progress` where possible.
+
+The older `learning_progress` table appears to be an earlier/simple module progress table.
+
+Do not build new dashboard logic around `learning_progress` unless specifically maintaining backwards compatibility.
+
+---
+
+## Existing Sandbox Model
+
+The audit confirmed a structured sandbox model.
+
+Tables include:
+
+    sandbox_tasks
+    sandbox_task_versions
+    lesson_sandbox_tasks
+    sandbox_attempts
+    sandbox_sessions
+
+Confirmed `sandbox_attempts` fields include:
+
+    id
+    user_id
+    sandbox_task_id
+    sandbox_task_version_id
+    status
+    input_payload
+    output_payload
+    self_reflection
+    score
+    feedback
+    started_at
+    submitted_at
+    reviewed_at
+    created_at
+    updated_at
+
+Purpose:
+
+    Tracks user attempts at practical sandbox tasks.
+
+This should power:
+
+    personal sandbox evidence
+    staff sandbox submissions
+    manager review queues later
+    skill evidence
+    business readiness reporting
+
+Do not create `workspace_sandbox_results` yet.
+
+If business-specific review state is needed later, extend with an organisation-scoped review table such as `organisation_sandbox_reviews`.
+
+---
+
+## Business Workspace Meaning
+
+A business workspace is not a separate database table.
+
+A business workspace is:
+
+    an organisation record
+    plus organisation membership records
+    plus organisation entitlements
+    plus organisation subscription state
+    plus organisation-scoped assignments
+    plus user progress and sandbox evidence viewed through permitted organisation membership
+
+In product copy, it is fine to say:
+
+    business workspace
+    team workspace
+    company workspace
+
+In database and migrations, use:
+
+    organisation
+    organisation_membership
+    organisation_invitations
+    organisation entitlement
+    organisation subscription
+
+---
+
+## Role Model
+
+Business roles should be stored in `organisation_memberships.membership_role`.
+
+The existing allowed values must be checked before writing migrations that depend on exact role names.
+
+Desired long-term role model:
+
+    owner
+    admin
+    manager
+    learner
+
+Product-facing labels may be:
+
+    Owner
+    Admin
+    Manager
+    Staff
+
+Important:
+
+    Staff in the UI should probably map to learner in the database.
+    Do not introduce both member and learner unless we intentionally migrate role names.
+    Do not assume role check constraints without auditing them first.
+
+---
+
+## Role Responsibilities
 
 ### Owner
 
-The owner controls the company workspace.
+The owner controls the organisation.
 
 Responsibilities:
 
-- owns the business workspace
-- controls billing and seats later
-- can invite staff
-- can remove staff
-- can assign admin or manager roles
-- can view company-wide progress
-- can view staff training status
-- can view sandbox review queues
-- can view retraining requirements
-- can manage assigned learning paths
-- can access billing and seat information when billing is wired
-
-The owner is the highest business-level role.
+    owns the organisation context
+    controls business billing later
+    can invite and remove staff
+    can assign admin or manager roles
+    can view organisation-wide progress
+    can view retraining requirements
+    can manage assigned learning paths
+    can view billing and seat information when wired
 
 ### Admin
 
@@ -373,13 +527,13 @@ The admin manages staff and training operations.
 
 Responsibilities:
 
-- invite staff
-- manage staff status
-- assign training
-- view staff progress reports
-- view sandbox submissions
-- view retraining alerts
-- manage learning assignments
+    invite staff
+    manage staff status
+    assign training
+    view staff progress reports
+    view sandbox submissions
+    view retraining alerts
+    manage learning assignments
 
 Admins should not automatically control billing unless the billing model explicitly allows it.
 
@@ -389,105 +543,98 @@ The manager supervises assigned staff, departments, or groups.
 
 Responsibilities:
 
-- view assigned team progress
-- monitor completion status
-- review sandbox evidence if required
-- flag staff needing support
-- track role-specific readiness
-- check refresher requirements
+    view assigned team progress
+    monitor completion status
+    review sandbox evidence if required
+    flag staff needing support
+    track role-specific readiness
+    check refresher requirements
 
 Manager support can be added after the first business version.
 
-### Member
+### Learner / Staff
 
-The member is a staff learner.
+The learner is the staff member inside an organisation.
 
 Responsibilities:
 
-- complete assigned learning paths
-- complete required lessons
-- submit sandbox evidence
-- respond to refreshers
-- see own progress inside the company workspace
-- see own review status
+    complete assigned learning paths
+    complete required lessons
+    submit sandbox evidence
+    respond to refreshers
+    see own progress inside the organisation context
+    see own review status
 
-Members should not see other staff progress unless a later permission explicitly allows it.
-
----
-
-## Initial Role Simplification
-
-The first version can start with:
-
-```text
-owner
-admin
-member
-```
-
-Later additions:
-
-```text
-manager
-department_lead
-viewer
-billing_owner
-```
-
-This keeps the first implementation manageable while leaving room for business reporting.
+Learners should not see other staff progress unless a later permission explicitly allows it.
 
 ---
 
 ## Company Onboarding Flow
 
-The intended business onboarding flow:
+The intended organisation onboarding flow:
 
 1. Company signs up.
 2. Owner user account is created or authenticated.
-3. Business workspace is created.
-4. Owner is added as workspace owner.
-5. Owner lands on the business dashboard.
-6. Owner invites staff by email.
-7. Staff accept invite.
-8. Staff create or log into their account.
-9. Staff are linked to the business workspace.
-10. Owner or admin assigns learning paths.
-11. Staff complete lessons and sandbox tasks.
-12. Owner/admin dashboard shows progress, readiness, reviews, and retraining needs.
+3. Organisation row is created in `organisations`.
+4. Owner membership row is created in `organisation_memberships`.
+5. Organisation entitlement or subscription is created where relevant.
+6. Owner lands on business dashboard.
+7. Owner invites staff by email.
+8. Staff accept invite.
+9. Staff create or log into their account.
+10. Staff are linked to the organisation through `organisation_memberships`.
+11. Owner or admin assigns training through `training_assignments`.
+12. Staff complete lessons and sandbox tasks.
+13. Owner/admin dashboard shows progress, readiness, reviews, and retraining needs.
 
-This flow should be server-controlled and protected by Supabase permissions.
+This flow must be server-controlled and protected by Supabase permissions.
 
 The browser should not be able to grant business access directly.
 
 ---
 
-## Staff Invite Flow
+## Staff Invitation Direction
 
-The staff invite flow should be explicit and secure.
+The audit did not show an existing invitation table.
 
-Suggested flow:
+Future invitation table should use organisation naming:
 
-1. Owner/admin enters staff email.
-2. System creates a workspace invite record.
-3. Invite stores a hashed token, not a raw reusable token.
-4. Invite email is sent.
-5. Staff member opens invite link.
-6. Staff member signs up or logs in.
-7. System validates invite token and expiry.
-8. System creates active workspace membership.
-9. Invite is marked accepted.
-10. Staff member lands in assigned company training view.
+    organisation_invitations
 
-Invites should support statuses:
+Do not create:
 
-```text
-pending
-accepted
-expired
-revoked
-```
+    workspace_invites
 
-Do not infer membership from email domain alone.
+Suggested future fields:
+
+    id
+    organisation_id
+    email
+    invited_role
+    token_hash
+    status
+    expires_at
+    invited_by
+    accepted_by
+    accepted_at
+    created_at
+    updated_at
+
+Invite status values:
+
+    pending
+    accepted
+    expired
+    revoked
+
+Important rules:
+
+    Store token hashes only.
+    Do not store reusable raw invite tokens.
+    Expired invites must not be reusable.
+    Accepted invites must not be reusable.
+    Invite acceptance must verify the authenticated user.
+    Do not infer membership from email domain alone.
 
 Email-domain matching may be added later as a controlled convenience feature, but it must not be the security boundary.
 
@@ -495,142 +642,142 @@ Email-domain matching may be added later as a controlled convenience feature, bu
 
 ## Business Dashboard Sections
 
-The business dashboard should not look like an individual course page.
+The business dashboard should show operational capability and workforce readiness.
 
-It should show operational capability and workforce readiness.
+It should not look like an individual course page.
 
 ### Team Onboarding
 
 Shows:
 
-- seats used
-- seats available
-- active staff
-- invites pending
-- staff not started
-- recently joined staff
-- removed or suspended staff where relevant
+    seats used
+    seats available
+    active staff
+    invites pending
+    staff not started
+    recently joined staff
+    removed or suspended staff where relevant
 
 Primary questions:
 
-- How many staff are active?
-- Who has not accepted their invite?
-- Are we near the seat limit?
-- Who needs onboarding attention?
+    How many staff are active?
+    Who has not accepted their invite?
+    Are we near the seat limit?
+    Who needs onboarding attention?
 
 ### Assigned Training
 
-Shows assigned learning paths such as:
+Powered by:
 
-- AI Fundamentals
-- Safe AI Use at Work
-- Prompt Engineering for Teams
-- Tool Selection for Teams
-- Business Workflow Mapping
-- AI Output Validation
+    training_assignments
+
+Shows assigned training such as:
+
+    AI Fundamentals
+    Safe AI Use at Work
+    Prompt Engineering for Teams
+    Tool Selection for Teams
+    Business Workflow Mapping
+    AI Output Validation
 
 Each assignment should show:
 
-- assigned staff
-- due date where applicable
-- completion rate
-- staff not started
-- staff in progress
-- staff completed
-- refresher required
-
-Primary questions:
-
-- What training has been assigned?
-- Who has started?
-- Who has finished?
-- Who needs a reminder?
-- Which training is now stale because AI changed?
+    assigned staff
+    due date where applicable
+    completion state
+    staff not started
+    staff in progress
+    staff completed
+    refresher required
 
 ### Readiness
 
+Powered by:
+
+    user_lesson_progress
+    sandbox_attempts
+    training_assignments
+    organisation membership
+
 Shows team capability states:
 
-- completed
-- in progress
-- needs review
-- refresher recommended
-- not started
-- overdue where due dates exist
-
-Primary questions:
-
-- Is the team ready to use AI safely?
-- Which staff need more training?
-- Which skill areas are weak?
-- Which staff have practical evidence?
+    completed
+    in progress
+    needs review
+    refresher recommended
+    not started
+    overdue where due dates exist
 
 ### Sandbox Evidence
 
+Powered by:
+
+    sandbox_attempts
+    sandbox_tasks
+    sandbox_task_versions
+
+Future review may require:
+
+    organisation_sandbox_reviews
+
 Shows:
 
-- staff submissions
-- manager review required
-- approved tasks
-- rejected or needs-improvement tasks
-- pending reviews
-- evidence attached to skill areas
-
-Primary questions:
-
-- Who has submitted practical evidence?
-- Which submissions need review?
-- Which staff have proved applied skill?
-- Which staff need to retry?
+    staff submissions
+    manager review required
+    approved tasks
+    rejected or needs-improvement tasks
+    pending reviews
+    evidence attached to skill areas
 
 ### AI Update Impact
 
+Future retraining alerts should use organisation naming.
+
+Possible future table:
+
+    organisation_retraining_alerts
+
 Shows:
 
-- lessons changed
-- team retraining required
-- new sandbox task available
-- affected staff
-- affected skill area
-- recommended manager action
-
-Primary questions:
-
-- Did an AI update affect completed training?
-- Which staff completed the old version?
-- Who needs a refresher?
-- What should managers assign next?
+    lessons changed
+    team retraining required
+    new sandbox task available
+    affected staff
+    affected skill area
+    recommended manager action
 
 ### Staff Progress
 
+Powered by:
+
+    organisation_memberships
+    training_assignments
+    user_lesson_progress
+    sandbox_attempts
+
 Shows:
 
-- staff member
-- role or department
-- assigned paths
-- lesson completion
-- sandbox completion
-- safety status
-- last activity
-- next required action
-
-Primary questions:
-
-- Who is active?
-- Who is stuck?
-- Who needs review?
-- Who has completed required training?
+    staff member
+    role or department
+    assigned paths
+    lesson completion
+    sandbox completion
+    safety status
+    last activity
+    next required action
 
 ### Billing and Seats
 
-Shows later:
+Powered by:
 
-- plan tier
-- seat limit
-- seats used
-- billing owner
-- renewal state
-- payment action required
+    subscriptions
+    entitlements
+
+Future seat summary may be calculated from memberships and subscription plan.
+
+Possible future table only if needed:
+
+    organisation_seats
 
 Do not show fake billing records before billing is wired.
 
@@ -638,451 +785,46 @@ Do not show fake billing records before billing is wired.
 
 ## Staff Dashboard Sections
 
-A staff member inside a business workspace should see a focused learning dashboard.
+A staff member inside an organisation should see a focused learning dashboard.
 
 Staff dashboard should show:
 
-- assigned learning paths
-- required lessons
-- optional lessons where allowed
-- lesson progress
-- sandbox tasks assigned by the business
-- submitted evidence
-- manager review status
-- refresher requirements
-- due dates where applicable
-- own awards or skill evidence
-- safe-use guidance
+    assigned learning paths
+    required lessons
+    optional lessons where allowed
+    lesson progress
+    sandbox tasks assigned by the business
+    submitted evidence
+    manager review status
+    refresher requirements
+    due dates where applicable
+    own awards or skill evidence
+    safe-use guidance
 
 Staff should not see:
 
-- company-wide progress
-- other staff member records
-- billing controls
-- invite controls
-- admin settings
-- seat management
-- manager reports
-
----
-
-## Business Progress and Reporting States
-
-Business reporting needs clear statuses.
-
-Suggested training statuses:
-
-```text
-not_started
-in_progress
-completed
-needs_review
-approved
-needs_improvement
-refresher_recommended
-overdue
-```
-
-Suggested invite statuses:
-
-```text
-pending
-accepted
-expired
-revoked
-```
-
-Suggested membership statuses:
-
-```text
-active
-invited
-suspended
-removed
-```
-
-Suggested sandbox review statuses:
-
-```text
-not_submitted
-submitted
-under_review
-approved
-needs_improvement
-rejected
-```
-
-Suggested retraining statuses:
-
-```text
-no_action_required
-refresher_recommended
-retraining_required
-manager_review_required
-completed_after_update
-```
-
-These should be stored as real data, not inferred from frontend labels only.
-
----
-
-## Monetisation and Seat Logic
-
-Business monetisation should be workspace-based.
-
-A business plan should attach to a business workspace, not just a user.
-
-Future business plans may include:
-
-- seat limit
-- included Academy access
-- included Sandbox access
-- business dashboard access
-- staff progress tracking
-- manager reports
-- refresher tracking
-- business training modules
-- support level
-
-Possible seat states:
-
-```text
-seat_available
-seat_used
-invite_pending
-seat_over_limit
-```
-
-The billing owner may be the same as the workspace owner, but the model should allow this to differ later.
-
-Billing data should be controlled server-side.
-
-Do not allow browser clients to modify billing state directly.
-
----
-
-## Database Tables Needed
-
-The first business workspace database model should likely include these tables.
-
-### workspaces
-
-Purpose:
-
-Stores individual and business workspace records.
-
-Possible fields:
-
-```text
-id
-name
-slug
-type
-owner_user_id
-plan_tier
-status
-created_at
-updated_at
-```
-
-Suggested type values:
-
-```text
-individual
-business
-```
-
-Suggested status values:
-
-```text
-active
-trial
-suspended
-cancelled
-archived
-```
-
-### workspace_members
-
-Purpose:
-
-Connects users to workspaces.
-
-Possible fields:
-
-```text
-id
-workspace_id
-user_id
-role
-status
-invited_by
-joined_at
-created_at
-updated_at
-```
-
-Suggested role values:
-
-```text
-owner
-admin
-manager
-member
-```
-
-Suggested status values:
-
-```text
-active
-invited
-suspended
-removed
-```
-
-### workspace_invites
-
-Purpose:
-
-Stores business staff invitations.
-
-Possible fields:
-
-```text
-id
-workspace_id
-email
-role
-token_hash
-status
-expires_at
-invited_by
-accepted_by
-accepted_at
-created_at
-updated_at
-```
-
-Important rules:
-
-- Store token hashes.
-- Do not store reusable raw invite tokens.
-- Expired invites must not be reusable.
-- Accepted invites must not be reusable.
-- Invite acceptance must verify the authenticated user.
-
-### workspace_seats
-
-Purpose:
-
-Tracks seat allocation where useful.
-
-Possible fields:
-
-```text
-id
-workspace_id
-seat_limit
-seats_used
-pending_invites_count
-plan_tier
-status
-created_at
-updated_at
-```
-
-This may also be calculated from memberships and billing entitlement records instead of stored directly.
-
-### workspace_learning_assignments
-
-Purpose:
-
-Stores assigned learning paths or lessons for staff.
-
-Possible fields:
-
-```text
-id
-workspace_id
-assigned_by
-assigned_to_user_id
-assigned_to_group_id
-learning_path_id
-module_id
-lesson_id
-required
-due_at
-status
-created_at
-updated_at
-```
-
-Assignments may target individual users first.
-
-Groups and departments can come later.
-
-### workspace_staff_progress
-
-Purpose:
-
-Stores or materialises staff progress for reporting.
-
-Possible fields:
-
-```text
-id
-workspace_id
-user_id
-learning_path_id
-lesson_id
-lesson_version_id
-status
-completed_at
-last_activity_at
-refresher_required
-created_at
-updated_at
-```
-
-This may be derived from lesson progress tables, but a reporting table may be useful later.
-
-### workspace_sandbox_results
-
-Purpose:
-
-Tracks sandbox evidence in a business context.
-
-Possible fields:
-
-```text
-id
-workspace_id
-user_id
-sandbox_task_id
-sandbox_task_version_id
-attempt_id
-status
-review_status
-reviewed_by
-reviewed_at
-created_at
-updated_at
-```
-
-### workspace_retraining_alerts
-
-Purpose:
-
-Tracks retraining needs caused by updated lessons, sandbox tasks, tool comparisons, safety recommendations, or AI intelligence.
-
-Possible fields:
-
-```text
-id
-workspace_id
-affected_user_id
-learning_path_id
-lesson_id
-lesson_version_id
-source_update_id
-alert_type
-status
-created_at
-updated_at
-```
-
-Suggested alert types:
-
-```text
-lesson_updated
-sandbox_updated
-policy_updated
-tool_recommendation_changed
-business_training_changed
-```
-
----
-
-## Relationship to Existing Auth Model
-
-Supabase Auth owns the user identity.
-
-Application tables should reference authenticated user IDs.
-
-A user profile is not enough to grant business access.
-
-Business access should require:
-
-1. authenticated user
-2. active workspace membership
-3. correct role
-4. correct entitlement or plan state where needed
-
-Frontend-only checks are not enough.
-
-Database policies and server-side checks are required.
-
----
-
-## Route Protection Rules
-
-Business routes should require authentication and workspace membership.
-
-Suggested future route groups:
-
-```text
-/business/dashboard
-/business/team
-/business/invites
-/business/assignments
-/business/progress
-/business/sandbox-reviews
-/business/retraining
-/business/billing
-```
-
-Access rules:
-
-- owner/admin can access business settings, team, invites, assignments, and reports
-- manager can access assigned reports and review queues where allowed
-- member can access assigned training and own progress only
-- unauthenticated users redirect to login
-- users without workspace membership cannot access the business workspace
-- users from another workspace cannot access unrelated workspace records
-
----
-
-## Row Level Security Direction
-
-Business data must be workspace-scoped.
-
-RLS policies should ensure:
-
-- users can read their own memberships
-- workspace owners/admins can read members of their workspace
-- workspace owners/admins can manage invites for their workspace
-- staff can read their own assigned training
-- staff can read their own progress
-- staff cannot read other staff progress
-- owners/admins can read staff progress inside their workspace
-- users cannot access another workspace's data
-- billing writes are server-side only
-
-Service role keys must never be exposed to the browser.
+    company-wide progress
+    other staff member records
+    billing controls
+    invite controls
+    admin settings
+    seat management
+    manager reports
 
 ---
 
 ## Dashboard Detection Logic
 
-Once workspace tables exist, dashboard logic should follow this pattern:
+Once organisation-based routing is implemented, dashboard logic should follow this pattern:
 
 1. Get authenticated user.
-2. Get user's active workspace memberships.
-3. If user has no business workspace, show personal dashboard.
-4. If user has one business workspace and role is owner/admin, route or offer business dashboard.
-5. If user has one business workspace and role is member, show staff training dashboard.
-6. If user has multiple workspaces, show workspace switcher.
-7. Store active workspace preference if needed.
+2. Get active organisation memberships from `organisation_memberships`.
+3. If the user has no active organisation membership, show personal dashboard.
+4. If the user has one organisation and role is owner or admin, route or offer business dashboard.
+5. If the user has one organisation and role is manager, route or offer manager dashboard.
+6. If the user has one organisation and role is learner, show staff learning dashboard.
+7. If the user has multiple organisation memberships, show an organisation switcher.
+8. Store active organisation preference if needed.
 
 Current dashboard should remain personal-only until this model is implemented.
 
@@ -1090,26 +832,24 @@ Do not half-wire business panels into the personal dashboard.
 
 ---
 
-## Workspace Switcher Direction
+## Organisation Switcher Direction
 
-Later, users with multiple contexts may need a workspace switcher.
+Later, users with multiple contexts may need a switcher.
 
 Example contexts:
 
-```text
-Personal workspace
-DeepMind Resources business workspace
-Acme Ltd staff workspace
-```
+    Personal learning
+    DeepMind Resources organisation
+    Acme Ltd staff account
 
 Switcher should show:
 
-- workspace name
-- workspace type
-- user role
-- active state
+    context name
+    context type
+    user role
+    active state
 
-Do not add this UI until workspace membership data exists.
+Do not add this UI until organisation membership data exists.
 
 ---
 
@@ -1117,23 +857,28 @@ Do not add this UI until workspace membership data exists.
 
 Business training should be assignable by owners/admins.
 
+Use the existing table:
+
+    training_assignments
+
 Assignment target options over time:
 
 1. individual staff member
 2. role
 3. department
-4. entire workspace
+4. entire organisation
 
-Initial build should start with individual assignment or whole-workspace assignment.
+The current table supports:
 
-Assignment should include:
+    assigned_to_user_id
+    target_type
+    target_id
+    organisation_id
+    required
+    due_at
+    status
 
-- learning path
-- required or optional
-- due date where useful
-- status
-- assigned by
-- assigned at
+Initial build should start with individual assignment or whole-organisation assignment.
 
 Do not overbuild departments before basic staff assignment works.
 
@@ -1143,20 +888,37 @@ Do not overbuild departments before basic staff assignment works.
 
 Business sandbox tasks may need review.
 
-Reviewers may be:
+The existing `sandbox_attempts` table stores:
 
-- owner
-- admin
-- manager
-- platform reviewer later
+    submitted_at
+    reviewed_at
+    score
+    feedback
+    status
+
+For simple review, this may be enough.
+
+For manager-specific review later, add an organisation-scoped table such as:
+
+    organisation_sandbox_reviews
+
+Possible fields:
+
+    id
+    organisation_id
+    sandbox_attempt_id
+    reviewer_user_id
+    review_status
+    review_feedback
+    reviewed_at
+    created_at
+    updated_at
 
 Review outcomes:
 
-```text
-approved
-needs_improvement
-rejected
-```
+    approved
+    needs_improvement
+    rejected
 
 A sandbox submission should not automatically become verified business skill evidence unless the task rules allow automatic scoring.
 
@@ -1168,18 +930,24 @@ For business training, manager review is valuable because it proves workplace re
 
 Retraining is one of the most important business features.
 
-When a lesson, sandbox task, tool comparison, or business safety recommendation changes, the system should be able to flag affected staff.
+When a lesson, sandbox task, tool comparison, safety recommendation, or AI intelligence record changes, the system should be able to flag affected staff.
+
+Future table should use organisation naming:
+
+    organisation_retraining_alerts
+
+Do not create:
+
+    workspace_retraining_alerts
 
 Example:
 
-```text
-Staff member completed Safe AI Use at Work v1.
-A verified update changes the recommended data handling policy.
-Lesson becomes v2.
-Business dashboard shows refresher recommended.
-Manager can assign updated lesson.
-Staff completion after update clears alert.
-```
+    Staff member completed Safe AI Use at Work v1.
+    A verified update changes the recommended data handling policy.
+    Lesson becomes v2.
+    Business dashboard shows refresher recommended.
+    Manager can assign updated lesson.
+    Staff completion after update clears alert.
 
 Retraining states should be version-aware.
 
@@ -1187,31 +955,207 @@ Do not overwrite historical completions.
 
 ---
 
+## Business Progress and Reporting States
+
+Business reporting needs clear statuses.
+
+Suggested assignment statuses:
+
+    not_started
+    in_progress
+    completed
+    needs_review
+    approved
+    needs_improvement
+    refresher_recommended
+    overdue
+
+Suggested invitation statuses:
+
+    pending
+    accepted
+    expired
+    revoked
+
+Suggested membership statuses:
+
+    active
+    invited
+    suspended
+    removed
+
+Suggested sandbox review statuses:
+
+    not_submitted
+    submitted
+    under_review
+    approved
+    needs_improvement
+    rejected
+
+Suggested retraining statuses:
+
+    no_action_required
+    refresher_recommended
+    retraining_required
+    manager_review_required
+    completed_after_update
+
+Before writing migrations that enforce status constraints, audit existing constraints and existing data.
+
+---
+
+## Monetisation and Seat Logic
+
+Business monetisation should be organisation-based.
+
+A business plan should attach to an organisation, not just a user.
+
+Existing tables:
+
+    subscriptions
+    entitlements
+
+Business plans may include:
+
+    seat limit
+    included Academy access
+    included Sandbox access
+    business dashboard access
+    staff progress tracking
+    manager reports
+    refresher tracking
+    business training modules
+    support level
+
+Possible future seat states:
+
+    seat_available
+    seat_used
+    invite_pending
+    seat_over_limit
+
+Seat counts may be calculated from:
+
+    organisation_memberships
+    organisation_invitations
+    subscriptions
+    entitlements
+
+Only add a dedicated `organisation_seats` table if calculated seat logic becomes too slow or too complex.
+
+Billing data should be controlled server-side.
+
+Do not allow browser clients to modify billing state directly.
+
+---
+
+## Route Protection Rules
+
+Business routes should require authentication and organisation membership.
+
+Suggested future route groups:
+
+    /business/dashboard
+    /business/team
+    /business/invites
+    /business/assignments
+    /business/progress
+    /business/sandbox-reviews
+    /business/retraining
+    /business/billing
+
+Access rules:
+
+    owner/admin can access business settings, team, invites, assignments, and reports
+    manager can access assigned reports and review queues where allowed
+    learner can access assigned training and own progress only
+    unauthenticated users redirect to login
+    users without organisation membership cannot access the organisation dashboard
+    users from another organisation cannot access unrelated organisation records
+
+---
+
+## Row Level Security Direction
+
+Business data must be organisation-scoped.
+
+Existing RLS already exists on:
+
+    organisations
+    organisation_memberships
+    entitlements
+    subscriptions
+    training_assignments
+    user_lesson_progress
+    sandbox_attempts
+
+Future RLS changes should ensure:
+
+    users can read their own memberships
+    organisation owners/admins can read members of their organisation
+    organisation owners/admins can manage invites for their organisation
+    staff can read their own assigned training
+    staff can read their own progress
+    staff cannot read other staff progress
+    owners/admins can read staff progress inside their organisation
+    users cannot access another organisation's data
+    billing writes are server-side only
+
+Service role keys must never be exposed to the browser.
+
+---
+
+## Migration Rules Going Forward
+
+Before creating any new Supabase migration:
+
+1. Audit existing tables.
+2. Audit existing columns.
+3. Audit existing policies.
+4. Audit existing functions.
+5. Check existing migration history.
+6. Prefer extending existing organisation-based tables.
+7. Do not create duplicate workspace-based tables.
+8. Keep migrations small.
+9. Make RLS explicit.
+10. Do not run SQL until the migration has been reviewed.
+
+The previously proposed workspace migration should not be applied.
+
+If the file exists, remove it:
+
+    supabase/migrations/008_business_workspace_foundation.sql
+
+The correct future migration path is organisation-based.
+
+---
+
 ## Business Dashboard Definition of Done
 
-A business dashboard is ready only when it can show real workspace data or honest empty states.
+A business dashboard is ready only when it can show real organisation data or honest empty states.
 
 It must show:
 
-- workspace name
-- user role
-- active staff count
-- pending invite count
-- assigned training state
-- staff progress state
-- sandbox review state
-- retraining state
-- billing/seat state when available
+    organisation name
+    user role
+    active staff count
+    pending invite count
+    assigned training state
+    staff progress state
+    sandbox review state
+    retraining state
+    billing or seat state when available
 
 It must not show:
 
-- fake staff
-- fake completion percentages
-- fake revenue
-- fake billing data
-- fake AI update alerts
-- placeholder demo companies
-- public marketing copy
+    fake staff
+    fake completion percentages
+    fake revenue
+    fake billing data
+    fake AI update alerts
+    placeholder demo companies
+    public marketing copy
 
 ---
 
@@ -1221,62 +1165,62 @@ A staff dashboard is ready only when it can show assigned training or honest emp
 
 It must show:
 
-- assigned paths
-- own progress
-- next required lesson
-- sandbox task status
-- review status
-- refresher status
-- safe-use reminders where relevant
+    assigned paths
+    own progress
+    next required lesson
+    sandbox task status
+    review status
+    refresher status
+    safe-use reminders where relevant
 
 It must not show:
 
-- other staff progress
-- billing
-- team management
-- owner/admin controls
-- fake tasks
-- fake awards
+    other staff progress
+    billing
+    team management
+    owner/admin controls
+    fake tasks
+    fake awards
 
 ---
 
-## Build Order
+## Correct Build Order
 
-The recommended build order is:
+The corrected build order is:
 
-1. Create this planning document.
-2. Create database migration for `workspaces`, `workspace_members`, and `workspace_invites`.
-3. Add RLS policies for workspace ownership and membership.
-4. Create workspace bootstrap for individual users.
-5. Create business workspace creation flow.
-6. Add owner membership creation.
-7. Add dashboard workspace detection.
-8. Create separate business dashboard route.
-9. Create honest business dashboard empty state.
-10. Add staff invite creation flow.
-11. Add invite acceptance flow.
-12. Add assigned training records.
-13. Add staff learning dashboard mode.
-14. Add sandbox evidence reporting.
-15. Add manager/admin review flow.
-16. Add retraining alert model.
-17. Add billing and seat logic.
-18. Add workspace switcher for multi-workspace users.
+1. Keep this document aligned with the existing organisation model.
+2. Remove any duplicate workspace migration from the repo.
+3. Audit exact constraints on `organisations` and `organisation_memberships`.
+4. Audit whether an invitation table already exists outside the keyword search.
+5. Create `organisation_invitations` only if no invite table exists.
+6. Add RLS for invitations.
+7. Add owner/admin invite creation flow.
+8. Add invite acceptance flow.
+9. Add organisation-aware dashboard detection.
+10. Create separate business dashboard route.
+11. Create honest business dashboard empty state.
+12. Read assigned training from `training_assignments`.
+13. Read staff progress from `user_lesson_progress`.
+14. Read sandbox evidence from `sandbox_attempts`.
+15. Add organisation-scoped sandbox review only if needed.
+16. Add retraining alert model only after lesson version refresh logic is working.
+17. Add billing and seat logic using `subscriptions` and `entitlements`.
+18. Add organisation switcher for users with multiple organisation memberships.
 
-Do not jump to business dashboard UI before workspace membership and permissions are planned.
+Do not jump to business dashboard UI before organisation permissions and routing are understood.
 
 ---
 
 ## Near-Term Next Step
 
-After this document is committed, the next practical build step should be a database planning or migration file for:
+The next practical database step should not be `workspaces`.
 
-```text
-workspaces
-workspace_members
-workspace_invites
-```
+The next practical database step should be one of:
 
-That migration should be small, reviewed carefully, and RLS-aware.
+    audit existing organisation constraints
+    audit existing organisation role values
+    audit existing training assignment statuses
+    create organisation_invitations if missing
+    align /dashboard with existing user_lesson_progress and sandbox_attempts
 
-Do not wire business dashboard UI into the personal dashboard.
+The safest next build step is to remove the duplicate workspace migration, then continue with organisation-based planning and dashboard wiring.
