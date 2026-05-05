@@ -1,81 +1,43 @@
-import type { LucideIcon } from 'lucide-react'
-import Link from 'next/link'
+﻿import Link from 'next/link'
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import {
-  ArrowRight,
-  Award,
-  BadgeCheck,
-  Bell,
-  BookOpenCheck,
-  Brain,
-  CheckCircle2,
-  Code2,
-  CreditCard,
-  GraduationCap,
-  Layers3,
-  LockKeyhole,
-  Radar,
-  Route,
-  Settings,
-  ShieldCheck,
-  Sparkles,
-  Target,
-  UserRound,
-  Workflow,
-} from 'lucide-react'
-import { createClient } from '@/lib/supabase/server'
+import { createServerClient } from '@supabase/ssr'
 
-type DashboardTab = {
-  label: string
-  href: string
+type LessonProgressRow = {
+  status: string | null
+  completed_at: string | null
+  lesson_id: string | null
+  lesson_version_id: string | null
 }
 
-type ProgressCard = {
+type SandboxAttemptRow = {
+  status: string | null
+  submitted_at: string | null
+  reviewed_at: string | null
+  sandbox_task_id: string | null
+  sandbox_task_version_id: string | null
+}
+
+type DashboardMetric = {
   label: string
   value: string
-  description: string
-  icon: LucideIcon
+  detail: string
+  state: 'active' | 'empty' | 'ready' | 'locked'
 }
 
-type ModuleStep = {
-  label: string
-  title: string
-  status: string
-}
-
-type PathwayCard = {
-  title: string
+type DashboardTask = {
   label: string
   status: string
-  href: string
-  icon: LucideIcon
+  detail: string
 }
 
-type StatusPanel = {
+type PathModule = {
   title: string
   status: string
-  description: string
-  icon: LucideIcon
+  detail: string
 }
 
-type AccountPanel = {
-  id: string
-  title: string
-  description: string
-  icon: LucideIcon
-  details: string[]
-}
-
-async function signOut() {
-  'use server'
-
-  const supabase = await createClient()
-  await supabase.auth.signOut()
-
-  redirect('/')
-}
-
-const dashboardTabs: DashboardTab[] = [
+const navItems = [
   { label: 'Overview', href: '#overview' },
   { label: 'Academy', href: '#academy' },
   { label: 'Sandbox', href: '#sandbox' },
@@ -86,140 +48,202 @@ const dashboardTabs: DashboardTab[] = [
   { label: 'Payments', href: '#payments' },
 ]
 
-const progressCards: ProgressCard[] = [
-  {
-    label: 'Current pathway',
-    value: 'AI Fundamentals',
-    description: 'Recommended starting point for your personal Academy record.',
-    icon: GraduationCap,
-  },
-  {
-    label: 'Current lesson',
-    value: 'AI Operating Base',
-    description: 'First lesson route for building safe, practical AI judgement.',
-    icon: BookOpenCheck,
-  },
-  {
-    label: 'Sandbox evidence',
-    value: 'None submitted',
-    description: 'Practical task evidence appears after sandbox work is submitted.',
-    icon: Code2,
-  },
-  {
-    label: 'Award status',
-    value: 'Not earned',
-    description: 'Awards unlock through completed lessons, checks, and sandbox tasks.',
-    icon: Award,
-  },
-]
-
-const moduleSteps: ModuleStep[] = [
-  {
-    label: 'Module 1',
-    title: 'Modern AI systems',
-    status: 'Ready',
-  },
-  {
-    label: 'Module 2',
-    title: 'Safe-use boundaries',
-    status: 'After module 1',
-  },
-  {
-    label: 'Module 3',
-    title: 'Prompt foundations',
-    status: 'After module 2',
-  },
-  {
-    label: 'Module 4',
-    title: 'Output review',
-    status: 'After module 3',
-  },
-]
-
-const pathwayCards: PathwayCard[] = [
+const academyPaths = [
   {
     title: 'AI Fundamentals',
-    label: 'Foundation',
-    status: 'Start here',
+    status: 'Active path',
     href: '/academy/path/fundamentals',
-    icon: Brain,
+    detail: 'Start here. Core concepts, safe use, tool basics, and first sandbox proof.',
   },
   {
     title: 'Prompt Engineering',
-    label: 'Core execution',
-    status: 'Next route',
+    status: 'Next path',
     href: '/academy/path/prompting',
-    icon: Sparkles,
+    detail: 'Structured prompting, constraints, examples, iteration, and output review.',
   },
   {
     title: 'Agent Architecture',
-    label: 'Builder route',
     status: 'Preview route',
     href: '/academy/path/agents',
-    icon: Workflow,
+    detail: 'Agent boundaries, tools, planning, handoffs, and review gates.',
   },
   {
     title: 'Multi-Agent Systems',
-    label: 'Advanced route',
-    status: 'Preview route',
+    status: 'Advanced route',
     href: '/academy/path/multi-agent-systems',
-    icon: Layers3,
+    detail: 'Specialist agents, coordination, validation, and operating controls.',
   },
 ]
 
-const statusPanels: StatusPanel[] = [
+const pathModules: PathModule[] = [
   {
-    title: 'Sandbox practice',
-    status: 'Ready for first task',
-    description:
-      'Use sandbox exercises to prove prompt control, workflow judgement, validation, and tool-selection skill.',
-    icon: Route,
+    title: 'Module 1',
+    status: 'Ready',
+    detail: 'Modern AI systems',
   },
   {
-    title: 'AI update refreshers',
-    status: 'No action required',
-    description:
-      'Important AI changes that affect your learning route appear here as refresher actions.',
-    icon: Bell,
+    title: 'Module 2',
+    status: 'Locked',
+    detail: 'Safe-use boundaries',
   },
   {
-    title: 'Assessment access',
-    status: 'Linked to lesson progress',
-    description:
-      'Knowledge checks and practical reviews belong to the lesson route they assess.',
-    icon: LockKeyhole,
+    title: 'Module 3',
+    status: 'Locked',
+    detail: 'Prompt foundations',
+  },
+  {
+    title: 'Module 4',
+    status: 'Locked',
+    detail: 'Output review',
   },
 ]
 
-const accountPanels: AccountPanel[] = [
-  {
-    id: 'account',
-    title: 'Account',
-    description:
-      'Your personal learner account is the identity used for Academy progress, sandbox evidence, and awards.',
-    icon: UserRound,
-    details: ['Personal learner profile', 'Secure sign-in access', 'Workspace identity'],
-  },
-  {
-    id: 'settings',
-    title: 'Settings',
-    description:
-      'Manage personal workspace preferences, notifications, privacy choices, and learning controls.',
-    icon: Settings,
-    details: ['Profile preferences', 'Notification controls', 'Privacy settings'],
-  },
-  {
-    id: 'payments',
-    title: 'Payments',
-    description:
-      'Review personal plan access, billing controls, receipts, and subscription details from your account area.',
-    icon: CreditCard,
-    details: ['Plan access', 'Billing controls', 'Receipts'],
-  },
-]
+function getSupabaseKey() {
+  return (
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  )
+}
+
+async function createSupabaseServerClient() {
+  const cookieStore = await cookies()
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = getSupabaseKey()
+
+  if (!supabaseUrl || !supabaseKey) {
+    return null
+  }
+
+  return createServerClient(supabaseUrl, supabaseKey, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll()
+      },
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options)
+          })
+        } catch {
+          // Server components cannot always write cookies during render.
+          // Auth middleware / server actions handle writable cookie contexts.
+        }
+      },
+    },
+  })
+}
+
+async function signOut() {
+  'use server'
+
+  const supabase = await createSupabaseServerClient()
+
+  if (supabase) {
+    await supabase.auth.signOut()
+  }
+
+  redirect('/auth/login')
+}
+
+function getCompletedLessons(rows: LessonProgressRow[]) {
+  return rows.filter((row) => row.status === 'completed' || row.completed_at).length
+}
+
+function getSubmittedSandboxAttempts(rows: SandboxAttemptRow[]) {
+  return rows.filter(
+    (row) =>
+      row.status === 'submitted' ||
+      row.status === 'reviewed' ||
+      row.status === 'passed' ||
+      row.submitted_at,
+  ).length
+}
+
+function getReviewedSandboxAttempts(rows: SandboxAttemptRow[]) {
+  return rows.filter((row) => row.status === 'reviewed' || row.status === 'passed' || row.reviewed_at)
+    .length
+}
+
+function getOverallProgress(completedLessons: number) {
+  const totalLaunchLessons = 4
+  const percentage = Math.min(Math.round((completedLessons / totalLaunchLessons) * 100), 100)
+
+  return {
+    totalLaunchLessons,
+    percentage,
+  }
+}
+
+function getProgressLabel(progressStorageAvailable: boolean, completedLessons: number) {
+  if (!progressStorageAvailable) {
+    return 'No saved records'
+  }
+
+  if (completedLessons === 0) {
+    return 'Not started'
+  }
+
+  return 'In progress'
+}
+
+function StatusBadge({ state, children }: { state: DashboardMetric['state']; children: React.ReactNode }) {
+  const className =
+    state === 'active'
+      ? 'border-blue-200 bg-blue-600 text-white'
+      : state === 'ready'
+        ? 'border-blue-100 bg-blue-50 text-blue-700'
+        : state === 'locked'
+          ? 'border-slate-200 bg-slate-100 text-slate-500'
+          : 'border-slate-200 bg-white text-slate-600'
+
+  return (
+    <span
+      className={`inline-flex w-fit items-center rounded-full border px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.14em] ${className}`}
+    >
+      {children}
+    </span>
+  )
+}
+
+function MetricCard({ metric }: { metric: DashboardMetric }) {
+  return (
+    <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">{metric.label}</p>
+        <StatusBadge state={metric.state}>{metric.state === 'empty' ? 'Empty' : metric.state}</StatusBadge>
+      </div>
+      <p className="mt-4 text-3xl font-black tracking-tight text-slate-950">{metric.value}</p>
+      <p className="mt-2 text-sm leading-6 text-slate-600">{metric.detail}</p>
+    </article>
+  )
+}
+
+function SectionHeader({
+  eyebrow,
+  title,
+  description,
+}: {
+  eyebrow: string
+  title: string
+  description: string
+}) {
+  return (
+    <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-600">{eyebrow}</p>
+        <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-950">{title}</h2>
+      </div>
+      <p className="max-w-xl text-sm leading-6 text-slate-600">{description}</p>
+    </div>
+  )
+}
 
 export default async function DashboardPage() {
-  const supabase = await createClient()
+  const supabase = await createSupabaseServerClient()
+
+  if (!supabase) {
+    redirect('/auth/login')
+  }
 
   const {
     data: { user },
@@ -229,411 +253,409 @@ export default async function DashboardPage() {
     redirect('/auth/login')
   }
 
-  const { data: profile } = await supabase
-    .from('user_profiles')
-    .select('first_name, display_name')
-    .eq('id', user.id)
-    .maybeSingle()
+  const [{ data: lessonRows, error: lessonError }, { data: sandboxRows, error: sandboxError }] =
+    await Promise.all([
+      supabase
+        .from('lesson_progress')
+        .select('status, completed_at, lesson_id, lesson_version_id')
+        .eq('user_id', user.id),
+      supabase
+        .from('sandbox_attempts')
+        .select('status, submitted_at, reviewed_at, sandbox_task_id, sandbox_task_version_id')
+        .eq('user_id', user.id),
+    ])
 
-  const profileFirstName =
-    typeof profile?.first_name === 'string' && profile.first_name.trim()
-      ? profile.first_name.trim()
-      : null
+  const lessonProgressRows = (lessonRows ?? []) as LessonProgressRow[]
+  const sandboxAttemptRows = (sandboxRows ?? []) as SandboxAttemptRow[]
 
-  const profileDisplayName =
-    typeof profile?.display_name === 'string' && profile.display_name.trim()
-      ? profile.display_name.trim()
-      : null
-
-  const metadataFirstName =
-    typeof user.user_metadata?.first_name === 'string' && user.user_metadata.first_name.trim()
-      ? user.user_metadata.first_name.trim()
-      : null
-
-  const metadataFullName =
-    typeof user.user_metadata?.full_name === 'string' && user.user_metadata.full_name.trim()
-      ? user.user_metadata.full_name.trim()
-      : null
+  const progressStorageAvailable = !lessonError && !sandboxError
+  const completedLessons = getCompletedLessons(lessonProgressRows)
+  const submittedSandboxAttempts = getSubmittedSandboxAttempts(sandboxAttemptRows)
+  const reviewedSandboxAttempts = getReviewedSandboxAttempts(sandboxAttemptRows)
+  const overallProgress = getOverallProgress(completedLessons)
+  const progressLabel = getProgressLabel(progressStorageAvailable, completedLessons)
 
   const displayName =
-    profileFirstName ?? profileDisplayName ?? metadataFirstName ?? metadataFullName ?? null
+    user.user_metadata?.full_name ||
+    user.user_metadata?.name ||
+    user.email?.split('@')[0] ||
+    'Learner'
 
-  const emailAddress = typeof user.email === 'string' ? user.email : 'Signed-in account'
+  const metrics: DashboardMetric[] = [
+    {
+      label: 'Path progress',
+      value: progressStorageAvailable ? `${overallProgress.percentage}%` : '0%',
+      detail: progressStorageAvailable
+        ? `${completedLessons} of ${overallProgress.totalLaunchLessons} launch lessons completed.`
+        : 'No saved lesson progress records are available yet.',
+      state: completedLessons > 0 ? 'active' : 'empty',
+    },
+    {
+      label: 'Lessons completed',
+      value: String(completedLessons),
+      detail: completedLessons === 0 ? 'Lesson completion has not been recorded yet.' : 'Saved lesson completions.',
+      state: completedLessons > 0 ? 'active' : 'empty',
+    },
+    {
+      label: 'Sandbox evidence',
+      value: String(submittedSandboxAttempts),
+      detail:
+        submittedSandboxAttempts === 0
+          ? 'No sandbox task evidence submitted yet.'
+          : `${reviewedSandboxAttempts} reviewed sandbox attempt${reviewedSandboxAttempts === 1 ? '' : 's'}.`,
+      state: submittedSandboxAttempts > 0 ? 'active' : 'empty',
+    },
+    {
+      label: 'Award status',
+      value: '0',
+      detail: 'No verified skill award has been earned yet.',
+      state: 'empty',
+    },
+  ]
+
+  const dashboardTasks: DashboardTask[] = [
+    {
+      label: 'Current pathway',
+      status: 'AI Fundamentals',
+      detail: 'Selected starting path for the individual Academy workspace.',
+    },
+    {
+      label: 'Current lesson',
+      status: 'AI Operating Base',
+      detail: 'Lesson 1 is the next learning action.',
+    },
+    {
+      label: 'Progress state',
+      status: progressLabel,
+      detail: progressStorageAvailable
+        ? 'Progress will update from saved lesson and sandbox records.'
+        : 'Dashboard is ready to show saved progress once records exist.',
+    },
+    {
+      label: 'Refreshers',
+      status: 'No action required',
+      detail: 'No completed lesson currently needs a refresher.',
+    },
+  ]
 
   return (
-    <main className="min-h-screen bg-obsidian px-4 py-8 text-sand sm:px-6 lg:px-8">
-      <div id="overview" className="mx-auto w-full max-w-7xl">
-        <header className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-            <div className="max-w-4xl">
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
-                  <Brain className="h-4 w-4" aria-hidden="true" />
-                  Personal dashboard
-                </span>
-
-                <span className="inline-flex items-center gap-2 rounded-full bg-[#EAF7FF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF] shadow-sm">
-                  <Sparkles className="h-4 w-4" aria-hidden="true" />
+    <main className="min-h-screen bg-[#eef7ff] text-slate-950">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-5 sm:px-6 lg:px-8">
+        <header className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm sm:p-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600">
+                Personal dashboard
+              </p>
+              <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-end">
+                <h1 className="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
+                  {displayName}&apos;s learning dashboard
+                </h1>
+                <span className="mb-1 inline-flex w-fit rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
                   Individual Academy workspace
                 </span>
               </div>
-
-              <h1 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl lg:text-5xl">
-                {displayName ? `${displayName}'s AI learning dashboard` : 'Your AI learning dashboard'}
-              </h1>
-
-              <p className="mt-4 max-w-3xl text-base leading-8 text-sand/65">
-                Track your Academy route, continue the next lesson, practise in the Sandbox, review
-                AI update actions, and manage your personal learning account.
+              <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
+                A compact record of your pathway, lesson progress, sandbox evidence, refresher status, account access,
+                and next action.
               </p>
             </div>
 
-            <form action={signOut}>
-              <button
-                type="submit"
-                className="rounded-2xl border border-sand/10 bg-white px-5 py-3 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
-              >
-                Sign out
-              </button>
-            </form>
+            <div className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm sm:min-w-72">
+              <div className="flex items-center justify-between gap-3">
+                <span className="font-semibold text-slate-500">Signed in</span>
+                <span className="truncate font-bold text-slate-950">{user.email ?? 'Account verified'}</span>
+              </div>
+              <form action={signOut}>
+                <button
+                  type="submit"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition hover:border-blue-200 hover:text-blue-700"
+                >
+                  Sign out
+                </button>
+              </form>
+            </div>
           </div>
 
-          <nav className="mt-8 overflow-x-auto rounded-2xl border border-sand/10 bg-[#F7FBFF] p-2">
-            <div className="flex min-w-max gap-2">
-              {dashboardTabs.map((tab, index) => (
-                <a
-                  key={tab.label}
-                  href={tab.href}
-                  className={`rounded-2xl px-4 py-3 text-sm font-bold shadow-sm transition ${
-                    index === 0
-                      ? 'bg-[#123BFF] text-white'
-                      : 'bg-white text-sand hover:text-[#123BFF]'
-                  }`}
-                >
-                  {tab.label}
-                </a>
-              ))}
-            </div>
+          <nav className="mt-5 flex gap-2 overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50 p-2">
+            {navItems.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="shrink-0 rounded-xl px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-slate-600 transition hover:bg-white hover:text-blue-700"
+              >
+                {item.label}
+              </a>
+            ))}
           </nav>
-
-          <section className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4" aria-label="Personal progress snapshot">
-            {progressCards.map((card) => {
-              const Icon = card.icon
-
-              return (
-                <article
-                  key={card.label}
-                  className="rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
-                >
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
-                      <Icon className="h-5 w-5" aria-hidden="true" />
-                    </span>
-                  </div>
-
-                  <p className="mt-4 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                    {card.label}
-                  </p>
-                  <h2 className="mt-2 text-xl font-bold tracking-tight text-sand">{card.value}</h2>
-                  <p className="mt-2 text-sm leading-6 text-sand/60">{card.description}</p>
-                </article>
-              )
-            })}
-          </section>
         </header>
 
-        <section className="mt-8 grid gap-6 xl:grid-cols-[1.08fr_0.92fr]">
-          <article className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-              <div>
-                <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
-                  <Target className="h-4 w-4" aria-hidden="true" />
-                  Continue learning
-                </span>
+        <section id="overview" className="grid gap-5 lg:grid-cols-[1.45fr_0.85fr]">
+          <div className="space-y-5">
+            <section className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm sm:p-5">
+              <SectionHeader
+                eyebrow="Overview"
+                title="Progress report"
+                description="Current personal learning status without fake completions or invented activity."
+              />
 
-                <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
-                  Start Lesson 1: AI Operating Base.
-                </h2>
-
-                <p className="mt-4 max-w-3xl text-base leading-8 text-sand/65">
-                  Begin with AI Fundamentals. This first route builds the judgement layer for model
-                  behaviour, safe-use boundaries, controlled instructions, and first sandbox checks.
-                </p>
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                {metrics.map((metric) => (
+                  <MetricCard key={metric.label} metric={metric} />
+                ))}
               </div>
+            </section>
 
-              <span className="w-fit rounded-2xl bg-[#EAF7FF] px-4 py-3 text-sm font-bold text-[#123BFF]">
-                Ready
-              </span>
-            </div>
+            <section className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm sm:p-5">
+              <SectionHeader
+                eyebrow="Continue"
+                title="Next learning action"
+                description="Your dashboard should make the next action obvious before anything else."
+              />
 
-            <div className="mt-7 grid gap-4 md:grid-cols-4">
-              {moduleSteps.map((module) => (
-                <div key={module.label} className="rounded-2xl border border-sand/10 bg-[#F8FCFF] p-4">
-                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                    {module.label}
+              <div className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
+                <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
+                  <StatusBadge state="ready">Ready</StatusBadge>
+                  <h3 className="mt-4 text-2xl font-black tracking-tight text-slate-950">
+                    Start Lesson 1: AI Operating Base
+                  </h3>
+                  <p className="mt-3 text-sm leading-6 text-slate-600">
+                    Begin with the operating base for modern AI systems, safe-use boundaries, prompt foundations, and
+                    output review.
                   </p>
-                  <p className="mt-2 text-sm font-bold leading-6 text-sand">{module.title}</p>
-                  <p className="mt-3 text-xs font-semibold text-sand/45">{module.status}</p>
+
+                  <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+                    <Link
+                      href="/academy/path/fundamentals"
+                      className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:bg-blue-700"
+                    >
+                      Open AI Fundamentals
+                    </Link>
+                    <a
+                      href="#sandbox"
+                      className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 shadow-sm transition hover:border-blue-200 hover:text-blue-700"
+                    >
+                      View sandbox evidence
+                    </a>
+                  </div>
                 </div>
-              ))}
-            </div>
 
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link
-                href="/academy/path/fundamentals"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
-              >
-                Open AI Fundamentals
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </Link>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {pathModules.map((module) => (
+                    <article key={module.title} className="rounded-2xl border border-slate-200 bg-white p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">
+                          {module.title}
+                        </p>
+                        <StatusBadge state={module.status === 'Ready' ? 'ready' : 'locked'}>
+                          {module.status}
+                        </StatusBadge>
+                      </div>
+                      <p className="mt-3 text-sm font-bold text-slate-950">{module.detail}</p>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </section>
+          </div>
 
-              <Link
-                href="/sandbox"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-sand/10 bg-white px-5 py-3 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
-              >
-                Open Sandbox
-                <Route className="h-4 w-4" aria-hidden="true" />
-              </Link>
-            </div>
-          </article>
-
-          <aside className="rounded-3xl border border-sand/10 bg-[#123BFF] p-6 text-white shadow-sm sm:p-8">
-            <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF] shadow-sm">
-              <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-              Personal workspace
-            </span>
-
-            <h2 className="mt-5 text-2xl font-bold tracking-tight">
-              Your individual training record starts here.
-            </h2>
-
-            <p className="mt-4 text-sm leading-7 text-white/80">
-              Lessons, sandbox practice, assessments, awards, and refresher actions are organised
-              around your personal learning account.
+          <aside className="rounded-3xl border border-blue-700 bg-blue-600 p-4 text-white shadow-sm sm:p-5">
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-100">Training record</p>
+            <h2 className="mt-2 text-2xl font-black tracking-tight">Individual record summary</h2>
+            <p className="mt-3 text-sm leading-6 text-blue-50">
+              This panel reports the account&apos;s current learning state. It does not include business workspace
+              controls.
             </p>
 
-            <div className="mt-6 grid gap-3">
-              {[
-                'Academy route selected',
-                'Sandbox practice available',
-                'Account access verified',
-              ].map((item) => (
-                <div key={item} className="flex items-start gap-3 rounded-2xl bg-white/10 p-3">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-white" aria-hidden="true" />
-                  <p className="text-sm font-semibold leading-6 text-white/90">{item}</p>
-                </div>
+            <div className="mt-5 space-y-3">
+              {dashboardTasks.map((task) => (
+                <article key={task.label} className="rounded-2xl border border-white/15 bg-white/10 p-4">
+                  <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-100">{task.label}</p>
+                  <p className="mt-2 text-lg font-black text-white">{task.status}</p>
+                  <p className="mt-1 text-sm leading-6 text-blue-50">{task.detail}</p>
+                </article>
               ))}
             </div>
           </aside>
         </section>
 
-        <section id="academy" className="mt-8" aria-labelledby="academy-status-title">
-          <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
-                <GraduationCap className="h-4 w-4" aria-hidden="true" />
-                Academy
-              </span>
+        <section id="academy" className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm sm:p-5">
+          <SectionHeader
+            eyebrow="Academy"
+            title="Personal pathway map"
+            description="Only personal Academy paths are shown here. Business routing will belong in a separate workspace."
+          />
 
-              <h2
-                id="academy-status-title"
-                className="mt-4 text-3xl font-bold tracking-tight text-sand sm:text-4xl"
-              >
-                Personal pathway map.
-              </h2>
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {academyPaths.map((path) => (
+              <article key={path.title} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <StatusBadge state={path.status === 'Active path' ? 'active' : 'ready'}>{path.status}</StatusBadge>
+                <h3 className="mt-4 text-lg font-black text-slate-950">{path.title}</h3>
+                <p className="mt-2 min-h-20 text-sm leading-6 text-slate-600">{path.detail}</p>
+                <Link
+                  href={path.href}
+                  className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-black text-white transition hover:bg-blue-700"
+                >
+                  Open pathway
+                </Link>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+          <section className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm sm:p-5">
+            <SectionHeader
+              eyebrow="Progress"
+              title="Skill evidence"
+              description="Progress is based on completion records and sandbox submissions, not page views."
+            />
+
+            <div className="space-y-3">
+              <article className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="font-black text-slate-950">Academy lessons</p>
+                  <StatusBadge state={completedLessons > 0 ? 'active' : 'empty'}>
+                    {completedLessons > 0 ? 'Recorded' : 'Not started'}
+                  </StatusBadge>
+                </div>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  {completedLessons === 0
+                    ? 'No lesson completion has been saved yet.'
+                    : `${completedLessons} lesson completion${completedLessons === 1 ? '' : 's'} saved.`}
+                </p>
+              </article>
+
+              <article id="sandbox" className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="font-black text-slate-950">Sandbox submissions</p>
+                  <StatusBadge state={submittedSandboxAttempts > 0 ? 'active' : 'empty'}>
+                    {submittedSandboxAttempts > 0 ? 'Submitted' : 'None submitted'}
+                  </StatusBadge>
+                </div>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  {submittedSandboxAttempts === 0
+                    ? 'No practical task evidence has been submitted yet.'
+                    : `${submittedSandboxAttempts} sandbox attempt${submittedSandboxAttempts === 1 ? '' : 's'} submitted.`}
+                </p>
+              </article>
+
+              <article id="awards" className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="font-black text-slate-950">Awards</p>
+                  <StatusBadge state="empty">Not earned</StatusBadge>
+                </div>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  Verified skill awards will show here after the required lesson, sandbox, and review evidence exists.
+                </p>
+              </article>
             </div>
+          </section>
 
+          <section id="intelligence" className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm sm:p-5">
+            <SectionHeader
+              eyebrow="Intelligence"
+              title="Refresh and review status"
+              description="This keeps the dashboard focused on whether any completed training needs another pass."
+            />
+
+            <div className="overflow-hidden rounded-2xl border border-slate-200">
+              <table className="w-full border-collapse text-left text-sm">
+                <thead className="bg-slate-50 text-[11px] uppercase tracking-[0.16em] text-slate-500">
+                  <tr>
+                    <th className="px-4 py-3 font-black">Area</th>
+                    <th className="px-4 py-3 font-black">Status</th>
+                    <th className="px-4 py-3 font-black">Meaning</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 bg-white">
+                  <tr>
+                    <td className="px-4 py-4 font-bold text-slate-950">AI Fundamentals</td>
+                    <td className="px-4 py-4 text-slate-700">No action required</td>
+                    <td className="px-4 py-4 text-slate-600">No completed lesson is currently marked for refresh.</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-4 font-bold text-slate-950">Sandbox practice</td>
+                    <td className="px-4 py-4 text-slate-700">Available</td>
+                    <td className="px-4 py-4 text-slate-600">No evidence has been submitted yet.</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-4 font-bold text-slate-950">Skill trace</td>
+                    <td className="px-4 py-4 text-slate-700">Not earned</td>
+                    <td className="px-4 py-4 text-slate-600">No verified skill proof is attached to this account.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section className="grid gap-5 lg:grid-cols-3">
+          <section id="account" className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm sm:p-5">
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-600">Account</p>
+            <h2 className="mt-2 text-2xl font-black text-slate-950">Personal access</h2>
+            <div className="mt-4 space-y-3 text-sm">
+              <div className="rounded-2xl bg-slate-50 p-4">
+                <p className="font-bold text-slate-500">Email</p>
+                <p className="mt-1 break-words font-black text-slate-950">{user.email ?? 'Verified account'}</p>
+              </div>
+              <div className="rounded-2xl bg-slate-50 p-4">
+                <p className="font-bold text-slate-500">Access type</p>
+                <p className="mt-1 font-black text-slate-950">Individual account</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="settings" className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm sm:p-5">
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-600">Settings</p>
+            <h2 className="mt-2 text-2xl font-black text-slate-950">Preferences</h2>
+            <div className="mt-4 space-y-3 text-sm">
+              <div className="rounded-2xl bg-slate-50 p-4">
+                <p className="font-bold text-slate-500">Profile preferences</p>
+                <p className="mt-1 text-slate-600">No preference changes saved in this dashboard view.</p>
+              </div>
+              <div className="rounded-2xl bg-slate-50 p-4">
+                <p className="font-bold text-slate-500">Notifications</p>
+                <p className="mt-1 text-slate-600">No refresher notifications are active.</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="payments" className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm sm:p-5">
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-600">Payments</p>
+            <h2 className="mt-2 text-2xl font-black text-slate-950">Billing status</h2>
+            <div className="mt-4 space-y-3 text-sm">
+              <div className="rounded-2xl bg-slate-50 p-4">
+                <p className="font-bold text-slate-500">Plan record</p>
+                <p className="mt-1 font-black text-slate-950">No billing record</p>
+              </div>
+              <div className="rounded-2xl bg-slate-50 p-4">
+                <p className="font-bold text-slate-500">Payment action</p>
+                <p className="mt-1 text-slate-600">No payment action is required.</p>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <footer className="flex flex-col gap-3 rounded-3xl border border-blue-100 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5">
+          <p className="text-sm font-semibold text-slate-600">
+            Next action: start the first AI Fundamentals lesson and create your first sandbox evidence record.
+          </p>
+          <div className="flex flex-col gap-2 sm:flex-row">
             <Link
-              href="/syllabus"
-              className="inline-flex w-fit items-center justify-center gap-2 rounded-2xl border border-sand/10 bg-white px-5 py-3 text-sm font-bold text-[#123BFF] shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#0A63FF]"
+              href="/academy/path/fundamentals"
+              className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-black text-white transition hover:bg-blue-700"
             >
-              View syllabus
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              Open AI Fundamentals
+            </Link>
+            <Link
+              href="/"
+              className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
+            >
+              Return home
             </Link>
           </div>
-
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {pathwayCards.map((pathway) => {
-              const Icon = pathway.icon
-
-              return (
-                <article
-                  key={pathway.title}
-                  className="flex h-full flex-col rounded-3xl border border-sand/10 bg-white/90 p-5 shadow-sm"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF] shadow-sm">
-                      <Icon className="h-6 w-6" aria-hidden="true" />
-                    </span>
-
-                    <span className="rounded-full bg-[#123BFF] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white shadow-sm">
-                      {pathway.label}
-                    </span>
-                  </div>
-
-                  <h3 className="mt-5 text-xl font-bold tracking-tight text-sand">
-                    {pathway.title}
-                  </h3>
-
-                  <p className="mt-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                    {pathway.status}
-                  </p>
-
-                  <Link
-                    href={pathway.href}
-                    className="mt-6 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
-                  >
-                    Open pathway
-                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                  </Link>
-                </article>
-              )
-            })}
-          </div>
-        </section>
-
-        <section className="mt-8 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
-              <BadgeCheck className="h-4 w-4" aria-hidden="true" />
-              Personal progress
-            </span>
-
-            <h2 className="mt-5 text-3xl font-bold tracking-tight text-sand">
-              Progress, practice, and proof.
-            </h2>
-
-            <p className="mt-4 text-base leading-8 text-sand/65">
-              Your dashboard separates learning from evidence. Academy pathways explain the skill,
-              Sandbox tasks prove the skill, and awards mark completed progress.
-            </p>
-
-            <div className="mt-7 grid gap-3 sm:grid-cols-2">
-              {[
-                'Academy: lessons and module sequence',
-                'Sandbox: practical task evidence',
-                'Intelligence: update refreshers',
-                'Awards: completed skill proof',
-              ].map((item) => (
-                <div key={item} className="flex items-start gap-3 rounded-2xl bg-[#EAF7FF] p-4">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#123BFF]" aria-hidden="true" />
-                  <p className="text-sm font-semibold leading-6 text-sand/75">{item}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid gap-4">
-            {statusPanels.map((panel) => {
-              const Icon = panel.icon
-              const sectionId =
-                panel.title === 'Sandbox practice'
-                  ? 'sandbox'
-                  : panel.title === 'AI update refreshers'
-                    ? 'intelligence'
-                    : 'awards'
-
-              return (
-                <article
-                  key={panel.title}
-                  id={sectionId}
-                  className="rounded-3xl border border-sand/10 bg-white/90 p-5 shadow-sm"
-                >
-                  <div className="flex items-start gap-4">
-                    <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF]">
-                      <Icon className="h-6 w-6" aria-hidden="true" />
-                    </span>
-
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                        {panel.status}
-                      </p>
-                      <h3 className="mt-2 text-lg font-bold text-sand">{panel.title}</h3>
-                      <p className="mt-2 text-sm leading-7 text-sand/65">{panel.description}</p>
-                    </div>
-                  </div>
-                </article>
-              )
-            })}
-          </div>
-        </section>
-
-        <section className="mt-8 grid gap-5 lg:grid-cols-3">
-          {accountPanels.map((panel) => {
-            const Icon = panel.icon
-
-            return (
-              <article
-                key={panel.id}
-                id={panel.id}
-                className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-7"
-              >
-                <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF] shadow-sm">
-                  <Icon className="h-6 w-6" aria-hidden="true" />
-                </span>
-
-                <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand">{panel.title}</h2>
-
-                <p className="mt-3 text-sm leading-7 text-sand/65">{panel.description}</p>
-
-                {panel.id === 'account' ? (
-                  <div className="mt-5 rounded-2xl bg-[#F7FBFF] p-4">
-                    <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
-                      Signed in as
-                    </p>
-                    <p className="mt-2 break-words text-sm font-bold text-sand">{emailAddress}</p>
-                  </div>
-                ) : null}
-
-                <div className="mt-5 grid gap-3">
-                  {panel.details.map((detail) => (
-                    <div key={detail} className="flex items-start gap-3 rounded-2xl bg-[#F7FBFF] p-3">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#123BFF]" aria-hidden="true" />
-                      <p className="text-sm leading-6 text-sand/70">{detail}</p>
-                    </div>
-                  ))}
-                </div>
-              </article>
-            )
-          })}
-        </section>
-
-        <section className="mt-8 rounded-3xl bg-[#123BFF] p-6 text-white shadow-sm sm:p-8 lg:p-10">
-          <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div>
-              <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF] shadow-sm">
-                <Radar className="h-4 w-4" aria-hidden="true" />
-                Next action
-              </span>
-
-              <h2 className="mt-5 max-w-3xl text-3xl font-bold tracking-tight sm:text-4xl">
-                Begin with AI Fundamentals.
-              </h2>
-
-              <p className="mt-4 max-w-3xl text-sm leading-7 text-white/80 sm:text-base">
-                Start the foundation route, then move into sandbox practice when you are ready to
-                test the skill with a practical task.
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-              <Link
-                href="/academy/path/fundamentals"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 py-4 text-sm font-bold text-[#123BFF] shadow-sm transition hover:bg-[#EAF7FF]"
-              >
-                Open AI Fundamentals
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </Link>
-
-              <Link
-                href="/"
-                className="inline-flex items-center justify-center rounded-2xl border border-white/25 bg-white/10 px-6 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-white/20"
-              >
-                Return home
-              </Link>
-            </div>
-          </div>
-        </section>
+        </footer>
       </div>
     </main>
   )
