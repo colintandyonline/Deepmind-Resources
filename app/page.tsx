@@ -1,5 +1,4 @@
-import type { LucideIcon } from 'lucide-react'
-import Image from 'next/image'
+﻿import type { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import {
   ArrowRight,
@@ -16,6 +15,7 @@ import {
   Workflow,
 } from 'lucide-react'
 import { Sidebar } from '@/components/platform/sidebar'
+import { HeroSection } from '@/components/platform/hero-section'
 import { CodeSandbox } from '@/components/platform/code-sandbox'
 import { ContentCardGrid, type LessonModule } from '@/components/platform/content-card'
 
@@ -212,7 +212,7 @@ export default function HomePage() {
             className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-sand/10 bg-white text-sand/60 shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
             aria-label="Close signup prompt"
           >
-            ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â
+            Ãƒâ€”
           </button>
 
           <div className="grid md:grid-cols-[0.95fr_1.05fr]">
@@ -265,7 +265,7 @@ export default function HomePage() {
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
                 >
                   Explore the Academy
-                  <span aria-hidden="true">ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢</span>
+                  <span aria-hidden="true">Ã¢â€ â€™</span>
                 </a>
 
                 <a
@@ -273,7 +273,7 @@ export default function HomePage() {
                   className="inline-flex items-center justify-center gap-2 rounded-2xl border border-sand/10 bg-white px-5 py-4 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
                 >
                   Sign up and create workspace
-                  <span aria-hidden="true">ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢</span>
+                  <span aria-hidden="true">Ã¢â€ â€™</span>
                 </a>
 
                 <a
@@ -281,7 +281,7 @@ export default function HomePage() {
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#EAF7FF] px-5 py-4 text-sm font-bold text-[#123BFF] shadow-sm transition hover:bg-[#DDF2FF]"
                 >
                   Get your business onboarded
-                  <span aria-hidden="true">ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢</span>
+                  <span aria-hidden="true">Ã¢â€ â€™</span>
                 </a>
               </div>
 
@@ -389,65 +389,7 @@ export default function HomePage() {
 
       <main className="relative z-10 min-h-screen pt-16 md:pl-64 md:pt-0">
         <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-          <section className="relative overflow-hidden rounded-[2rem] border border-sand/10 bg-white shadow-[0_26px_90px_rgba(6,27,91,0.12)]">
-            <div className="grid gap-0 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
-              <div className="order-first overflow-hidden bg-[#EAF7FF] lg:order-last">
-                <Image
-                  src="/brand/publicbrandhomepage-intelligence-layer.png"
-                  alt="DeepMind Resources intelligence layer showing Signal Grid, Verification Gates, Tool Intelligence, Academy Pathways, Sandbox Proof, and Workforce Capability"
-                  width={1672}
-                  height={941}
-                  sizes="(min-width: 1024px) 58vw, 100vw"
-                  className="h-auto w-full"
-                  priority
-                />
-              </div>
-
-              <div className="px-5 py-7 sm:px-8 sm:py-10 lg:px-12 lg:py-12">
-                <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-[0.68rem] font-black uppercase tracking-[0.16em] text-white shadow-sm sm:text-xs">
-                  <Radar className="h-4 w-4" aria-hidden="true" />
-                  Live AI Intelligence Online
-                </span>
-
-                <h1 className="mt-5 max-w-2xl text-[2.35rem] font-black leading-[0.98] tracking-[-0.052em] text-sand sm:text-5xl lg:text-[3.7rem]">
-                  Master agentic AI as the frontier moves.
-                </h1>
-
-                <p className="mt-5 max-w-xl text-base leading-8 text-sand/70 sm:text-lg">
-                  DeepMind Resources turns verified AI change into tool intelligence, practical
-                  lessons, sandbox proof, and business-ready AI competency.
-                </p>
-
-                <div className="mt-6 grid gap-3 sm:flex sm:flex-wrap">
-                  <Link
-                    href="/academy"
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-6 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
-                  >
-                    Explore Academy
-                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                  </Link>
-
-                  <Link
-                    href="/sandbox"
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-sand/10 bg-white px-6 py-4 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
-                  >
-                    View Sandbox
-                    <Code2 className="h-4 w-4" aria-hidden="true" />
-                  </Link>
-                </div>
-
-                <div className="mt-6 grid grid-cols-3 gap-2">
-                  {['Verified', 'Current', 'Practical'].map((item) => (
-                    <div key={item} className="rounded-2xl border border-[#123BFF]/10 bg-[#F8FCFF] px-3 py-3 text-center shadow-sm">
-                      <p className="text-[0.66rem] font-black uppercase tracking-[0.12em] text-[#123BFF] sm:text-xs">
-                        {item}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
+          <HeroSection />
 
           <section className="mt-8 lg:mt-12">
             <div className="rounded-3xl border border-sand/10 bg-[#123BFF] p-6 text-white shadow-sm sm:p-8 lg:p-10">
@@ -565,7 +507,7 @@ export default function HomePage() {
                   </span>
 
                   <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand sm:text-3xl">
-                    AI update ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ verified meaning ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Agentic Sandbox Deployment.
+                    AI update → verified meaning → Agentic Sandbox Deployment.
                   </h2>
 
                   <p className="mt-3 max-w-3xl text-sm leading-7 text-sand/65 sm:text-base">
