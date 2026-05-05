@@ -11,7 +11,7 @@ import {
   CheckCircle2,
   ClipboardCheck,
   FileQuestion,
-  FlaskConical,
+  Code2,
   GraduationCap,
   Grid3X3,
   Layers3,
@@ -240,11 +240,10 @@ function ModulePanel({ module, index }: { module: Module; index: number }) {
 
             <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur xl:w-80">
               <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-100">
-                Module movement
+                Training rhythm
               </p>
               <p className="mt-2 text-sm leading-6 text-blue-50">
-                Complete the lessons, pass the check, then move into the sandbox task where this module requires
-                practical evidence.
+                Read the lesson route, pass the check, then practise the skill in the sandbox where evidence is required.
               </p>
             </div>
           </div>
@@ -263,8 +262,8 @@ function ModulePanel({ module, index }: { module: Module; index: number }) {
               value={module.knowledgeCheck.blocksProgressUntilPassed ? 'Required' : 'Diagnostic'}
             />
             <ModuleStat
-              icon={<FlaskConical className="h-5 w-5" aria-hidden="true" />}
-              label="Sandbox lab"
+              icon={<Code2 className="h-5 w-5" aria-hidden="true" />}
+              label="Sandbox practice"
               value={sandboxRequirement}
             />
           </section>
@@ -347,11 +346,11 @@ function ModulePanel({ module, index }: { module: Module; index: number }) {
               <div className="overflow-hidden rounded-[1.75rem] border border-blue-700 bg-gradient-to-br from-blue-600 to-[#0736db] p-5 text-white shadow-sm shadow-blue-900/20">
                 <div className="flex items-center gap-3">
                   <IconShell solid>
-                    <FlaskConical className="h-5 w-5" aria-hidden="true" />
+                    <Code2 className="h-5 w-5" aria-hidden="true" />
                   </IconShell>
                   <div>
                     <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-100">
-                      Sandbox lab
+                      Sandbox practice
                     </p>
                     <h3 className="text-base font-black leading-6 text-white">{module.sandboxTask.title}</h3>
                   </div>
@@ -569,7 +568,7 @@ export default async function AIFundamentalsModulesPage() {
               className="hidden items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-700 shadow-sm transition hover:border-blue-200 hover:text-blue-700 sm:inline-flex"
             >
               <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
-              Gateway
+              Path overview
             </Link>
           </nav>
         </div>
@@ -587,8 +586,8 @@ export default async function AIFundamentalsModulesPage() {
                 Academy training path
               </div>
 
-              <h1 className="mt-5 max-w-4xl text-4xl font-black tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
-                Work through AI Fundamentals one module at a time.
+              <h1 className="mt-5 max-w-4xl text-3xl font-black tracking-tight text-slate-950 sm:text-4xl lg:text-5xl">
+                Build your AI operating base.
               </h1>
 
               <p className="mt-5 max-w-3xl text-base leading-8 text-slate-600 sm:text-lg">
@@ -601,7 +600,7 @@ export default async function AIFundamentalsModulesPage() {
                   href="#module-tabs"
                   className="inline-flex items-center justify-center rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-sm shadow-blue-900/20 transition hover:bg-blue-700"
                 >
-                  Start Module 1
+                  Start with Module 1
                 </a>
                 <Link
                   href="/dashboard"
@@ -628,7 +627,7 @@ export default async function AIFundamentalsModulesPage() {
                   <ProgressCard
                     label="Sandbox"
                     value={requiredSandboxTasks}
-                    icon={<FlaskConical className="h-5 w-5" aria-hidden="true" />}
+                    icon={<Code2 className="h-5 w-5" aria-hidden="true" />}
                   />
                   <ProgressCard
                     label="Completed"
@@ -664,7 +663,7 @@ export default async function AIFundamentalsModulesPage() {
             detail="Confirm the idea with a focused knowledge check."
           />
           <MethodStep
-            icon={<FlaskConical className="h-5 w-5" aria-hidden="true" />}
+            icon={<Code2 className="h-5 w-5" aria-hidden="true" />}
             title="Practise"
             detail="Move into sandbox tasks where the skill becomes visible."
           />
@@ -691,9 +690,9 @@ export default async function AIFundamentalsModulesPage() {
             <aside className="academy-module-tabs rounded-[2rem] border border-blue-100 bg-white p-3 shadow-sm shadow-blue-900/10 lg:sticky lg:top-24 lg:self-start">
               <div className="mb-3 px-2 pt-2">
                 <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600">
-                  Module tabs
+                  Training path
                 </p>
-                <h2 className="mt-2 text-xl font-black tracking-tight text-slate-950">Choose your training step</h2>
+                <h2 className="mt-2 text-xl font-black tracking-tight text-slate-950">Follow the module path</h2>
               </div>
 
               <div className="flex gap-3 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
@@ -774,8 +773,7 @@ export default async function AIFundamentalsModulesPage() {
                 {aiFundamentalsLearningPath.finalSkillCheck.award}
               </h3>
               <p className="mt-4 text-sm leading-7 text-blue-50">
-                The badge should only be awarded after the required lessons, checks, sandbox evidence, and final
-                assessment are complete.
+                Earn this after the required lessons, checks, sandbox evidence, and final assessment are complete.
               </p>
             </div>
           </div>
@@ -800,7 +798,7 @@ export default async function AIFundamentalsModulesPage() {
             </div>
 
             <div className="rounded-3xl border border-blue-100 bg-blue-50 p-5">
-              <FlaskConical className="h-6 w-6 text-blue-700" aria-hidden="true" />
+              <Code2 className="h-6 w-6 text-blue-700" aria-hidden="true" />
               <h3 className="mt-4 text-base font-black text-slate-950">Prove practice</h3>
               <p className="mt-2 text-sm leading-6 text-slate-600">
                 Sandbox tasks create the practical evidence that later powers progress, awards, and skill trace.
@@ -810,7 +808,7 @@ export default async function AIFundamentalsModulesPage() {
 
           <div className="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm font-semibold leading-6 text-slate-600">
-              Next product step: create the Module 1 learning screen and start wiring lesson progress.
+              Begin with Module 1, then complete each check and sandbox task in sequence.
             </p>
             <span className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-500">
               <LockKeyhole className="h-4 w-4" aria-hidden="true" />
@@ -822,3 +820,4 @@ export default async function AIFundamentalsModulesPage() {
     </main>
   )
 }
+
