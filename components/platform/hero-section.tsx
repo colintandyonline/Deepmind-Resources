@@ -135,7 +135,7 @@ export function HeroSection() {
         </div>
 
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="rounded-[2rem] border border-sand/10 bg-white/88 px-5 py-6 shadow-sm backdrop-blur">
+          <div className="rounded-[2rem] border border-sand/10 bg-white/88 px-6 py-6 shadow-sm backdrop-blur">
             <p className="text-center text-xs font-black uppercase tracking-[0.18em] text-[#123BFF]">
               Tracking the AI models and tools shaping modern workflows
             </p>
@@ -144,9 +144,15 @@ export function HeroSection() {
               {aiToolStrip.map((tool) => (
                 <div
                   key={tool.name}
-                  className="flex min-h-20 items-center justify-center rounded-3xl border border-[#123BFF]/10 bg-white px-5 py-4 text-center shadow-sm transition hover:border-[#123BFF]/25 hover:shadow-md"
+                  className="flex min-h-20 items-center justify-center gap-3 rounded-3xl border border-[#123BFF]/10 bg-white px-5 py-4 text-center shadow-sm transition hover:border-[#123BFF]/25 hover:shadow-md"
                 >
-                  <span className="text-lg font-black tracking-[-0.05em] text-sand/58">
+                  <img
+                    src={tool.icon}
+                    alt=""
+                    aria-hidden="true"
+                    className="h-7 w-7 shrink-0 opacity-70"
+                  />
+                  <span className="text-lg font-black tracking-[-0.05em] text-sand/62">
                     {tool.name}
                   </span>
                 </div>
