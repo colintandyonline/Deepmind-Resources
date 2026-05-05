@@ -1,4 +1,5 @@
 ﻿import type { Metadata } from 'next'
+import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -12,18 +13,32 @@ import {
   FileQuestion,
   FlaskConical,
   GraduationCap,
+  Grid3X3,
+  Layers3,
   LockKeyhole,
   Route,
   ShieldCheck,
+  Sparkles,
+  Target,
+  Trophy,
+  Zap,
 } from 'lucide-react'
 import { aiFundamentalsLearningPath } from '@/lib/academy/fundamentals'
 
 export const metadata: Metadata = {
   title: 'AI Fundamentals Modules | DeepMind Resources Academy',
   description:
-    'A focused learner workspace for the AI Fundamentals module sequence, lesson outcomes, checks, sandbox evidence, and final skill check.',
+    'A focused Academy training workspace for AI Fundamentals modules, lesson outcomes, knowledge checks, sandbox practice, progress evidence, and final skill assessment.',
   alternates: {
     canonical: 'https://deepmindresources.pro/academy/learn/fundamentals/modules',
+  },
+  openGraph: {
+    title: 'AI Fundamentals Modules | DeepMind Resources Academy',
+    description:
+      'Work through the AI Fundamentals sequence with focused modules, lessons, checks, sandbox practice, and skill evidence.',
+    url: 'https://deepmindresources.pro/academy/learn/fundamentals/modules',
+    siteName: 'DeepMind Resources',
+    type: 'website',
   },
 }
 
@@ -44,6 +59,8 @@ type SandboxAttemptRow = {
   submitted_at: string | null
   reviewed_at: string | null
 }
+
+type Module = (typeof aiFundamentalsLearningPath.modules)[number]
 
 function getSupabaseKey() {
   return (
@@ -97,158 +114,363 @@ function formatRequirement(requirement: string) {
   }
 
   if (requirement === 'optional') {
-    return 'Optional'
+    return 'Optional practice'
   }
 
   if (requirement === 'final_required') {
-    return 'Final'
+    return 'Final evidence'
   }
 
-  return 'Required'
+  return 'Required evidence'
 }
 
-function moduleAvailabilityLabel(moduleNumber: number) {
-  if (moduleNumber === 1) {
-    return 'Start first'
-  }
-
-  return `After module ${moduleNumber - 1}`
+function formatSensitivity(sensitivity: string) {
+  return `${sensitivity.charAt(0).toUpperCase()}${sensitivity.slice(1)}`
 }
 
-function ModuleRow({
-  module,
-}: {
-  module: (typeof aiFundamentalsLearningPath.modules)[number]
-}) {
-  const isFirstModule = module.moduleNumber === 1
-  const sandboxLabel = formatRequirement(module.sandboxTask.requirement)
-
+function IconShell({ children, solid = false }: { children: ReactNode; solid?: boolean }) {
   return (
-    <article
-      id={module.slug}
-      className="scroll-mt-24 rounded-3xl border border-slate-200 bg-white shadow-sm"
+    <span
+      className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-sm ${
+        solid
+          ? 'bg-white text-blue-700'
+          : 'border border-blue-100 bg-gradient-to-br from-blue-600 to-blue-500 text-white'
+      }`}
     >
-      <div className="grid gap-0 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="min-w-0 p-5 sm:p-6">
-          <div className="flex flex-wrap items-center gap-3">
-            <span
-              className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl text-sm font-black ${
-                isFirstModule ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700'
-              }`}
-            >
-              {module.moduleNumber}
-            </span>
+      {children}
+    </span>
+  )
+}
 
-            <span className="rounded-full bg-blue-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-blue-700">
-              Module {module.moduleNumber}
-            </span>
-
-            <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-slate-600">
-              {moduleAvailabilityLabel(module.moduleNumber)}
-            </span>
-          </div>
-
-          <h2 className="mt-4 text-2xl font-black tracking-tight text-slate-950">
-            {module.title}
-          </h2>
-
-          <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-600">
-            {module.purpose}
-          </p>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <div className="flex items-center gap-2 text-slate-500">
-                <BookOpenCheck className="h-4 w-4" aria-hidden="true" />
-                <p className="text-[11px] font-black uppercase tracking-[0.14em]">Lessons</p>
-              </div>
-              <p className="mt-2 text-lg font-black text-slate-950">{module.lessons.length}</p>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <div className="flex items-center gap-2 text-slate-500">
-                <FileQuestion className="h-4 w-4" aria-hidden="true" />
-                <p className="text-[11px] font-black uppercase tracking-[0.14em]">Check</p>
-              </div>
-              <p className="mt-2 text-sm font-black leading-5 text-slate-950">
-                {module.knowledgeCheck.blocksProgressUntilPassed ? 'Required' : 'Diagnostic'}
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <div className="flex items-center gap-2 text-slate-500">
-                <FlaskConical className="h-4 w-4" aria-hidden="true" />
-                <p className="text-[11px] font-black uppercase tracking-[0.14em]">Sandbox</p>
-              </div>
-              <p className="mt-2 text-sm font-black leading-5 text-slate-950">{sandboxLabel}</p>
-            </div>
-          </div>
-
-          <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">
-              Lesson sequence
-            </p>
-
-            <ol className="mt-3 space-y-3">
-              {module.lessons.map((lesson) => (
-                <li key={lesson.id} className="rounded-2xl border border-slate-200 bg-white p-4">
-                  <div className="flex gap-3">
-                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-black text-blue-700">
-                      {lesson.sortOrder}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-sm font-black leading-5 text-slate-950">{lesson.title}</p>
-                      <p className="mt-1 text-sm leading-6 text-slate-600">{lesson.outcome}</p>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
+function ProgressCard({
+  label,
+  value,
+  icon,
+}: {
+  label: string
+  value: string | number
+  icon: ReactNode
+}) {
+  return (
+    <article className="rounded-3xl border border-blue-100 bg-white/90 p-4 shadow-sm shadow-blue-900/5">
+      <div className="flex items-center gap-3">
+        <IconShell>{icon}</IconShell>
+        <div>
+          <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">{label}</p>
+          <p className="mt-1 text-3xl font-black tracking-tight text-slate-950">{value}</p>
         </div>
-
-        <aside className="border-t border-slate-200 bg-slate-50 p-5 sm:p-6 xl:border-l xl:border-t-0">
-          <div className="rounded-2xl border border-slate-200 bg-white p-4">
-            <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">
-              Learner outcome
-            </p>
-            <ul className="mt-3 space-y-3">
-              {module.studentOutcome.slice(0, 4).map((outcome) => (
-                <li key={outcome} className="flex gap-2 text-sm leading-6 text-slate-600">
-                  <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-blue-600" aria-hidden="true" />
-                  <span>{outcome}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-            <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">
-              Knowledge check
-            </p>
-            <p className="mt-2 text-sm font-black leading-5 text-slate-950">
-              {module.knowledgeCheck.title}
-            </p>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              {module.knowledgeCheck.purpose}
-            </p>
-          </div>
-
-          <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-            <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">
-              Sandbox task
-            </p>
-            <p className="mt-2 text-sm font-black leading-5 text-slate-950">
-              {module.sandboxTask.title}
-            </p>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              {module.sandboxTask.scenario}
-            </p>
-          </div>
-        </aside>
       </div>
     </article>
   )
+}
+
+function MethodStep({
+  icon,
+  title,
+  detail,
+}: {
+  icon: ReactNode
+  title: string
+  detail: string
+}) {
+  return (
+    <article className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm shadow-blue-900/5">
+      <div className="flex items-start gap-3">
+        <IconShell>{icon}</IconShell>
+        <div>
+          <h3 className="text-sm font-black text-slate-950">{title}</h3>
+          <p className="mt-1 text-sm leading-6 text-slate-600">{detail}</p>
+        </div>
+      </div>
+    </article>
+  )
+}
+
+function ModuleStat({
+  icon,
+  label,
+  value,
+}: {
+  icon: ReactNode
+  label: string
+  value: string | number
+}) {
+  return (
+    <div className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm shadow-blue-900/5">
+      <div className="flex items-center gap-3">
+        <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+          {icon}
+        </span>
+        <div>
+          <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">{label}</p>
+          <p className="mt-1 text-lg font-black text-slate-950">{value}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ModulePanel({ module, index }: { module: Module; index: number }) {
+  const sandboxRequirement = formatRequirement(module.sandboxTask.requirement)
+
+  return (
+    <article className={`module-panel module-panel-${index + 1}`}>
+      <div className="overflow-hidden rounded-[2rem] border border-blue-100 bg-white shadow-sm shadow-blue-900/10">
+        <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-600 to-[#0034d8] p-5 text-white sm:p-7">
+          <div className="absolute right-0 top-0 h-44 w-44 rounded-full bg-white/10 blur-2xl" />
+          <div className="absolute bottom-0 right-24 h-28 w-28 rounded-full bg-cyan-300/20 blur-2xl" />
+
+          <div className="relative z-10 flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+            <div className="max-w-4xl">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-sm font-black text-blue-700 shadow-sm">
+                  {module.moduleNumber}
+                </span>
+                <span className="rounded-full border border-white/20 bg-white/15 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.16em] text-blue-50">
+                  Module {module.moduleNumber}
+                </span>
+                <span className="rounded-full border border-white/20 bg-white/15 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.16em] text-blue-50">
+                  {module.brainUpdateSensitivity} update sensitivity
+                </span>
+              </div>
+
+              <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl">{module.title}</h2>
+              <p className="mt-4 max-w-3xl text-base leading-8 text-blue-50">{module.purpose}</p>
+            </div>
+
+            <div className="rounded-3xl border border-white/15 bg-white/10 p-4 backdrop-blur xl:w-80">
+              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-100">
+                Module movement
+              </p>
+              <p className="mt-2 text-sm leading-6 text-blue-50">
+                Complete the lessons, pass the check, then move into the sandbox task where this module requires
+                practical evidence.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-5 sm:p-7">
+          <section className="grid gap-3 md:grid-cols-3">
+            <ModuleStat
+              icon={<BookOpenCheck className="h-5 w-5" aria-hidden="true" />}
+              label="Lessons"
+              value={module.lessons.length}
+            />
+            <ModuleStat
+              icon={<FileQuestion className="h-5 w-5" aria-hidden="true" />}
+              label="Knowledge check"
+              value={module.knowledgeCheck.blocksProgressUntilPassed ? 'Required' : 'Diagnostic'}
+            />
+            <ModuleStat
+              icon={<FlaskConical className="h-5 w-5" aria-hidden="true" />}
+              label="Sandbox lab"
+              value={sandboxRequirement}
+            />
+          </section>
+
+          <section className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
+            <div className="min-w-0 rounded-[1.75rem] border border-slate-200 bg-slate-50 p-4 sm:p-5">
+              <div className="flex items-center gap-3">
+                <IconShell>
+                  <Route className="h-5 w-5" aria-hidden="true" />
+                </IconShell>
+                <div>
+                  <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-600">
+                    Lesson sequence
+                  </p>
+                  <h3 className="text-xl font-black tracking-tight text-slate-950">Training route</h3>
+                </div>
+              </div>
+
+              <ol className="mt-5 space-y-3">
+                {module.lessons.map((lesson) => (
+                  <li key={lesson.id} className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm">
+                    <div className="flex gap-4">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-sm font-black text-white">
+                        {lesson.sortOrder}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-base font-black leading-6 text-slate-950">{lesson.title}</p>
+                        <p className="mt-2 text-sm leading-7 text-slate-600">{lesson.outcome}</p>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <aside className="space-y-4">
+              <div className="rounded-[1.75rem] border border-blue-100 bg-white p-5 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <IconShell>
+                    <Target className="h-5 w-5" aria-hidden="true" />
+                  </IconShell>
+                  <div>
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-600">
+                      Learner outcome
+                    </p>
+                    <h3 className="text-lg font-black tracking-tight text-slate-950">By the end</h3>
+                  </div>
+                </div>
+
+                <ul className="mt-4 space-y-3">
+                  {module.studentOutcome.map((outcome) => (
+                    <li key={outcome} className="flex gap-3 text-sm leading-6 text-slate-600">
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" aria-hidden="true" />
+                      <span>{outcome}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="rounded-[1.75rem] border border-blue-100 bg-blue-50 p-5">
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-blue-700 shadow-sm">
+                    <FileQuestion className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-700">
+                      Knowledge check
+                    </p>
+                    <h3 className="text-base font-black leading-6 text-slate-950">
+                      {module.knowledgeCheck.title}
+                    </h3>
+                  </div>
+                </div>
+                <p className="mt-4 text-sm leading-7 text-slate-700">{module.knowledgeCheck.purpose}</p>
+                <p className="mt-3 rounded-2xl border border-blue-100 bg-white p-3 text-sm font-bold leading-6 text-slate-700">
+                  {module.knowledgeCheck.passRule}
+                </p>
+              </div>
+
+              <div className="overflow-hidden rounded-[1.75rem] border border-blue-700 bg-gradient-to-br from-blue-600 to-[#0736db] p-5 text-white shadow-sm shadow-blue-900/20">
+                <div className="flex items-center gap-3">
+                  <IconShell solid>
+                    <FlaskConical className="h-5 w-5" aria-hidden="true" />
+                  </IconShell>
+                  <div>
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-100">
+                      Sandbox lab
+                    </p>
+                    <h3 className="text-base font-black leading-6 text-white">{module.sandboxTask.title}</h3>
+                  </div>
+                </div>
+                <p className="mt-4 text-sm leading-7 text-blue-50">{module.sandboxTask.scenario}</p>
+
+                <div className="mt-4 rounded-2xl border border-white/15 bg-white/10 p-4">
+                  <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-100">
+                    Success criteria
+                  </p>
+                  <ul className="mt-3 space-y-2">
+                    {module.sandboxTask.successCriteria.slice(0, 3).map((item) => (
+                      <li key={item} className="flex gap-2 text-sm leading-6 text-blue-50">
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </aside>
+          </section>
+
+          <section className="mt-5 rounded-[1.75rem] border border-blue-100 bg-white p-5 shadow-sm">
+            <div className="flex items-start gap-3">
+              <IconShell>
+                <Zap className="h-5 w-5" aria-hidden="true" />
+              </IconShell>
+              <div>
+                <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-600">
+                  Progress effect
+                </p>
+                <h3 className="text-lg font-black tracking-tight text-slate-950">What this module unlocks</h3>
+              </div>
+            </div>
+
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {module.progressEffect.unlocks.map((unlock) => (
+                <div key={unlock} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-sm font-bold leading-6 text-slate-700">{unlock}</p>
+                </div>
+              ))}
+              {module.progressEffect.dashboardSignals.slice(0, 3).map((signal) => (
+                <div key={signal} className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
+                  <p className="text-sm font-bold leading-6 text-blue-800">{signal}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      </div>
+    </article>
+  )
+}
+
+function buildTabCss(modules: Module[]) {
+  const moduleCss = modules
+    .map((module, index) => {
+      const tabNumber = index + 1
+
+      return `
+#module-tab-${tabNumber}:checked ~ .academy-module-shell .academy-module-panels .module-panel-${tabNumber} {
+  display: block;
+}
+
+#module-tab-${tabNumber}:checked ~ .academy-module-shell .academy-module-tabs label[for="module-tab-${tabNumber}"] {
+  border-color: transparent;
+  background: linear-gradient(135deg, #123BFF 0%, #0A63FF 55%, #45C9FF 140%);
+  color: #ffffff;
+  box-shadow: 0 18px 45px rgba(18, 59, 255, 0.24);
+}
+
+#module-tab-${tabNumber}:checked ~ .academy-module-shell .academy-module-tabs label[for="module-tab-${tabNumber}"] .academy-tab-index {
+  background: rgba(255, 255, 255, 0.96);
+  color: #123BFF;
+}
+
+#module-tab-${tabNumber}:checked ~ .academy-module-shell .academy-module-tabs label[for="module-tab-${tabNumber}"] .academy-tab-detail,
+#module-tab-${tabNumber}:checked ~ .academy-module-shell .academy-module-tabs label[for="module-tab-${tabNumber}"] .academy-tab-label {
+  color: rgba(255, 255, 255, 0.9);
+}
+`
+    })
+    .join('\n')
+
+  return `
+.module-panel {
+  display: none;
+  animation: academyPanelRise 380ms ease both;
+}
+
+@keyframes academyPanelRise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes academyGlowFloat {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
+}
+
+.academy-floating-node {
+  animation: academyGlowFloat 6s ease-in-out infinite;
+}
+
+${moduleCss}
+`
 }
 
 export default async function AIFundamentalsModulesPage() {
@@ -277,13 +499,6 @@ export default async function AIFundamentalsModulesPage() {
       .eq('user_id', user.id),
   ])
 
-  const progressSummary: ProgressSummary = {
-    lessonRecords: (lessonRows ?? []).length,
-    completedLessons: getCompletedLessonCount((lessonRows ?? []) as LessonProgressRow[]),
-    submittedSandboxAttempts: getSubmittedSandboxCount((sandboxRows ?? []) as SandboxAttemptRow[]),
-    reviewedSandboxAttempts: getReviewedSandboxCount((sandboxRows ?? []) as SandboxAttemptRow[]),
-  }
-
   const modules = aiFundamentalsLearningPath.modules
   const totalLessons = modules.reduce((sum, module) => sum + module.lessons.length, 0)
   const requiredSandboxTasks = modules.filter(
@@ -291,25 +506,56 @@ export default async function AIFundamentalsModulesPage() {
       module.sandboxTask.requirement === 'required' ||
       module.sandboxTask.requirement === 'final_required',
   ).length
-  const firstModule = modules[0]
+
+  const progressSummary: ProgressSummary = {
+    lessonRecords: (lessonRows ?? []).length,
+    completedLessons: getCompletedLessonCount((lessonRows ?? []) as LessonProgressRow[]),
+    submittedSandboxAttempts: getSubmittedSandboxCount((sandboxRows ?? []) as SandboxAttemptRow[]),
+    reviewedSandboxAttempts: getReviewedSandboxCount((sandboxRows ?? []) as SandboxAttemptRow[]),
+  }
+
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    name: aiFundamentalsLearningPath.title,
+    description:
+      'AI Fundamentals is a structured Academy training path covering AI concepts, modern tools, safety, tool selection, workflow design, sandbox practice, and final skill evidence.',
+    provider: {
+      '@type': 'Organization',
+      name: 'DeepMind Resources',
+      url: 'https://deepmindresources.pro',
+    },
+    hasCourseInstance: {
+      '@type': 'CourseInstance',
+      courseMode: 'online',
+      courseWorkload: `${modules.length} modules, ${totalLessons} lessons, ${requiredSandboxTasks} required sandbox tasks`,
+    },
+  }
 
   return (
-    <main className="min-h-screen bg-[#f4f9ff] text-slate-950">
-      <header className="sticky top-0 z-40 border-b border-blue-100 bg-white/95 backdrop-blur">
+    <main className="min-h-screen bg-[#eef7ff] text-slate-950">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+
+      <style dangerouslySetInnerHTML={{ __html: buildTabCss(modules) }} />
+
+      <header className="sticky top-0 z-50 border-b border-blue-100 bg-white/95 backdrop-blur">
         <div className="mx-auto flex min-h-16 w-full max-w-[1500px] items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-          <div className="flex min-w-0 items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white">
+          <Link href="/dashboard" className="flex min-w-0 items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-sm shadow-blue-900/20">
               <GraduationCap className="h-5 w-5" aria-hidden="true" />
             </span>
-            <div className="min-w-0">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">
+            <span className="min-w-0">
+              <span className="block text-[10px] font-black uppercase tracking-[0.22em] text-blue-600">
                 DeepMind Resources Academy
-              </p>
-              <h1 className="truncate text-base font-black tracking-tight text-slate-950 sm:text-lg">
+              </span>
+              <span className="block truncate text-base font-black tracking-tight text-slate-950 sm:text-lg">
                 AI Fundamentals
-              </h1>
-            </div>
-          </div>
+              </span>
+            </span>
+          </Link>
 
           <nav className="flex shrink-0 items-center gap-2">
             <Link
@@ -330,225 +576,247 @@ export default async function AIFundamentalsModulesPage() {
       </header>
 
       <div className="mx-auto w-full max-w-[1500px] px-4 py-5 sm:px-6 lg:px-8">
-        <section className="rounded-3xl border border-blue-100 bg-white p-5 shadow-sm sm:p-6">
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px] xl:items-start">
+        <section className="relative overflow-hidden rounded-[2.25rem] border border-blue-100 bg-white shadow-sm shadow-blue-900/10">
+          <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-blue-100 blur-3xl" />
+          <div className="absolute -bottom-24 right-56 h-64 w-64 rounded-full bg-cyan-100 blur-3xl" />
+
+          <div className="relative z-10 grid gap-6 p-5 sm:p-7 xl:grid-cols-[minmax(0,1fr)_440px] xl:items-center">
             <div className="min-w-0">
-              <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600">
-                Learning path
-              </p>
-              <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
-                Work through the AI Fundamentals sequence.
-              </h2>
-              <p className="mt-4 max-w-4xl text-base leading-7 text-slate-600">
-                Six modules take you from orientation and baseline confidence into AI concepts, modern tools,
-                safety, tool selection, practical workflow design, and final skill evidence.
+              <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-blue-700">
+                <Sparkles className="h-4 w-4" aria-hidden="true" />
+                Academy training path
+              </div>
+
+              <h1 className="mt-5 max-w-4xl text-4xl font-black tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
+                Work through AI Fundamentals one module at a time.
+              </h1>
+
+              <p className="mt-5 max-w-3xl text-base leading-8 text-slate-600 sm:text-lg">
+                Start with orientation, then build practical AI judgement through concepts, modern tools, safety,
+                tool selection, workflow design, sandbox practice, and final skill evidence.
               </p>
 
-              <div className="mt-5 flex flex-wrap gap-2">
-                <span className="rounded-full bg-blue-600 px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-white">
-                  {modules.length} modules
-                </span>
-                <span className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-blue-700">
-                  {totalLessons} lessons
-                </span>
-                <span className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-blue-700">
-                  {requiredSandboxTasks} required sandbox tasks
-                </span>
+              <div className="mt-6 flex flex-wrap gap-2">
+                <a
+                  href="#module-tabs"
+                  className="inline-flex items-center justify-center rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-sm shadow-blue-900/20 transition hover:bg-blue-700"
+                >
+                  Start Module 1
+                </a>
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 shadow-sm transition hover:border-blue-200 hover:text-blue-700"
+                >
+                  View dashboard
+                </Link>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
-                Your Academy record
-              </p>
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                <div className="rounded-2xl border border-slate-200 bg-white p-3">
-                  <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">
-                    Saved lessons
-                  </p>
-                  <p className="mt-1 text-2xl font-black text-slate-950">{progressSummary.lessonRecords}</p>
+            <div className="relative">
+              <div className="academy-floating-node rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-600 to-[#0736db] p-5 text-white shadow-2xl shadow-blue-900/25">
+                <div className="grid grid-cols-2 gap-3">
+                  <ProgressCard
+                    label="Modules"
+                    value={modules.length}
+                    icon={<Grid3X3 className="h-5 w-5" aria-hidden="true" />}
+                  />
+                  <ProgressCard
+                    label="Lessons"
+                    value={totalLessons}
+                    icon={<BookOpenCheck className="h-5 w-5" aria-hidden="true" />}
+                  />
+                  <ProgressCard
+                    label="Sandbox"
+                    value={requiredSandboxTasks}
+                    icon={<FlaskConical className="h-5 w-5" aria-hidden="true" />}
+                  />
+                  <ProgressCard
+                    label="Completed"
+                    value={progressSummary.completedLessons}
+                    icon={<BadgeCheck className="h-5 w-5" aria-hidden="true" />}
+                  />
                 </div>
-                <div className="rounded-2xl border border-slate-200 bg-white p-3">
-                  <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">
-                    Completed
+
+                <div className="mt-4 rounded-3xl border border-white/15 bg-white/10 p-4">
+                  <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-100">
+                    Your saved record
                   </p>
-                  <p className="mt-1 text-2xl font-black text-slate-950">{progressSummary.completedLessons}</p>
-                </div>
-                <div className="rounded-2xl border border-slate-200 bg-white p-3">
-                  <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">
-                    Submitted
+                  <p className="mt-2 text-sm leading-6 text-blue-50">
+                    {progressSummary.lessonRecords === 0
+                      ? 'No lesson progress has been saved yet. Begin with Module 1.'
+                      : `${progressSummary.lessonRecords} lesson record saved for this account.`}
                   </p>
-                  <p className="mt-1 text-2xl font-black text-slate-950">{progressSummary.submittedSandboxAttempts}</p>
-                </div>
-                <div className="rounded-2xl border border-slate-200 bg-white p-3">
-                  <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">
-                    Reviewed
-                  </p>
-                  <p className="mt-1 text-2xl font-black text-slate-950">{progressSummary.reviewedSandboxAttempts}</p>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="mt-5 grid gap-5 lg:grid-cols-[320px_minmax(0,1fr)]">
-          <aside className="rounded-3xl border border-blue-100 bg-white p-5 shadow-sm lg:sticky lg:top-24 lg:self-start">
-            <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600">
-              Path order
-            </p>
-            <h2 className="mt-2 text-xl font-black tracking-tight text-slate-950">
-              Start with Module 1.
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              Follow the sequence. Later modules depend on the judgement and safety habits built earlier.
-            </p>
+        <section className="mt-5 grid gap-3 md:grid-cols-4">
+          <MethodStep
+            icon={<ShieldCheck className="h-5 w-5" aria-hidden="true" />}
+            title="Understand"
+            detail="Build the core concept before touching tools or workflows."
+          />
+          <MethodStep
+            icon={<FileQuestion className="h-5 w-5" aria-hidden="true" />}
+            title="Check"
+            detail="Confirm the idea with a focused knowledge check."
+          />
+          <MethodStep
+            icon={<FlaskConical className="h-5 w-5" aria-hidden="true" />}
+            title="Practise"
+            detail="Move into sandbox tasks where the skill becomes visible."
+          />
+          <MethodStep
+            icon={<Trophy className="h-5 w-5" aria-hidden="true" />}
+            title="Prove"
+            detail="Final evidence becomes the route to skill recognition."
+          />
+        </section>
 
-            <ol className="mt-5 space-y-2">
-              {modules.map((module) => (
-                <li key={module.id}>
-                  <a
-                    href={`#${module.slug}`}
-                    className="flex gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3 transition hover:border-blue-200 hover:bg-blue-50"
+        <section id="module-tabs" className="mt-6">
+          {modules.map((module, index) => (
+            <input
+              key={module.id}
+              id={`module-tab-${index + 1}`}
+              name="ai-fundamentals-module-tabs"
+              type="radio"
+              className="sr-only"
+              defaultChecked={index === 0}
+            />
+          ))}
+
+          <div className="academy-module-shell grid gap-5 lg:grid-cols-[360px_minmax(0,1fr)]">
+            <aside className="academy-module-tabs rounded-[2rem] border border-blue-100 bg-white p-3 shadow-sm shadow-blue-900/10 lg:sticky lg:top-24 lg:self-start">
+              <div className="mb-3 px-2 pt-2">
+                <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600">
+                  Module tabs
+                </p>
+                <h2 className="mt-2 text-xl font-black tracking-tight text-slate-950">Choose your training step</h2>
+              </div>
+
+              <div className="flex gap-3 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
+                {modules.map((module, index) => (
+                  <label
+                    key={module.id}
+                    htmlFor={`module-tab-${index + 1}`}
+                    className="min-w-[260px] cursor-pointer rounded-3xl border border-slate-200 bg-slate-50 p-4 text-slate-950 transition hover:border-blue-200 hover:bg-blue-50 lg:min-w-0"
                   >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-xs font-black text-white">
-                      {module.moduleNumber}
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block text-sm font-black leading-5 text-slate-950">
-                        {module.title}
+                    <span className="flex items-start gap-3">
+                      <span className="academy-tab-index flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-sm font-black text-white">
+                        {module.moduleNumber}
                       </span>
-                      <span className="mt-1 block text-xs leading-5 text-slate-500">
-                        {module.lessons.length} lessons
+                      <span className="min-w-0">
+                        <span className="academy-tab-label block text-[10px] font-black uppercase tracking-[0.16em] text-blue-600">
+                          Module {module.moduleNumber}
+                        </span>
+                        <span className="mt-1 block text-sm font-black leading-5">{module.title}</span>
+                        <span className="academy-tab-detail mt-1 block text-xs leading-5 text-slate-500">
+                          {module.lessons.length} lessons · {formatRequirement(module.sandboxTask.requirement)}
+                        </span>
                       </span>
                     </span>
-                  </a>
-                </li>
+                  </label>
+                ))}
+              </div>
+            </aside>
+
+            <section className="academy-module-panels min-w-0">
+              {modules.map((module, index) => (
+                <ModulePanel key={module.id} module={module} index={index} />
               ))}
-            </ol>
+            </section>
+          </div>
+        </section>
 
-            <div className="mt-5 rounded-2xl border border-slate-200 bg-blue-50 p-4">
-              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-700">
-                First action
-              </p>
-              <p className="mt-2 text-sm font-black leading-5 text-slate-950">
-                {firstModule?.title ?? 'AI Orientation and Baseline'}
-              </p>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                Begin with orientation and baseline confidence before required sandbox evidence starts.
-              </p>
-            </div>
-          </aside>
-
-          <section className="min-w-0 space-y-5">
-            {modules.map((module) => (
-              <ModuleRow key={module.id} module={module} />
-            ))}
-
-            <section className="rounded-3xl border border-blue-100 bg-white p-5 shadow-sm sm:p-6">
-              <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
+        <section className="mt-6 overflow-hidden rounded-[2rem] border border-blue-100 bg-white shadow-sm shadow-blue-900/10">
+          <div className="grid gap-0 xl:grid-cols-[minmax(0,1fr)_420px]">
+            <div className="p-5 sm:p-7">
+              <div className="flex items-center gap-3">
+                <IconShell>
+                  <ClipboardCheck className="h-5 w-5" aria-hidden="true" />
+                </IconShell>
                 <div>
                   <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600">
-                    Completion evidence
-                  </p>
-                  <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">
-                    What the path requires
-                  </h2>
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                    {aiFundamentalsLearningPath.requiredCompletionEvidence.map((item) => (
-                      <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                        <div className="flex gap-2">
-                          <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" aria-hidden="true" />
-                          <p className="text-sm font-bold leading-6 text-slate-700">{item}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
                     Final skill check
                   </p>
-                  <h3 className="mt-2 text-lg font-black leading-6 text-slate-950">
+                  <h2 className="text-2xl font-black tracking-tight text-slate-950">
                     {aiFundamentalsLearningPath.finalSkillCheck.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    {aiFundamentalsLearningPath.finalSkillCheck.scenario}
-                  </p>
+                  </h2>
+                </div>
+              </div>
 
-                  <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-                    <div className="flex items-center gap-2 text-slate-500">
-                      <ClipboardCheck className="h-4 w-4" aria-hidden="true" />
-                      <p className="text-[11px] font-black uppercase tracking-[0.16em]">
-                        Passing evidence
-                      </p>
-                    </div>
-                    <ul className="mt-3 space-y-2">
-                      {aiFundamentalsLearningPath.finalSkillCheck.passingEvidence.map((item) => (
-                        <li key={item} className="flex gap-2 text-sm leading-5 text-slate-600">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" aria-hidden="true" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+              <p className="mt-5 max-w-4xl text-base leading-8 text-slate-600">
+                {aiFundamentalsLearningPath.finalSkillCheck.scenario}
+              </p>
 
-                  <div className="mt-4 flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4">
-                    <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" aria-hidden="true" />
-                    <div>
-                      <p className="text-sm font-black text-slate-950">
-                        Award: {aiFundamentalsLearningPath.finalSkillCheck.award}
-                      </p>
-                      <p className="mt-1 text-sm leading-6 text-slate-600">
-                        Awarding should wait for the required lesson, check, sandbox, and assessment evidence.
-                      </p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                {aiFundamentalsLearningPath.finalSkillCheck.passingEvidence.map((item) => (
+                  <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <div className="flex gap-2">
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" aria-hidden="true" />
+                      <p className="text-sm font-bold leading-6 text-slate-700">{item}</p>
                     </div>
                   </div>
-                </div>
+                ))}
               </div>
-            </section>
+            </div>
 
-            <section className="rounded-3xl border border-blue-100 bg-white p-5 shadow-sm sm:p-6">
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <Route className="h-5 w-5 text-blue-600" aria-hidden="true" />
-                  <h3 className="mt-3 text-sm font-black text-slate-950">Learn in order</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    Modules build from orientation to workflow design.
-                  </p>
-                </div>
+            <div className="border-t border-blue-100 bg-gradient-to-br from-blue-600 to-[#0736db] p-5 text-white sm:p-7 xl:border-l xl:border-t-0">
+              <IconShell solid>
+                <BadgeCheck className="h-5 w-5" aria-hidden="true" />
+              </IconShell>
+              <p className="mt-5 text-[11px] font-black uppercase tracking-[0.22em] text-blue-100">
+                Award target
+              </p>
+              <h3 className="mt-2 text-2xl font-black tracking-tight">
+                {aiFundamentalsLearningPath.finalSkillCheck.award}
+              </h3>
+              <p className="mt-4 text-sm leading-7 text-blue-50">
+                The badge should only be awarded after the required lessons, checks, sandbox evidence, and final
+                assessment are complete.
+              </p>
+            </div>
+          </div>
+        </section>
 
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <FileQuestion className="h-5 w-5 text-blue-600" aria-hidden="true" />
-                  <h3 className="mt-3 text-sm font-black text-slate-950">Pass checks</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    Checks confirm understanding before skill evidence.
-                  </p>
-                </div>
+        <section className="mt-6 rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm shadow-blue-900/10 sm:p-6">
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-3xl border border-blue-100 bg-blue-50 p-5">
+              <BookOpenCheck className="h-6 w-6 text-blue-700" aria-hidden="true" />
+              <h3 className="mt-4 text-base font-black text-slate-950">Learn with sequence</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Each module builds on the judgement, language, and safety habits from the previous step.
+              </p>
+            </div>
 
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <FlaskConical className="h-5 w-5 text-blue-600" aria-hidden="true" />
-                  <h3 className="mt-3 text-sm font-black text-slate-950">Prove practice</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    Sandbox work proves practical application.
-                  </p>
-                </div>
-              </div>
+            <div className="rounded-3xl border border-blue-100 bg-blue-50 p-5">
+              <FileQuestion className="h-6 w-6 text-blue-700" aria-hidden="true" />
+              <h3 className="mt-4 text-base font-black text-slate-950">Check understanding</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Knowledge checks keep progress connected to understanding, not just reading.
+              </p>
+            </div>
 
-              <div className="mt-5 flex flex-col gap-2 border-t border-slate-200 pt-5 sm:flex-row sm:justify-between">
-                <Link
-                  href="/dashboard"
-                  className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
-                >
-                  Dashboard
-                </Link>
-                <span className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-500">
-                  <LockKeyhole className="h-4 w-4" aria-hidden="true" />
-                  Module lessons unlock in sequence
-                </span>
-              </div>
-            </section>
-          </section>
+            <div className="rounded-3xl border border-blue-100 bg-blue-50 p-5">
+              <FlaskConical className="h-6 w-6 text-blue-700" aria-hidden="true" />
+              <h3 className="mt-4 text-base font-black text-slate-950">Prove practice</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Sandbox tasks create the practical evidence that later powers progress, awards, and skill trace.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm font-semibold leading-6 text-slate-600">
+              Next product step: create the Module 1 learning screen and start wiring lesson progress.
+            </p>
+            <span className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-500">
+              <LockKeyhole className="h-4 w-4" aria-hidden="true" />
+              Lessons unlock in sequence
+            </span>
+          </div>
         </section>
       </div>
     </main>
