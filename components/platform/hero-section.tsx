@@ -135,21 +135,18 @@ export function HeroSection() {
         </div>
 
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="overflow-hidden rounded-[2rem] border border-sand/10 bg-white/88 px-4 py-6 shadow-sm backdrop-blur">
+          <div className="rounded-[2rem] border border-sand/10 bg-white/88 px-5 py-6 shadow-sm backdrop-blur">
             <p className="text-center text-xs font-black uppercase tracking-[0.18em] text-[#123BFF]">
               Tracking the AI models and tools shaping modern workflows
             </p>
 
-            <div className="mt-5 flex flex-nowrap items-center justify-start gap-3 overflow-x-auto pb-2 sm:justify-center sm:pb-0">
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
               {aiToolStrip.map((tool) => (
                 <div
                   key={tool.name}
-                  className="flex shrink-0 items-center gap-3 rounded-2xl border border-[#123BFF]/10 bg-white px-4 py-3 shadow-sm"
+                  className="flex min-h-20 items-center justify-center rounded-3xl border border-[#123BFF]/10 bg-white px-5 py-4 text-center shadow-sm transition hover:border-[#123BFF]/25 hover:shadow-md"
                 >
-                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#EAF7FF] text-[0.65rem] font-black tracking-[-0.02em] text-[#123BFF]">
-                    {tool.mark}
-                  </span>
-                  <span className="text-sm font-black tracking-[-0.02em] text-sand/70">
+                  <span className="text-lg font-black tracking-[-0.05em] text-sand/58">
                     {tool.name}
                   </span>
                 </div>
