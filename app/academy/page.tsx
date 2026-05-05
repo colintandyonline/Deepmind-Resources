@@ -113,6 +113,44 @@ const competencyArchitecture: Card[] = [
   },
 ]
 
+const featuredPathways: FeaturedPathway[] = [
+  {
+    title: 'AI Fundamentals',
+    label: 'Foundation',
+    description:
+      'Build the practical AI foundation: what AI is, how modern tools work, where they fail, and how to use them safely.',
+    href: '/academy/path/fundamentals',
+    icon: BrainCircuit,
+    outcomes: ['Core AI concepts', 'Safe-use judgement', 'Beginner sandbox practice'],
+  },
+  {
+    title: 'Prompt Engineering',
+    label: 'Core execution',
+    description:
+      'Move from vague prompting into structured instructions, context, constraints, examples, review steps, and reusable prompt systems.',
+    href: '/academy/path/prompting',
+    icon: Sparkles,
+    outcomes: ['Structured prompts', 'Output control', 'Prompt improvement loops'],
+  },
+  {
+    title: 'Agent Architecture',
+    label: 'Builder path',
+    description:
+      'Understand agent goals, tools, permissions, memory, review gates, and the boundaries needed for controlled agentic systems.',
+    href: '/academy/path/agents',
+    icon: Route,
+    outcomes: ['Agent boundaries', 'Tool permissions', 'Human review gates'],
+  },
+  {
+    title: 'Multi-Agent Systems',
+    label: 'Advanced builder',
+    description:
+      'Learn how specialist agents coordinate through roles, handoffs, shared state, validation layers, and escalation rules.',
+    href: '/academy/path/multi-agent-systems',
+    icon: Workflow,
+    outcomes: ['Specialist roles', 'Agent handoffs', 'Validation workflows'],
+  },
+]
 const intelligencePipeline: Card[] = [
   {
     title: 'Frontier signal detected',
@@ -340,7 +378,7 @@ export default function AcademyPage() {
             className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-sand/10 bg-white text-sand/60 shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
             aria-label="Close Academy onboarding"
           >
-            Ãƒâ€”
+            ÃƒÆ’Ã¢â‚¬â€
           </button>
 
           <div className="grid gap-0 md:grid-cols-[0.95fr_1.05fr]">
@@ -661,6 +699,86 @@ export default function AcademyPage() {
             </div>
           </section>
 
+          <section className="py-8" aria-labelledby="academy-featured-pathways-title">
+            <div className="rounded-[2rem] border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div className="max-w-3xl">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                    <BookOpenCheck className="h-4 w-4" aria-hidden="true" />
+                    Learning pathways
+                  </span>
+
+                  <h2
+                    id="academy-featured-pathways-title"
+                    className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl"
+                  >
+                    Start with the pathway that matches your next AI skill.
+                  </h2>
+
+                  <p className="mt-4 text-base leading-8 text-sand/65">
+                    These Academy pathways move learners from understanding into practical skill:
+                    concepts, workflow judgement, sandbox practice, and update-aware competency.
+                  </p>
+                </div>
+
+                <Link
+                  href="/syllabus"
+                  className="inline-flex w-fit items-center justify-center gap-2 rounded-2xl border border-sand/10 bg-white px-5 py-3 text-sm font-bold text-[#123BFF] shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#0A63FF]"
+                >
+                  View syllabus
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+              </div>
+
+              <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+                {featuredPathways.map((pathway) => {
+                  const Icon = pathway.icon
+
+                  return (
+                    <article
+                      key={pathway.title}
+                      className="flex h-full flex-col rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF] shadow-sm">
+                          <Icon className="h-6 w-6" aria-hidden="true" />
+                        </span>
+
+                        <span className="rounded-full bg-[#123BFF] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white shadow-sm">
+                          {pathway.label}
+                        </span>
+                      </div>
+
+                      <h3 className="mt-5 text-xl font-bold tracking-tight text-sand">
+                        {pathway.title}
+                      </h3>
+
+                      <p className="mt-3 text-sm leading-7 text-sand/65">
+                        {pathway.description}
+                      </p>
+
+                      <div className="mt-5 grid gap-3">
+                        {pathway.outcomes.map((outcome) => (
+                          <div key={outcome} className="flex items-start gap-3 rounded-2xl bg-[#F7FBFF] p-3">
+                            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#123BFF]" aria-hidden="true" />
+                            <p className="text-sm leading-6 text-sand/70">{outcome}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      <Link
+                        href={pathway.href}
+                        className="mt-6 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
+                      >
+                        View pathway
+                        <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                      </Link>
+                    </article>
+                  )
+                })}
+              </div>
+            </div>
+          </section>
           <section className="py-8" aria-labelledby="live-intelligence-title">
             <div className="rounded-[2rem] border border-sand/10 bg-[#123BFF] p-6 text-white shadow-sm sm:p-8 lg:p-10">
               <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
