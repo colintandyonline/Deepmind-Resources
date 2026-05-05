@@ -15,6 +15,7 @@ import {
   Workflow,
 } from 'lucide-react'
 import { HeroSection } from '@/components/platform/hero-section'
+import { AiBrandStrip } from '@/components/platform/ai-brand-strip'
 import { CodeSandbox } from '@/components/platform/code-sandbox'
 import { ContentCardGrid, type LessonModule } from '@/components/platform/content-card'
 
@@ -388,6 +389,7 @@ export default function HomePage() {
       <main className="relative z-10 min-h-screen">
         <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
           <HeroSection />
+          <AiBrandStrip />
 
           <section className="mt-8 lg:mt-12">
             <div className="rounded-3xl border border-sand/10 bg-[#123BFF] p-6 text-white shadow-sm sm:p-8 lg:p-10">
