@@ -26,16 +26,16 @@ import {
 import { aiFundamentalsLearningPath } from '@/lib/academy/fundamentals'
 
 export const metadata: Metadata = {
-  title: 'AI Fundamentals Modules | DeepMind Resources Academy',
+  title: 'AI Fundamentals Beginner Course | DeepMind Resources Academy',
   description:
-    'A focused Academy training workspace for AI Fundamentals modules, lesson outcomes, knowledge checks, sandbox practice, progress evidence, and final skill assessment.',
+    'A focused beginner Academy course for building AI fundamentals, safe-use judgement, prompt basics, tool selection, validation habits, sandbox practice, and final skill evidence.',
   alternates: {
     canonical: 'https://deepmindresources.pro/academy/learn/fundamentals/modules',
   },
   openGraph: {
-    title: 'AI Fundamentals Modules | DeepMind Resources Academy',
+    title: 'AI Fundamentals Beginner Course | DeepMind Resources Academy',
     description:
-      'Work through the AI Fundamentals sequence with focused modules, lessons, checks, sandbox practice, and skill evidence.',
+      'Build AI fundamentals from the ground up with beginner modules, safe-use judgement, prompt basics, tool awareness, validation habits, and sandbox practice.',
     url: 'https://deepmindresources.pro/academy/learn/fundamentals/modules',
     siteName: 'DeepMind Resources',
     type: 'website',
@@ -468,6 +468,11 @@ function buildTabCss(modules: Module[]) {
   animation: academyGlowFloat 6s ease-in-out infinite;
 }
 
+.academy-module-panels img[src*="/brand/"],
+.academy-module-panels img[alt="DeepMind Resources"] {
+  display: none !important;
+}
+
 ${moduleCss}
 `
 }
@@ -516,9 +521,9 @@ export default async function AIFundamentalsModulesPage() {
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'Course',
-    name: aiFundamentalsLearningPath.title,
+    name: 'AI Fundamentals Beginner Course',
     description:
-      'AI Fundamentals is a structured Academy training path covering AI concepts, modern tools, safety, tool selection, workflow design, sandbox practice, and final skill evidence.',
+      'AI Fundamentals is the beginner Academy course for building practical AI competency, safe-use judgement, prompt foundations, tool awareness, validation habits, and verified sandbox practice.',
     provider: {
       '@type': 'Organization',
       name: 'DeepMind Resources',
@@ -583,16 +588,15 @@ export default async function AIFundamentalsModulesPage() {
             <div className="min-w-0">
               <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-blue-700">
                 <Sparkles className="h-4 w-4" aria-hidden="true" />
-                Academy training path
+                Beginner foundation path
               </div>
 
               <h1 className="mt-5 max-w-4xl text-3xl font-black tracking-tight text-slate-950 sm:text-4xl lg:text-5xl">
-                Build your AI operating base.
+                AI Fundamentals beginner course.
               </h1>
 
               <p className="mt-5 max-w-3xl text-base leading-8 text-slate-600 sm:text-lg">
-                Start with orientation, then build practical AI judgement through concepts, modern tools, safety,
-                tool selection, workflow design, sandbox practice, and final skill evidence.
+                Build the foundation before advanced AI work: safe-use judgement, prompt basics, tool awareness, output validation, sandbox practice, and verified skill evidence.
               </p>
 
               <div className="mt-6 flex flex-wrap gap-2">
@@ -600,7 +604,7 @@ export default async function AIFundamentalsModulesPage() {
                   href="#module-tabs"
                   className="inline-flex items-center justify-center rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-sm shadow-blue-900/20 transition hover:bg-blue-700"
                 >
-                  Start with Module 1
+                  Start Module 1
                 </a>
                 <Link
                   href="/dashboard"
@@ -820,4 +824,5 @@ export default async function AIFundamentalsModulesPage() {
     </main>
   )
 }
+
 
