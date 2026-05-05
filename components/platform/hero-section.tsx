@@ -52,7 +52,7 @@ export function HeroSection() {
   return (
     <section className="relative overflow-hidden">
       <div className="relative z-10">
-        <div className="relative min-h-[calc(100vh-5rem)] overflow-hidden bg-[#EAF7FF]">
+        <div className="relative min-h-[calc(100vh-5rem)] overflow-hidden rounded-[2rem] bg-[#EAF7FF]">
           <Image
             src="/brand/homepage-system-hero.png"
             alt="DeepMind Resources connected AI training system with verification, tool intelligence, sandbox proof, academy pathways, and workforce capability nodes"
