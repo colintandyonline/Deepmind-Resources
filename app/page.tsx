@@ -1,4 +1,5 @@
-import type { LucideIcon } from 'lucide-react'
+﻿import type { LucideIcon } from 'lucide-react'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import {
   ArrowRight,
@@ -15,7 +16,7 @@ import {
   Workflow,
 } from 'lucide-react'
 import { HeroSection } from '@/components/platform/hero-section'
-import { CodeSandbox } from '@/components/platform/code-sandbox'
+
 import { ContentCardGrid, type LessonModule } from '@/components/platform/content-card'
 
 const featuredModules: LessonModule[] = [
@@ -211,7 +212,7 @@ export default function HomePage() {
             className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-sand/10 bg-white text-sand/60 shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
             aria-label="Close signup prompt"
           >
-            Ãƒâ€”
+            ÃƒÆ’Ã¢â‚¬â€
           </button>
 
           <div className="grid md:grid-cols-[0.95fr_1.05fr]">
@@ -264,7 +265,7 @@ export default function HomePage() {
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
                 >
                   Explore the Academy
-                  <span aria-hidden="true">Ã¢â€ â€™</span>
+                  <span aria-hidden="true">ÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬â„¢</span>
                 </a>
 
                 <a
@@ -272,7 +273,7 @@ export default function HomePage() {
                   className="inline-flex items-center justify-center gap-2 rounded-2xl border border-sand/10 bg-white px-5 py-4 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
                 >
                   Sign up and create workspace
-                  <span aria-hidden="true">Ã¢â€ â€™</span>
+                  <span aria-hidden="true">ÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬â„¢</span>
                 </a>
 
                 <a
@@ -280,7 +281,7 @@ export default function HomePage() {
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#EAF7FF] px-5 py-4 text-sm font-bold text-[#123BFF] shadow-sm transition hover:bg-[#DDF2FF]"
                 >
                   Get your business onboarded
-                  <span aria-hidden="true">Ã¢â€ â€™</span>
+                  <span aria-hidden="true">ÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬â„¢</span>
                 </a>
               </div>
 
@@ -505,7 +506,7 @@ export default function HomePage() {
                   </span>
 
                   <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand sm:text-3xl">
-                    AI update → verified meaning → Agentic Sandbox Deployment.
+                    AI update â†’ verified meaning â†’ Agentic Sandbox Deployment.
                   </h2>
 
                   <p className="mt-3 max-w-3xl text-sm leading-7 text-sand/65 sm:text-base">
@@ -629,4 +630,5 @@ export default function HomePage() {
     </div>
   )
 }
+
 
