@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Image from 'next/image'
 import Link from 'next/link'
@@ -117,9 +117,11 @@ export function HeroSection() {
         <div className="relative min-h-[calc(100vh-5rem)] overflow-hidden rounded-[2rem] bg-[#EAF7FF]">
           <Image
             src="/brand/homepage-system-hero.png"
-            alt="DeepMind Resources connected AI training system with verification, tool intelligence, sandbox proof, academy pathways, and workforce capability nodes"
+            alt="DeepMind Resources visual system showing connected agentic AI training, verified lessons, tool intelligence, sandbox practice, and business AI competency pathways"
+            title="DeepMind Resources agentic AI training and tool intelligence system"
             fill
-            sizes="100vw"
+            sizes="(min-width: 1536px) 1280px, (min-width: 768px) calc(100vw - 18rem), calc(100vw - 2rem)"
+            quality={75}
             className="object-cover object-center"
             priority
           />
