@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   description:
     'Build core AI competency with source-aware foundations, safe-use judgement, prompt basics, tool selection, validation habits, and verified sandbox practice.',
   alternates: {
-    canonical: 'https://deepmindresources.pro/path/fundamentals',
+    canonical: 'https://deepmindresources.pro/academy/path/fundamentals',
   },
   keywords: [
     'AI fundamentals training',
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     title: 'AI Fundamentals Training Path | DeepMind Resources',
     description:
       'A practical AI fundamentals path for building safe-use judgement, prompt foundations, tool awareness, validation habits, and production-ready AI competency.',
-    url: 'https://deepmindresources.pro/path/fundamentals',
+    url: 'https://deepmindresources.pro/academy/path/fundamentals',
     siteName: 'DeepMind Resources',
     type: 'website',
   },
@@ -253,7 +253,7 @@ const structuredData = {
   name: 'AI Fundamentals Pathway | DeepMind Resources Academy',
   description:
     'A professional AI fundamentals pathway for building practical AI competency, safe-use habits, prompt foundations, tool judgement, and verified sandbox practice.',
-  url: 'https://deepmindresources.pro/path/fundamentals',
+  url: 'https://deepmindresources.pro/academy/path/fundamentals',
   publisher: {
     '@type': 'Organization',
     name: 'DeepMind Resources',

@@ -18,7 +18,7 @@ const academyPaths = [
     title: 'AI Fundamentals',
     description:
       'Build the operating base: how AI works, where it fails, what needs review, and how to use it safely before real workflow use.',
-    href: '/path/fundamentals',
+    href: '/academy/path/fundamentals',
   },
   {
     icon: Sparkles,
@@ -26,7 +26,7 @@ const academyPaths = [
     title: 'Prompt Engineering',
     description:
       'Turn weak requests into structured instructions with context, constraints, output rules, and validation before production use.',
-    href: '/path/prompting',
+    href: '/academy/path/prompting',
   },
   {
     icon: Bot,
@@ -34,7 +34,7 @@ const academyPaths = [
     title: 'Agent Architecture',
     description:
       'Design bounded AI agents with defined goals, tool permissions, memory rules, escalation points, and human review gates.',
-    href: '/path/agents',
+    href: '/academy/path/agents',
   },
   {
     icon: Network,
@@ -42,7 +42,7 @@ const academyPaths = [
     title: 'Multi-Agent Systems',
     description:
       'Coordinate specialist agents with explicit roles, handoff contracts, shared state, validation layers, and reviewable workflow logic.',
-    href: '/path/multi-agent-systems',
+    href: '/academy/path/multi-agent-systems',
   },
 ]
 

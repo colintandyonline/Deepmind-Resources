@@ -24,10 +24,10 @@ const footerColumns = [
   {
     title: 'Learning paths',
     links: [
-      { label: 'AI Fundamentals', href: '/path/fundamentals' },
-      { label: 'Prompt Engineering', href: '/path/prompting' },
-      { label: 'Agent Architecture', href: '/path/agents' },
-      { label: 'Multi-Agent Systems', href: '/path/multi-agent-systems' },
+      { label: 'AI Fundamentals', href: '/academy/path/fundamentals' },
+      { label: 'Prompt Engineering', href: '/academy/path/prompting' },
+      { label: 'Agent Architecture', href: '/academy/path/agents' },
+      { label: 'Multi-Agent Systems', href: '/academy/path/multi-agent-systems' },
     ],
   },
   {
@@ -187,7 +187,7 @@ export function SiteFooter() {
         <div className="border-t border-white/10 bg-[#07152F] px-5 py-4 text-white sm:px-8">
           <div className="flex flex-col gap-3 text-center text-xs sm:text-left">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p>Ãƒâ€šÃ‚Â© 2026 DeepMind Resources. Built for verified AI skill gain.</p>
+              <p>ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© 2026 DeepMind Resources. Built for verified AI skill gain.</p>
               <p className="inline-flex items-center justify-center gap-2 sm:justify-end">
                 <BookOpenCheck className="h-4 w-4" aria-hidden="true" />
                 AI update -&gt; verified meaning -&gt; practical lesson -&gt; sandbox task.

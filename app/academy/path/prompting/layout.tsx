@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     'Learn prompt engineering as a production skill: structured instructions, context control, constraints, examples, evaluation loops, reusable systems, and verified sandbox tasks.',
   alternates: {
-    canonical: 'https://deepmindresources.pro/path/prompting',
+    canonical: 'https://deepmindresources.pro/academy/path/prompting',
   },
   keywords: [
     'prompt engineering training',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     title: 'Prompt Engineering Training Path | DeepMind Resources',
     description:
       'A professional prompt engineering path for building structured instructions, context control, reusable prompt systems, evaluation loops, and verified sandbox practice.',
-    url: 'https://deepmindresources.pro/path/prompting',
+    url: 'https://deepmindresources.pro/academy/path/prompting',
     siteName: 'DeepMind Resources',
     type: 'website',
   },

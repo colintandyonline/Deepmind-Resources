@@ -20,43 +20,42 @@ import {
   ShieldCheck,
   Sparkles,
   Target,
-  UsersRound,
   Workflow,
   Zap,
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Multi-Agent Systems Training Path | DeepMind Resources',
+  title: 'AI Agent Architecture Training Path | DeepMind Resources',
   description:
-    'Learn multi-agent systems with specialist roles, handoffs, shared state, orchestration logic, validation layers, escalation paths, and reviewable AI workflows.',
+    'Learn AI agent architecture with bounded goals, tool permissions, memory rules, RAG context, review gates, validation layers, and production-ready workflow design.',
   alternates: {
-    canonical: 'https://deepmindresources.pro/path/multi-agent-systems',
+    canonical: 'https://deepmindresources.pro/academy/path/agents',
   },
   keywords: [
-    'multi-agent systems training',
-    'multi-agent AI workflows',
-    'agent orchestration',
-    'AI agent handoffs',
-    'specialist AI agents',
-    'multi-agent architecture',
-    'AI workflow validation',
-    'human-in-the-loop agents',
-    'agentic orchestration training',
-    'production multi-agent systems',
+    'AI agent architecture',
+    'AI agents training',
+    'agentic AI systems',
+    'AI tool calling',
+    'agent workflow design',
+    'RAG agents',
+    'AI agent safety',
+    'human review gates',
+    'agent sandbox tasks',
+    'production AI agents',
   ],
   openGraph: {
-    title: 'Multi-Agent Systems Training Path | DeepMind Resources',
+    title: 'AI Agent Architecture Training Path | DeepMind Resources',
     description:
-      'A professional training path for multi-agent systems: specialist roles, handoffs, orchestration logic, shared state, validation layers, escalation, and reviewable workflows.',
-    url: 'https://deepmindresources.pro/path/multi-agent-systems',
+      'A practical training path for designing bounded AI agents with tools, memory, RAG context, permissions, review gates, validation, and production workflow discipline.',
+    url: 'https://deepmindresources.pro/academy/path/agents',
     siteName: 'DeepMind Resources',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Multi-Agent Systems Training Path | DeepMind Resources',
+    title: 'AI Agent Architecture Training Path | DeepMind Resources',
     description:
-      'Build multi-agent system competency with specialist roles, handoffs, orchestration logic, validation layers, escalation paths, and verified sandbox practice.',
+      'Learn bounded AI agent architecture with tool permissions, memory rules, RAG context, review gates, validation layers, and verified sandbox practice.',
   },
 }
 
@@ -79,27 +78,27 @@ type FaqItem = {
 
 const architecturePrinciples: Card[] = [
   {
-    title: 'Specialist roles, not agent sprawl',
+    title: 'Bounded autonomy',
     description:
-      'Define why each agent exists, what it owns, what it must never decide, and which output another layer must review.',
-    icon: UsersRound,
+      'Define what the agent can decide, what it can only recommend, and where human approval is required before action.',
+    icon: ShieldCheck,
   },
   {
-    title: 'Explicit handoffs',
+    title: 'Tool permissions',
     description:
-      'Control how work moves between agents with clear input contracts, output formats, escalation rules, and acceptance criteria.',
-    icon: GitBranch,
+      'Map each tool to a safe purpose, allowed inputs, expected outputs, failure states, and review rules before deployment.',
+    icon: LockKeyhole,
   },
   {
-    title: 'Validation before action',
+    title: 'State and memory control',
     description:
-      'Place validator, reviewer, and human approval gates before outputs influence tools, decisions, business workflows, or publication.',
-    icon: BadgeCheck,
+      'Design what the agent may remember, what should expire, what must be retrieved, and what should never enter context.',
+    icon: BrainCircuit,
   },
   {
-    title: 'Observable orchestration',
+    title: 'Observable workflows',
     description:
-      'Track state, decisions, tool calls, failed handoffs, confidence gaps, and review history so the system can be inspected.',
+      'Build traceable steps, logs, checkpoints, escalation rules, and validation criteria so agent behaviour can be inspected.',
     icon: Radar,
   },
 ]
@@ -107,147 +106,147 @@ const architecturePrinciples: Card[] = [
 const routeSteps: RouteStep[] = [
   {
     label: '01',
-    title: 'Split the workflow into accountable roles',
+    title: 'Define the operating boundary',
     description:
-      'Identify whether the task needs scout, planner, tool, reviewer, validator, business, or publication agents before adding complexity.',
+      'Clarify the goal, user, risk level, data boundary, tool access, review owner, and what the agent must never do.',
   },
   {
     label: '02',
-    title: 'Define contracts and handoffs',
+    title: 'Design the tool and context layer',
     description:
-      'Give every agent a narrow responsibility, input shape, output shape, confidence rule, and handoff condition.',
+      'Connect prompts, tools, retrieval, memory, and workflow state with explicit rules for when each component is used.',
   },
   {
     label: '03',
-    title: 'Add shared state and review controls',
+    title: 'Add review gates and failure controls',
     description:
-      'Decide what the system can remember, what must be logged, which claims need validation, and when humans approve next actions.',
+      'Create approval points, uncertainty handling, fallback behaviour, logging, and escalation before the workflow reaches production.',
   },
   {
     label: '04',
-    title: 'Test coordination in the sandbox',
+    title: 'Test behaviour in the sandbox',
     description:
-      'Practise agent role design, failed handoffs, validation checks, and orchestration patterns before using multi-agent workflows for real work.',
+      'Practise agent design against realistic scenarios so users can spot unsafe autonomy, weak tool boundaries, and missing validation.',
   },
 ]
 
 const learningAreas: Card[] = [
   {
-    title: 'Multi-agent fundamentals',
+    title: 'Agent mental models',
     description:
-      'Understand when several agents improve a workflow, when one agent is enough, and when the design is overbuilt.',
+      'Understand the difference between chatbots, workflows, assistants, tool-calling systems, and genuinely agentic patterns.',
     icon: Bot,
   },
   {
-    title: 'Agent role architecture',
+    title: 'Instruction architecture',
     description:
-      'Design scout, planner, executor, critic, validator, and business-review roles with narrow authority and clear responsibilities.',
-    icon: UsersRound,
+      'Build role, goal, tool, memory, planning, refusal, escalation, and review instructions that agents can follow consistently.',
+    icon: Sparkles,
   },
   {
-    title: 'Handoff protocols',
+    title: 'Tool-calling control',
     description:
-      'Build structured handoffs with task state, evidence, missing context, confidence labels, and next-action requirements.',
-    icon: GitBranch,
+      'Decide when tools are needed, what parameters are allowed, how outputs are validated, and when action must pause.',
+    icon: Zap,
   },
   {
-    title: 'Shared memory and state',
+    title: 'RAG and knowledge context',
     description:
-      'Control what the system shares, persists, retrieves, discards, and isolates so agents do not pollute one another with weak context.',
-    icon: BrainCircuit,
-  },
-  {
-    title: 'Validation layers',
-    description:
-      'Add review agents, source checks, confidence thresholds, contradiction handling, and human approval before operational impact.',
-    icon: FileCheck2,
+      'Use retrieval carefully so agents act from source-aware context instead of relying on unsupported memory or invented facts.',
+    icon: Layers3,
   },
   {
     title: 'Workflow orchestration',
     description:
-      'Coordinate specialist agents through queues, checkpoints, retries, escalation paths, and observability standards.',
+      'Connect task steps, state, handoffs, queues, approvals, and retries into controlled agentic workflows.',
     icon: Workflow,
+  },
+  {
+    title: 'Reliability and safety',
+    description:
+      'Inspect agent output, tool use, autonomy level, sensitive data exposure, hidden failure modes, and production readiness.',
+    icon: FileCheck2,
   },
 ]
 
 const sandboxTasks: Card[] = [
   {
-    title: 'Design a Scout and Validator workflow',
+    title: 'Design a bounded research agent',
     description:
-      'Create separate roles for finding signals, filtering noise, checking claims, and deciding whether a record can move forward.',
+      'Set goal, source rules, allowed tools, memory limits, and review gates for a research workflow before any output is trusted.',
     icon: Radar,
   },
   {
-    title: 'Audit an overbuilt agent team',
+    title: 'Audit unsafe agent autonomy',
     description:
-      'Review a multi-agent design and remove unnecessary agents, weak handoffs, duplicated responsibilities, and uncontrolled autonomy.',
-    icon: Target,
+      'Review a flawed agent design and identify missing approval steps, risky tool access, vague goals, and weak stop conditions.',
+    icon: ShieldCheck,
   },
   {
-    title: 'Build a handoff contract',
+    title: 'Map tool calls to workflow decisions',
     description:
-      'Define the exact output one agent must produce before another agent can continue the workflow safely.',
+      'Decide which tool should be called, which input is allowed, how results should be validated, and when to escalate.',
     icon: GitBranch,
   },
   {
-    title: 'Add validator and human approval gates',
+    title: 'Create a human-in-the-loop checkpoint',
     description:
-      'Place source checks, confidence thresholds, contradiction handling, and final human review before publication or business action.',
-    icon: ShieldCheck,
+      'Add review logic so the agent pauses before sending, saving, buying, deleting, updating, or publishing anything important.',
+    icon: BadgeCheck,
   },
 ]
 
 const businessValue: Card[] = [
   {
-    title: 'Safer automation planning',
+    title: 'Controlled adoption',
     description:
-      'Help teams understand where agent collaboration is useful and where a simpler workflow is safer, cheaper, and easier to govern.',
+      'Give teams a practical route for understanding agents without letting automation outrun policy, privacy, or review standards.',
     icon: BriefcaseBusiness,
   },
   {
-    title: 'Clear accountability',
+    title: 'Workflow fit before tool spend',
     description:
-      'Map agent roles to business ownership so managers know who reviews claims, approves actions, and handles failures.',
-    icon: UsersRound,
+      'Map the business process first, then decide whether an agent, workflow automation, RAG system, or standard assistant is actually needed.',
+    icon: Target,
   },
   {
-    title: 'Validation-led operations',
+    title: 'Manager-visible risk gates',
     description:
-      'Train staff to put validation, source checking, human approval, and audit trails at the centre of multi-agent workflows.',
-    icon: LockKeyhole,
+      'Train staff to document agent decisions, approval points, sensitive-data boundaries, and escalation rules before operational use.',
+    icon: FileCheck2,
   },
 ]
 
 const faqItems: FaqItem[] = [
   {
-    question: 'What is a multi-agent system?',
+    question: 'What does Agent Architecture mean in DeepMind Resources?',
     answer:
-      'A multi-agent system uses several specialist agents or workflow roles to complete a task. In DeepMind Resources, the focus is controlled coordination: roles, handoffs, shared state, validation layers, and human review.',
+      'Agent Architecture means designing controlled AI systems with goals, tool permissions, memory rules, state, review gates, logs, and failure controls. It is not about letting an AI system act freely without boundaries.',
   },
   {
-    question: 'When should a team use multiple agents?',
+    question: 'Is this pathway for developers only?',
     answer:
-      'Multiple agents make sense when a workflow has distinct responsibilities, such as discovery, planning, execution, critique, validation, and business review. If the task does not need role separation, one controlled workflow may be better.',
+      'No. Technical builders will use it deeply, but business operators and managers also need the judgement to understand when an agent is suitable, risky, overbuilt, or missing review controls.',
   },
   {
-    question: 'How does this connect to Agent Architecture?',
+    question: 'How does this connect to Prompt Engineering?',
     answer:
-      'Agent Architecture teaches how to design one controlled agent workflow. Multi-Agent Systems extends that into specialist roles, handoff contracts, shared state, and validation-led orchestration.',
+      'Prompt Engineering creates controlled instructions. Agent Architecture extends that control into tools, memory, state, handoffs, approvals, and repeatable workflow behaviour.',
   },
   {
     question: 'Where does sandbox practice fit?',
     answer:
-      'The Sandbox lets users test coordination safely. Learners practise agent roles, handoff contracts, validator checks, failure handling, and review gates using synthetic workflows before applying the pattern to real operations.',
+      'The Sandbox lets users test agent designs safely before production. Learners practise boundaries, tool calls, review gates, and failure handling with synthetic scenarios.',
   },
 ]
 
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'WebPage',
-  name: 'Multi-Agent Systems Pathway | DeepMind Resources Academy',
+  name: 'Agent Architecture Pathway | DeepMind Resources Academy',
   description:
-    'A professional pathway for controlled multi-agent architecture, specialist agent roles, handoff contracts, shared state, validation layers, and verified sandbox practice.',
-  url: 'https://deepmindresources.pro/path/multi-agent-systems',
+    'A professional pathway for controlled AI agents, tool boundaries, orchestration patterns, human review gates, and verified sandbox practice.',
+  url: 'https://deepmindresources.pro/academy/path/agents',
   publisher: {
     '@type': 'Organization',
     name: 'DeepMind Resources',
@@ -302,7 +301,7 @@ function CardGrid({ items, columns = 'xl:grid-cols-4' }: { items: Card[]; column
   )
 }
 
-export default function MultiAgentSystemsPathwayPage() {
+export default function AgentArchitecturePathwayPage() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-obsidian text-sand">
       <script
@@ -311,21 +310,21 @@ export default function MultiAgentSystemsPathwayPage() {
       />
 
       <div
-        id="multi-agent-onboarding-popup"
+        id="agents-onboarding-popup"
         className="hidden fixed inset-0 z-50 items-center justify-center bg-sand/30 px-4 py-6 backdrop-blur-sm"
         aria-hidden="true"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="multi-agent-onboarding-title"
+        aria-labelledby="agents-onboarding-title"
       >
         <div className="relative flex max-h-[calc(100vh-2rem)] w-full max-w-2xl flex-col overflow-hidden rounded-[2rem] border border-sand/10 bg-white shadow-2xl">
           <div className="absolute inset-x-0 top-0 h-1.5 bg-[#123BFF]" />
 
           <button
-            id="multi-agent-onboarding-close"
+            id="agents-onboarding-close"
             type="button"
             className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-sand/10 bg-white text-sand/60 shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
-            aria-label="Close Multi-Agent Systems prompt"
+            aria-label="Close Agent Architecture prompt"
           >
             &times;
           </button>
@@ -334,23 +333,23 @@ export default function MultiAgentSystemsPathwayPage() {
             <div className="grid md:grid-cols-[0.95fr_1.05fr]">
               <div className="bg-[#123BFF] p-6 text-white sm:p-8">
                 <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF] shadow-sm">
-                  <UsersRound className="h-4 w-4" aria-hidden="true" />
-                  Multi-agent control layer
+                  <Bot className="h-4 w-4" aria-hidden="true" />
+                  Agent control layer
                 </span>
 
-                <h2 id="multi-agent-onboarding-title" className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">
-                  Build agent teams with roles, handoffs, and validation gates.
+                <h2 id="agents-onboarding-title" className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">
+                  Design agents that stay inside the workflow boundary.
                 </h2>
 
                 <p className="mt-4 text-sm leading-7 text-white/80 sm:text-base">
-                  Move beyond agent hype into controlled orchestration: specialist roles, shared state, review layers, and production-aware workflow design.
+                  Build the operating map for goals, tools, memory, handoffs, human review, and production-safe agent behaviour.
                 </p>
 
-                <div className="mt-4 grid gap-2 sm:mt-6 sm:gap-3">
+                <div className="mt-6 grid gap-3">
                   {[
-                    'Specialist agents with clear authority',
-                    'Handoff contracts and shared state rules',
-                    'Validator and human approval gates before action',
+                    'Bounded autonomy before action',
+                    'Tool permissions and review gates',
+                    'Verified sandbox practice before production use',
                   ].map((item) => (
                     <div key={item} className="flex items-start gap-3 rounded-2xl bg-white/10 p-3">
                       <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-white" aria-hidden="true" />
@@ -366,14 +365,14 @@ export default function MultiAgentSystemsPathwayPage() {
                 </p>
 
                 <h3 className="mt-3 text-2xl font-bold tracking-tight text-sand">
-                  Move from one controlled agent into orchestrated AI systems.
+                  Move from prompt control into controlled agentic workflows.
                 </h3>
 
                 <p className="mt-3 text-sm leading-7 text-sand/65">
-                  Start the pathway, test coordination in the Sandbox, or bring multi-agent workflow judgement into team training.
+                  Start the pathway, practise the architecture in the Sandbox, or bring the same control layer into team training.
                 </p>
 
-                <div className="mt-4 grid gap-2 sm:mt-6 sm:gap-3">
+                <div className="mt-6 grid gap-3">
                   <Link
                     href="/auth/signup"
                     className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
@@ -412,9 +411,9 @@ export default function MultiAgentSystemsPathwayPage() {
         dangerouslySetInnerHTML={{
           __html: `
             (() => {
-              const popup = document.getElementById('multi-agent-onboarding-popup');
-              const closeButton = document.getElementById('multi-agent-onboarding-close');
-              const storageKey = 'dmr_multi_agent_onboarding_popup_dismissed';
+              const popup = document.getElementById('agents-onboarding-popup');
+              const closeButton = document.getElementById('agents-onboarding-close');
+              const storageKey = 'dmr_agents_onboarding_popup_dismissed';
               let shown = false;
               let timerId = null;
 
@@ -511,23 +510,23 @@ export default function MultiAgentSystemsPathwayPage() {
 
       <div className="relative z-10 px-4 py-5 sm:px-6 lg:px-8">
         <div className="mx-auto w-full max-w-7xl">
-          <section className="grid gap-6 rounded-[1.5rem] border border-sand/10 bg-white/90 p-5 shadow-sm backdrop-blur sm:gap-10 sm:rounded-[2rem] sm:p-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:p-10">
+          <section className="grid gap-10 rounded-[2rem] border border-sand/10 bg-white/90 p-6 shadow-sm backdrop-blur sm:p-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:p-10">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
-                <UsersRound className="h-4 w-4" aria-hidden="true" />
-                Multi-Agent Systems Pathway
+                <Bot className="h-4 w-4" aria-hidden="true" />
+                Agent Architecture Pathway
               </span>
 
-              <h1 className="mt-5 max-w-5xl text-3xl font-bold tracking-tight text-sand sm:mt-6 sm:text-5xl lg:text-6xl">
-                Multi-Agent Systems: orchestrated AI teams with controlled handoffs.
+              <h1 className="mt-6 max-w-5xl text-4xl font-bold tracking-tight text-sand sm:text-5xl lg:text-6xl">
+                Agent Architecture: controlled AI systems for production-ready workflows.
               </h1>
 
-              <p className="mt-4 max-w-3xl text-base leading-8 text-sand/70 sm:mt-6 sm:text-lg">
-                Multi-agent systems should not be a pile of bots talking to each other. They need specialist roles, handoff contracts, shared state rules, validation layers, and human approval before they influence production work.
+              <p className="mt-6 max-w-3xl text-base leading-8 text-sand/70 sm:text-lg">
+                AI agents are not magic workers. They are controlled systems that need goals, tool permissions, memory rules, state, review gates, and observable workflow boundaries before they can support real work.
               </p>
 
               <p className="mt-4 max-w-3xl text-base leading-8 text-sand/70 sm:text-lg">
-                DeepMind Resources turns multi-agent complexity into practical AI competency. This pathway teaches learners and teams how to coordinate agents without losing control, evidence, accountability, or workflow safety.
+                DeepMind Resources turns agent hype into practical competency. This pathway teaches learners and teams how to design agentic workflows that remain source-aware, reviewable, and safe enough to practise before production use.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -548,37 +547,37 @@ export default function MultiAgentSystemsPathwayPage() {
                 </Link>
 
                 <Link
-                  href="/path/agents"
+                  href="/academy/path/prompting"
                   className="inline-flex items-center justify-center gap-2 rounded-2xl border border-sand/10 bg-white px-6 py-4 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
                 >
-                  Review Agent Architecture
-                  <Bot className="h-4 w-4" aria-hidden="true" />
+                  Review Prompt Engineering
+                  <Sparkles className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </div>
             </div>
 
-            <div className="rounded-[1.5rem] border border-sand/10 bg-[#EAF7FF] p-4 shadow-sm sm:rounded-[2rem] sm:p-6 lg:p-7">
-              <div className="rounded-[1.35rem] bg-[#123BFF] p-4 text-white shadow-sm sm:rounded-[1.5rem] sm:p-6">
+            <div className="rounded-[2rem] border border-sand/10 bg-[#EAF7FF] p-5 shadow-sm sm:p-6 lg:p-7">
+              <div className="rounded-[1.5rem] bg-[#123BFF] p-6 text-white shadow-sm">
                 <div className="flex items-start justify-between gap-5">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/75">
-                      Orchestration route
+                      Agent control route
                     </p>
-                    <h2 className="mt-3 text-xl font-bold tracking-tight sm:text-3xl">
-                      From agent sprawl to coordinated AI execution.
+                    <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
+                      From autonomous hype to controlled agent execution.
                     </h2>
                   </div>
                   <EmblemPulse />
                 </div>
 
-                <div className="mt-4 grid gap-2 sm:mt-6 sm:gap-3">
+                <div className="mt-6 grid gap-3">
                   {[
-                    'Assign specialist roles with clear authority',
-                    'Control handoffs, state, and evidence flow',
-                    'Validate claims before actions move forward',
-                    'Practise orchestration inside verified sandbox tasks',
+                    'Define autonomy before action',
+                    'Map tools, memory, state, and permissions',
+                    'Add human review gates before workflow impact',
+                    'Test agent behaviour inside verified sandbox tasks',
                   ].map((item) => (
-                    <div key={item} className="flex items-start gap-3 rounded-2xl bg-white/10 p-3 sm:p-4">
+                    <div key={item} className="flex items-start gap-3 rounded-2xl bg-white/10 p-4">
                       <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-white" aria-hidden="true" />
                       <p className="text-sm font-semibold leading-6 text-white/90">{item}</p>
                     </div>
@@ -592,9 +591,9 @@ export default function MultiAgentSystemsPathwayPage() {
                     <Workflow className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <div>
-                    <h3 className="text-lg font-bold text-sand">Coordination before complexity.</h3>
+                    <h3 className="text-lg font-bold text-sand">Architecture before automation.</h3>
                     <p className="mt-2 text-sm leading-7 text-sand/65">
-                      The pathway helps users decide whether a workflow needs several agents, one controlled agent, or no agentic system at all.
+                      The pathway gives users a deterministic map for agent workflows before tools, memory, and autonomy reach business operations.
                     </p>
                   </div>
                 </div>
@@ -602,7 +601,7 @@ export default function MultiAgentSystemsPathwayPage() {
             </div>
           </section>
 
-          <section className="py-8" aria-labelledby="multi-agent-principles">
+          <section className="py-8" aria-labelledby="agent-architecture-principles">
             <div className="rounded-[2rem] border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
               <div className="max-w-3xl">
                 <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
@@ -610,12 +609,12 @@ export default function MultiAgentSystemsPathwayPage() {
                   Why this pathway matters
                 </span>
 
-                <h2 id="multi-agent-principles" className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
-                  Multi-agent systems need accountability before scale.
+                <h2 id="agent-architecture-principles" className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
+                  Agents need architecture before they need autonomy.
                 </h2>
 
                 <p className="mt-4 text-base leading-8 text-sand/65">
-                  As soon as several agents collaborate, mistakes can spread through handoffs, shared memory, tool calls, and unchecked assumptions. This pathway teaches orchestration that stays inspectable, validated, and fit for real workflows.
+                  Most agent failures begin before the first tool call: unclear goals, open-ended permissions, weak context, missing approval gates, and no way to inspect what happened. This pathway builds the control layer first.
                 </p>
               </div>
 
@@ -625,7 +624,7 @@ export default function MultiAgentSystemsPathwayPage() {
             </div>
           </section>
 
-          <section className="py-8" aria-labelledby="multi-agent-route-title">
+          <section className="py-8" aria-labelledby="agent-route-title">
             <div className="rounded-[2rem] border border-sand/10 bg-[#123BFF] p-6 text-white shadow-sm sm:p-8 lg:p-10">
               <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
                 <div>
@@ -634,20 +633,20 @@ export default function MultiAgentSystemsPathwayPage() {
                     Execution route
                   </span>
 
-                  <h2 id="multi-agent-route-title" className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">
-                    From isolated agents to controlled AI coordination.
+                  <h2 id="agent-route-title" className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">
+                    From agent concept to controlled workflow design.
                   </h2>
 
                   <p className="mt-4 text-base leading-8 text-white/80">
-                    The route moves from role separation into handoff design, shared state, validation controls, and sandbox testing. The goal is not to add agents. The goal is to make each agent necessary, bounded, and reviewable.
+                    The route moves from boundary definition into tool and context design, then into review gates, failure controls, and verified sandbox practice. The goal is not more autonomy. The goal is safer execution.
                   </p>
 
                   <div className="mt-7 flex flex-col gap-3 sm:flex-row lg:flex-col">
                     <Link
-                      href="/path/agents"
+                      href="/academy/path/prompting"
                       className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 py-4 text-sm font-bold text-[#123BFF] shadow-sm transition hover:bg-[#EAF7FF]"
                     >
-                      Revisit Agent Architecture
+                      Revisit Prompt Engineering
                       <ArrowRight className="h-4 w-4" aria-hidden="true" />
                     </Link>
 
@@ -680,7 +679,7 @@ export default function MultiAgentSystemsPathwayPage() {
             </div>
           </section>
 
-          <section className="py-8" aria-labelledby="multi-agent-learning-areas">
+          <section className="py-8" aria-labelledby="agent-learning-areas">
             <div className="rounded-[2rem] border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
@@ -689,8 +688,8 @@ export default function MultiAgentSystemsPathwayPage() {
                     What the pathway builds
                   </span>
 
-                  <h2 id="multi-agent-learning-areas" className="mt-5 max-w-4xl text-3xl font-bold tracking-tight text-sand sm:text-4xl">
-                    Multi-agent design for coordinated work, verified claims, and controlled action.
+                  <h2 id="agent-learning-areas" className="mt-5 max-w-4xl text-3xl font-bold tracking-tight text-sand sm:text-4xl">
+                    Agent architecture for real tools, real data boundaries, and real review.
                   </h2>
                 </div>
 
@@ -709,7 +708,7 @@ export default function MultiAgentSystemsPathwayPage() {
             </div>
           </section>
 
-          <section className="py-8" aria-labelledby="multi-agent-sandbox-practice">
+          <section className="py-8" aria-labelledby="agent-sandbox-practice">
             <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
               <div className="rounded-[2rem] border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
                 <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
@@ -717,12 +716,12 @@ export default function MultiAgentSystemsPathwayPage() {
                   Verified sandbox practice
                 </span>
 
-                <h2 id="multi-agent-sandbox-practice" className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
-                  Test the coordination layer before it reaches real operations.
+                <h2 id="agent-sandbox-practice" className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
+                  Prove the agent boundary before it reaches production.
                 </h2>
 
                 <p className="mt-4 text-base leading-8 text-sand/65">
-                  Multi-agent learning becomes useful when users can test the handoffs. Sandbox tasks let learners practise specialist roles, review gates, contradiction handling, and workflow coordination without touching live business systems.
+                  Agent training becomes useful when users can test the design. Sandbox tasks let learners practise safe autonomy, tool selection, human approval, and failure handling without touching live systems.
                 </p>
 
                 <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -762,21 +761,21 @@ export default function MultiAgentSystemsPathwayPage() {
             </div>
           </section>
 
-          <section className="py-8" aria-labelledby="business-multi-agent-training">
+          <section className="py-8" aria-labelledby="business-agent-training">
             <div className="rounded-[2rem] border border-sand/10 bg-[#123BFF] p-6 text-white shadow-sm sm:p-8 lg:p-10">
               <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
                 <div>
                   <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF] shadow-sm">
                     <BriefcaseBusiness className="h-4 w-4" aria-hidden="true" />
-                    Business-ready orchestration
+                    Business-ready agent training
                   </span>
 
-                  <h2 id="business-multi-agent-training" className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">
-                    Train teams to judge agent coordination before they scale it.
+                  <h2 id="business-agent-training" className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">
+                    Train teams to evaluate agents before adopting them.
                   </h2>
 
                   <p className="mt-4 text-base leading-8 text-white/80">
-                    Multi-agent systems can multiply both capability and risk. Business training needs staff who can map roles, validate claims, control tool access, and recognise when simpler automation is the better decision.
+                    Businesses do not need agent hype. They need staff who can judge workflow fit, tool access, privacy risk, escalation rules, and the cost of putting autonomy into real operations.
                   </p>
 
                   <Link
@@ -811,15 +810,15 @@ export default function MultiAgentSystemsPathwayPage() {
             </div>
           </section>
 
-          <section className="py-8" aria-labelledby="multi-agent-faq">
+          <section className="py-8" aria-labelledby="agent-faq">
             <div className="rounded-[2rem] border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
               <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
                 <FileCheck2 className="h-4 w-4" aria-hidden="true" />
                 Current competency notes
               </span>
 
-              <h2 id="multi-agent-faq" className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
-                How the Multi-Agent Systems route works.
+              <h2 id="agent-faq" className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl">
+                How the Agent Architecture route works.
               </h2>
 
               <div className="mt-8 grid gap-4 md:grid-cols-2">
@@ -838,16 +837,16 @@ export default function MultiAgentSystemsPathwayPage() {
               <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
                 <div>
                   <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF] shadow-sm">
-                    <UsersRound className="h-4 w-4" aria-hidden="true" />
-                    Build the orchestration layer
+                    <Bot className="h-4 w-4" aria-hidden="true" />
+                    Build the control layer
                   </span>
 
                   <h2 className="mt-5 max-w-4xl text-3xl font-bold tracking-tight sm:text-4xl">
-                    Start with controlled multi-agent design, then prove the coordination in verified sandbox practice.
+                    Start with agent architecture, then prove the workflow in verified sandbox practice.
                   </h2>
 
                   <p className="mt-4 max-w-3xl text-base leading-8 text-white/80">
-                    Move from single-agent architecture into specialist agents, structured handoffs, shared state, validation layers, and business-ready orchestration standards.
+                    Move from prompt systems into controlled agents with explicit tools, memory rules, human approval, and production-aware review standards.
                   </p>
                 </div>
 
@@ -876,5 +875,3 @@ export default function MultiAgentSystemsPathwayPage() {
     </main>
   )
 }
-
-
