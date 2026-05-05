@@ -72,7 +72,7 @@ const ROUTE_DETAILS: Record<string, RouteDetails> = {
     priority: 0.85,
     changeFrequency: 'weekly',
   },
-  '/path/fundamentals': {
+  '/academy/path/fundamentals': {
     title: 'AI Fundamentals Pathway',
     description:
       'Build practical AI foundations with safe-use habits, prompt basics, tool judgement, and verified sandbox practice.',
@@ -80,7 +80,7 @@ const ROUTE_DETAILS: Record<string, RouteDetails> = {
     priority: 0.85,
     changeFrequency: 'weekly',
   },
-  '/path/prompting': {
+  '/academy/path/prompting': {
     title: 'Prompt Engineering Pathway',
     description:
       'Learn structured prompt systems, context, constraints, output validation, workflow control, and reusable prompt patterns.',
@@ -88,7 +88,7 @@ const ROUTE_DETAILS: Record<string, RouteDetails> = {
     priority: 0.85,
     changeFrequency: 'weekly',
   },
-  '/path/agents': {
+  '/academy/path/agents': {
     title: 'Agent Architecture Pathway',
     description:
       'Learn bounded AI agent architecture with goals, tools, permissions, memory rules, review gates, and practical deployment thinking.',
@@ -96,7 +96,7 @@ const ROUTE_DETAILS: Record<string, RouteDetails> = {
     priority: 0.85,
     changeFrequency: 'weekly',
   },
-  '/path/multi-agent-systems': {
+  '/academy/path/multi-agent-systems': {
     title: 'Multi-Agent Systems Pathway',
     description:
       'Learn specialist agent roles, handoffs, shared state, validation layers, escalation logic, and reviewable multi-agent workflows.',
