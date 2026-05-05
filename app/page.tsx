@@ -1,4 +1,5 @@
-﻿import type { LucideIcon } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import {
   ArrowRight,
@@ -15,7 +16,6 @@ import {
   Workflow,
 } from 'lucide-react'
 import { Sidebar } from '@/components/platform/sidebar'
-import { HeroSection } from '@/components/platform/hero-section'
 import { CodeSandbox } from '@/components/platform/code-sandbox'
 import { ContentCardGrid, type LessonModule } from '@/components/platform/content-card'
 
@@ -389,7 +389,69 @@ export default function HomePage() {
 
       <main className="relative z-10 min-h-screen pt-16 md:pl-64 md:pt-0">
         <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-          <HeroSection />
+          <section className="relative overflow-hidden rounded-[2rem] border border-sand/10 bg-white shadow-[0_26px_90px_rgba(6,27,91,0.14)]">
+            <div className="absolute inset-0 bg-[#EAF7FF]" aria-hidden="true" />
+
+            <div className="relative min-h-[34rem] overflow-hidden sm:min-h-[38rem] lg:min-h-[42rem]">
+              <Image
+                src="/brand/publicbrandhomepage-intelligence-layer.png"
+                alt="DeepMind Resources intelligence layer showing Signal Grid, Verification Gates, Tool Intelligence, Academy Pathways, Sandbox Proof, and Workforce Capability"
+                fill
+                sizes="100vw"
+                className="object-cover object-[58%_center]"
+                priority
+              />
+
+              <div className="absolute inset-0 bg-gradient-to-r from-white via-white/86 to-white/10" aria-hidden="true" />
+              <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-white/72 lg:to-white/18" aria-hidden="true" />
+
+              <div className="relative z-10 flex min-h-[34rem] items-end px-5 py-6 sm:min-h-[38rem] sm:px-8 sm:py-8 lg:min-h-[42rem] lg:items-center lg:px-12 lg:py-12">
+                <div className="max-w-2xl rounded-[1.75rem] border border-white/70 bg-white/82 p-5 shadow-[0_20px_70px_rgba(6,27,91,0.14)] backdrop-blur-md sm:p-7 lg:bg-white/72 lg:p-8">
+                  <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-[0.68rem] font-black uppercase tracking-[0.16em] text-white shadow-sm sm:text-xs">
+                    <Radar className="h-4 w-4" aria-hidden="true" />
+                    Live AI Intelligence Online
+                  </span>
+
+                  <h1 className="mt-5 max-w-xl text-[2.45rem] font-black leading-[0.96] tracking-[-0.055em] text-sand sm:text-5xl lg:text-6xl">
+                    Master agentic AI as the frontier moves.
+                  </h1>
+
+                  <p className="mt-5 max-w-xl text-base leading-8 text-sand/70 sm:text-lg">
+                    DeepMind Resources turns verified AI change into tool intelligence, practical
+                    lessons, sandbox proof, and business-ready AI competency.
+                  </p>
+
+                  <div className="mt-6 grid gap-3 sm:flex sm:flex-wrap">
+                    <Link
+                      href="/academy"
+                      className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-6 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
+                    >
+                      Explore Academy
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </Link>
+
+                    <Link
+                      href="/sandbox"
+                      className="inline-flex items-center justify-center gap-2 rounded-2xl border border-sand/10 bg-white px-6 py-4 text-sm font-bold text-sand shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
+                    >
+                      View Sandbox
+                      <Code2 className="h-4 w-4" aria-hidden="true" />
+                    </Link>
+                  </div>
+
+                  <div className="mt-5 grid grid-cols-3 gap-2">
+                    {['Verified', 'Current', 'Practical'].map((item) => (
+                      <div key={item} className="rounded-2xl border border-[#123BFF]/10 bg-white/86 px-3 py-3 text-center shadow-sm">
+                        <p className="text-[0.66rem] font-black uppercase tracking-[0.12em] text-[#123BFF] sm:text-xs">
+                          {item}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
 
           <section className="mt-8 lg:mt-12">
             <div className="rounded-3xl border border-sand/10 bg-[#123BFF] p-6 text-white shadow-sm sm:p-8 lg:p-10">
