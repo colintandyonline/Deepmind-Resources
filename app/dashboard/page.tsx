@@ -357,7 +357,7 @@ export default async function DashboardPage() {
   const progressLabel = getProgressLabel(progressStorageAvailable, completedLessons, startedLessons)
   const billingLabel = billingStorageAvailable
     ? getBillingLabel(latestSubscription, activeEntitlements)
-    : 'Billing unavailable'
+    : 'No billing record'
 
   const displayName =
     user.user_metadata?.full_name ||
@@ -427,7 +427,7 @@ export default async function DashboardPage() {
       status: billingLabel,
       detail: billingStorageAvailable
         ? 'Personal subscription and entitlement records checked.'
-        : 'Billing records could not be read for this session.',
+        : 'No personal billing record is available yet.',
     },
   ]
 
@@ -770,3 +770,4 @@ export default async function DashboardPage() {
     </main>
   )
 }
+
