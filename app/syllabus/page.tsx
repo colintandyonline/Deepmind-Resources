@@ -521,6 +521,44 @@ const capabilityHighlights: CapabilityHighlight[] = [
   },
 ]
 
+const featuredPathwayLinks = [
+  {
+    title: 'AI Fundamentals',
+    label: 'Foundation',
+    description:
+      'Start with the core concepts, safe-use habits, tool awareness, and beginner judgement needed before deeper AI work.',
+    href: '/academy/path/fundamentals',
+    icon: BrainCircuit,
+    outcomes: ['Core AI concepts', 'Safe-use habits', 'Beginner practice'],
+  },
+  {
+    title: 'Prompt Engineering',
+    label: 'Core execution',
+    description:
+      'Learn how to structure instructions, add context, control outputs, improve weak responses, and create reusable prompt systems.',
+    href: '/academy/path/prompting',
+    icon: WandSparkles,
+    outcomes: ['Structured prompts', 'Output control', 'Reusable patterns'],
+  },
+  {
+    title: 'Agent Architecture',
+    label: 'Builder path',
+    description:
+      'Understand goals, tools, permissions, memory, review gates, and the boundaries required for controlled agentic systems.',
+    href: '/academy/path/agents',
+    icon: Route,
+    outcomes: ['Agent boundaries', 'Tool permissions', 'Review gates'],
+  },
+  {
+    title: 'Multi-Agent Systems',
+    label: 'Advanced builder',
+    description:
+      'Move into specialist agent roles, handoffs, shared state, validation layers, escalation logic, and multi-agent workflow design.',
+    href: '/academy/path/multi-agent-systems',
+    icon: Workflow,
+    outcomes: ['Specialist roles', 'Agent handoffs', 'Validation layers'],
+  },
+]
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
@@ -724,6 +762,87 @@ export default function SyllabusPage() {
             </div>
           </section>
 
+          <section className="pb-8" aria-labelledby="syllabus-featured-pathways-title">
+            <div className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div className="max-w-3xl">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
+                    <BookOpenCheck className="h-4 w-4" aria-hidden="true" />
+                    Academy pathways
+                  </span>
+
+                  <h2
+                    id="syllabus-featured-pathways-title"
+                    className="mt-5 text-3xl font-bold tracking-tight text-sand sm:text-4xl"
+                  >
+                    Choose the pathway that matches your next stage.
+                  </h2>
+
+                  <p className="mt-4 text-base leading-8 text-sand/65">
+                    The syllabus maps the full learning system. These Academy pathways are the
+                    first structured routes into practical AI competency, sandbox practice, and
+                    version-aware skill development.
+                  </p>
+                </div>
+
+                <Link
+                  href="/academy"
+                  className="inline-flex w-fit items-center justify-center gap-2 rounded-2xl border border-sand/10 bg-white px-5 py-3 text-sm font-bold text-[#123BFF] shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#0A63FF]"
+                >
+                  View Academy
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+              </div>
+
+              <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+                {featuredPathwayLinks.map((pathway) => {
+                  const Icon = pathway.icon
+
+                  return (
+                    <article
+                      key={pathway.title}
+                      className="flex h-full flex-col rounded-3xl border border-sand/10 bg-white p-5 shadow-sm"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF] shadow-sm">
+                          <Icon className="h-6 w-6" aria-hidden="true" />
+                        </span>
+
+                        <span className="rounded-full bg-[#123BFF] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white shadow-sm">
+                          {pathway.label}
+                        </span>
+                      </div>
+
+                      <h3 className="mt-5 text-xl font-bold tracking-tight text-sand">
+                        {pathway.title}
+                      </h3>
+
+                      <p className="mt-3 text-sm leading-7 text-sand/65">
+                        {pathway.description}
+                      </p>
+
+                      <div className="mt-5 grid gap-3">
+                        {pathway.outcomes.map((outcome) => (
+                          <div key={outcome} className="flex items-start gap-3 rounded-2xl bg-[#F7FBFF] p-3">
+                            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#123BFF]" aria-hidden="true" />
+                            <p className="text-sm leading-6 text-sand/70">{outcome}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      <Link
+                        href={pathway.href}
+                        className="mt-6 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#123BFF] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#0A63FF]"
+                      >
+                        View pathway
+                        <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                      </Link>
+                    </article>
+                  )
+                })}
+              </div>
+            </div>
+          </section>
           <section id="tracks" className="pb-8" aria-labelledby="tracks-title">
             <div className="rounded-3xl border border-sand/10 bg-white/90 p-6 shadow-sm sm:p-8 lg:p-10">
               <div className="grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
