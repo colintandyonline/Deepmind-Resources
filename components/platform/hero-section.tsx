@@ -50,66 +50,128 @@ const academyPaths = [
 export function HeroSection() {
   return (
     <section className="relative overflow-hidden">
-      <div className="relative z-10 py-14 sm:py-16 lg:py-24">
-        <div className="mb-7 flex items-center justify-center sm:mb-8">
-          <div className="flex max-w-[calc(100vw-2rem)] items-center gap-3 rounded-full border border-[#123BFF]/20 bg-white/80 px-4 py-2 shadow-sm backdrop-blur">
-            <span className="relative flex h-2.5 w-2.5 shrink-0">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#123BFF] opacity-75" />
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#123BFF]" />
-            </span>
-            <span className="text-center text-xs font-bold uppercase tracking-[0.16em] text-[#123BFF] sm:text-sm">
-              LIVE AI INTELLIGENCE ONLINE
-            </span>
-          </div>
-        </div>
+      <div className="relative z-10 px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
+        <div className="mx-auto max-w-7xl">
+          <div className="dmr-glass-panel dmr-orbit-dot rounded-[2rem] px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10">
+            <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+              <div className="relative z-10">
+                <div className="mb-6 flex justify-start">
+                  <div className="dmr-blue-pill px-4 py-2 text-[0.68rem] sm:text-xs">
+                    LIVE AI INTELLIGENCE ONLINE
+                  </div>
+                </div>
 
-        <div className="mx-auto max-w-6xl px-4 text-center">
-          <div className="relative mx-auto max-w-5xl rounded-[2rem] border border-white/70 bg-white/28 px-4 py-7 shadow-[0_24px_90px_rgba(18,59,255,0.08)] backdrop-blur-sm sm:px-8 sm:py-9 lg:px-10">
-            <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-[#123BFF]/30 to-transparent" />
+                <h1 className="dmr-soft-heading text-balance text-4xl font-black leading-[0.96] tracking-[-0.06em] sm:text-5xl lg:text-6xl">
+                  <span>Master the Art of</span>
+                  <br />
+                  <span className="dmr-gradient-text">Agentic AI Systems</span>
+                </h1>
 
-            <h1 className="mb-6 text-balance text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              <span className="text-sand">Master the Art of</span>
-              <br />
-              <span className="relative inline-flex text-[#123BFF]">
-                Agentic AI Systems
-                <span className="absolute -bottom-2 left-1/2 h-px w-3/4 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#45C9FF]/60 to-transparent" />
-              </span>
-            </h1>
+                <p className="mt-6 max-w-2xl text-pretty text-lg leading-8 text-sand/65 sm:text-xl">
+                  From AI beginner to multi-agent builder. Learn with verified lessons that evolve
+                  as new models, tools, and platform updates change what matters.
+                </p>
 
-            <p className="mx-auto mb-6 max-w-3xl text-pretty text-lg leading-relaxed text-sand/60 sm:text-xl">
-              From AI beginner to multi-agent builder. Learn with verified lessons that evolve
-              as new models, tools, and platform updates change what matters.
-            </p>
+                <p className="mt-5 max-w-2xl text-pretty text-base leading-8 text-sand/60 sm:text-lg">
+                  DeepMind Resources cuts through hype, compares AI tools for real scenarios, and turns
+                  trusted updates into practical sandbox training for individuals, teams, and businesses.
+                </p>
 
-            <p className="mx-auto mb-10 max-w-3xl text-pretty text-base leading-relaxed text-sand/55 sm:text-lg">
-              DeepMind Resources cuts through hype, compares AI tools for real scenarios, and turns
-              trusted updates into practical sandbox training for individuals, teams, and businesses.
-            </p>
+                <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                  <Button
+                    asChild
+                    size="lg"
+                    className="dmr-premium-button group w-full px-8 font-semibold sm:w-auto"
+                  >
+                    <Link href="/academy">
+                      Explore Academy
+                      <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  </Button>
 
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Button
-                asChild
-                size="lg"
-                className="group w-full bg-[#123BFF] px-8 font-semibold text-white shadow-sm hover:bg-[#0A63FF] sm:w-auto"
-              >
-                <Link href="/academy">
-                  Explore Academy
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </Button>
+                  <Button
+                    asChild
+                    size="lg"
+                    variant="outline"
+                    className="dmr-secondary-button w-full px-8 font-semibold hover:border-[#123BFF]/30 hover:bg-white hover:text-[#123BFF] sm:w-auto"
+                  >
+                    <Link href="/syllabus">View Live Curriculum</Link>
+                  </Button>
+                </div>
+              </div>
 
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="w-full border-sand/20 bg-white/75 px-8 font-semibold text-sand hover:border-[#123BFF]/30 hover:bg-white hover:text-[#123BFF] sm:w-auto"
-              >
-                <Link href="/syllabus">View Live Curriculum</Link>
-              </Button>
+              <div className="dmr-node-map relative min-h-[26rem] rounded-[2rem] bg-gradient-to-br from-white/70 via-[#EAF7FF]/78 to-[#DDF3FF]/88 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.92)] sm:p-6 lg:min-h-[34rem]">
+                <div className="absolute inset-0 rounded-[2rem] border border-white/80" aria-hidden="true" />
+
+                <div className="relative grid min-h-[24rem] gap-4 sm:grid-cols-2 lg:min-h-[32rem]">
+                  <div className="flex flex-col gap-4">
+                    <div className="dmr-floating-card rounded-[1.5rem] p-5">
+                      <span className="dmr-icon-tile">
+                        <Sparkles className="h-6 w-6" aria-hidden="true" />
+                      </span>
+                      <p className="dmr-card-number mt-4">01 | Signal Grid</p>
+                      <h2 className="mt-2 text-xl font-black tracking-tight text-sand">
+                        Identify what matters
+                      </h2>
+                      <p className="mt-2 text-sm leading-6 text-sand/62">
+                        Track meaningful model, tool, workflow, and platform shifts before they become stale training.
+                      </p>
+                    </div>
+
+                    <div className="dmr-floating-card rounded-[1.5rem] p-5">
+                      <span className="dmr-icon-tile">
+                        <CheckCircle2 className="h-6 w-6" aria-hidden="true" />
+                      </span>
+                      <p className="dmr-card-number mt-4">02 | Verification Gates</p>
+                      <h2 className="mt-2 text-xl font-black tracking-tight text-sand">
+                        Prove reliability
+                      </h2>
+                      <p className="mt-2 text-sm leading-6 text-sand/62">
+                        Separate verified guidance from hype, weak claims, and outdated AI advice.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-4 sm:pt-8">
+                    <div className="dmr-floating-card rounded-[1.5rem] p-5">
+                      <span className="dmr-icon-tile">
+                        <Network className="h-6 w-6" aria-hidden="true" />
+                      </span>
+                      <p className="dmr-card-number mt-4">03 | Tool Intelligence</p>
+                      <h2 className="mt-2 text-xl font-black tracking-tight text-sand">
+                        Choose with context
+                      </h2>
+                      <p className="mt-2 text-sm leading-6 text-sand/62">
+                        Map AI tools to real scenarios, roles, constraints, and production workflows.
+                      </p>
+                    </div>
+
+                    <div className="dmr-hub-card rounded-[1.75rem] p-6">
+                      <p className="text-xs font-black uppercase tracking-[0.16em] text-white/75">
+                        Core system layer
+                      </p>
+                      <h2 className="mt-3 text-2xl font-black tracking-tight">
+                        AI update → verified meaning → practical skill.
+                      </h2>
+                      <div className="mt-5 grid gap-3">
+                        {[
+                          'Academy pathways',
+                          'Verified sandbox tasks',
+                          'Business-ready competency',
+                        ].map((item) => (
+                          <div key={item} className="rounded-2xl bg-white/12 px-4 py-3 text-sm font-bold text-white">
+                            {item}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="mx-auto mt-12 max-w-6xl rounded-[2rem] border border-sand/10 bg-white/90 p-5 text-left shadow-sm backdrop-blur sm:p-6 lg:p-8">
+          <div className="mx-auto mt-8 max-w-7xl rounded-[2rem] border border-sand/10 bg-white/90 p-5 text-left shadow-sm backdrop-blur sm:p-6 lg:mt-10 lg:p-8">
             <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
               <div>
                 <span className="inline-flex items-center gap-2 rounded-full bg-[#123BFF] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-sm">
@@ -148,9 +210,9 @@ export function HeroSection() {
                     <Link
                       key={path.title}
                       href={path.href}
-                      className="group rounded-3xl border border-sand/10 bg-white p-5 shadow-sm transition hover:border-[#123BFF]/30 hover:shadow-md"
+                      className="dmr-floating-card group rounded-3xl p-5"
                     >
-                      <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EAF7FF] text-[#123BFF] shadow-sm transition group-hover:bg-[#123BFF] group-hover:text-white">
+                      <span className="dmr-icon-tile">
                         <Icon className="h-6 w-6" aria-hidden="true" />
                       </span>
                       <p className="mt-5 text-xs font-bold uppercase tracking-[0.14em] text-[#123BFF]">
