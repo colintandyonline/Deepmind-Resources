@@ -49,7 +49,7 @@ const academyPaths = [
 const aiToolStrip = [
   {
     name: 'ChatGPT',
-    logoSrc: 'https://cdn.simpleicons.org/openai/123BFF',
+    logoSrc: 'https://unpkg.com/@lobehub/icons-static-svg@latest/icons/openai.svg',
   },
   {
     name: 'Claude',
@@ -65,7 +65,7 @@ const aiToolStrip = [
   },
   {
     name: 'Grok',
-    logoSrc: 'https://cdn.simpleicons.org/xai/123BFF',
+    logoSrc: 'https://unpkg.com/@lobehub/icons-static-svg@latest/icons/grok.svg',
   },
   {
     name: 'DeepSeek',
