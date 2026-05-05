@@ -328,7 +328,7 @@ export default function AIFundamentalsPathwayPage() {
             className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-sand/10 bg-white text-xl font-bold leading-none text-sand/60 shadow-sm transition hover:border-[#123BFF]/30 hover:text-[#123BFF]"
             aria-label="Close AI Fundamentals onboarding"
           >
-            ×
+            Ã—
           </button>
 
           <div className="grid gap-0 md:grid-cols-[0.95fr_1.05fr]">
