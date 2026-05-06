@@ -1875,6 +1875,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                 <input type="hidden" name="moduleSlug" value={module.slug} />
                 <input type="hidden" name="lessonSlug" value={lesson.slug} />
                 <textarea
+                      key={resolvedSearchParams?.draft ?? practiceFeedback?.learnerInput ?? 'empty-practice-input'}
                   name="learnerInput"
                   required
                   minLength={40}
