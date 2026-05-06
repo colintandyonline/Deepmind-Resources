@@ -750,7 +750,7 @@ function evaluatePracticeSubmission(input: string): PracticeFeedback {
       missedChecks.length > 0
         ? missedChecks.map((check) => check.advice).slice(0, 4)
         : [
-            'Good structure. The next improvement is to make the review rule more precise for the risk level of the task.',
+            'Strong structure. Copy the better version below, then try tightening the review rule for the specific risk level of this task.',
           ],
     missedLabels: missedChecks.map((check) => check.label),
     strongerExample: buildPersonalisedExample(learnerInput),
@@ -787,6 +787,42 @@ function getPracticeFeedback(searchParams: LessonPageSearchParams | undefined): 
   }
 }
 
+
+function getTierPanelClass(tier: string) {
+  if (tier === 'Strong') {
+    return 'border-emerald-200 bg-emerald-50/70'
+  }
+
+  if (tier === 'Developing') {
+    return 'border-amber-200 bg-amber-50/75'
+  }
+
+  return 'border-rose-200 bg-rose-50/75'
+}
+
+function getTierScoreClass(tier: string) {
+  if (tier === 'Strong') {
+    return 'bg-emerald-600 text-white'
+  }
+
+  if (tier === 'Developing') {
+    return 'bg-amber-500 text-white'
+  }
+
+  return 'bg-rose-600 text-white'
+}
+
+function getTierGuidance(tier: string) {
+  if (tier === 'Strong') {
+    return 'Strong structure. Copy the better version, test it in an AI tool, then compare the result with your first attempt.'
+  }
+
+  if (tier === 'Developing') {
+    return 'Good start. Fix the missing areas, copy the better version, and notice how the task becomes easier for the AI to follow.'
+  }
+
+  return 'This needs more structure before it becomes a reliable AI instruction. Use the better version below as your next attempt.'
+}
 async function reviewPracticeInput(formData: FormData) {
   'use server'
 
@@ -1080,6 +1116,13 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
+      <script
+        dangerouslySetInnerHTML={{
+          __html:
+            "document.addEventListener('click',async function(event){var target=event.target;var trigger=target&&target.closest?target.closest('[data-copy-better-prompt]'):null;if(!trigger){return;}var text=trigger.getAttribute('data-copy-better-prompt')||'';var original=trigger.getAttribute('data-copy-label')||trigger.textContent;try{await navigator.clipboard.writeText(text);trigger.textContent='Copied — paste this into your AI tool';setTimeout(function(){trigger.textContent=original;},2200);}catch(error){trigger.textContent='Copy unavailable — select the text below';setTimeout(function(){trigger.textContent=original;},2200);}});",
+        }}
+      />
+
       <header className="sticky top-0 z-50 border-b border-blue-100 bg-white/95 backdrop-blur">
         <div className="mx-auto flex min-h-16 w-full max-w-[1500px] items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
           <Link href="/academy/learn/fundamentals" className="flex min-w-0 items-center gap-3">
@@ -1257,7 +1300,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
               </form>
 
               {practiceFeedback ? (
-                <div className="mt-5 rounded-3xl border border-blue-100 bg-white p-4">
+                <div className={`mt-5 rounded-3xl border p-4 shadow-sm ${getTierPanelClass(practiceFeedback.tier)}`}>
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-600">
@@ -1266,8 +1309,11 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                       <h3 className="mt-1 text-2xl font-black tracking-tight text-slate-950">
                         {practiceFeedback.tier}
                       </h3>
+                      <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-700">
+                        {getTierGuidance(practiceFeedback.tier)}
+                      </p>
                     </div>
-                    <span className="inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-blue-600 text-xl font-black text-white">
+                    <span className={`inline-flex h-16 w-16 items-center justify-center rounded-3xl text-xl font-black ${getTierScoreClass(practiceFeedback.tier)}`}>
                       {practiceFeedback.score}%
                     </span>
                   </div>
@@ -1280,15 +1326,15 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                   </div>
 
                   {practiceFeedback.missedLabels.length > 0 ? (
-                    <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 p-4">
-                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-700">
+                    <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 p-4">
+                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-rose-700">
                         Areas to improve
                       </p>
                       <div className="mt-3 flex flex-wrap gap-2">
                         {practiceFeedback.missedLabels.map((label) => (
                           <span
                             key={label}
-                            className="inline-flex rounded-full bg-white px-3 py-1.5 text-xs font-black text-blue-700"
+                            className="inline-flex rounded-full border border-rose-100 bg-white px-3 py-1.5 text-xs font-black text-rose-700"
                           >
                             {label}
                           </span>
@@ -1298,8 +1344,8 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                   ) : null}
 
                   <div className="mt-5 grid gap-4 lg:grid-cols-2">
-                    <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
-                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-700">
+                    <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-emerald-700">
                         What worked
                       </p>
                       <ul className="mt-3 space-y-2">
@@ -1312,8 +1358,8 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                       </ul>
                     </div>
 
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">
+                    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-700">
                         Improve next
                       </p>
                       <ul className="mt-3 space-y-2">
@@ -1327,11 +1373,29 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                     </div>
                   </div>
 
-                  <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 p-4">
-                    <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-700">
-                      Better version of your input
-                    </p>
-                    <p className="mt-2 text-sm leading-7 text-slate-700">{practiceFeedback.strongerExample}</p>
+                  <div className="mt-4 rounded-2xl border border-indigo-200 bg-indigo-50 p-4">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                      <div>
+                        <p className="text-[11px] font-black uppercase tracking-[0.16em] text-indigo-700">
+                          Better version of your input
+                        </p>
+                        <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">
+                          Copy this version, paste it into your AI tool, and compare the result with your first attempt.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        data-copy-better-prompt={practiceFeedback.strongerExample}
+                        data-copy-label="Copy better prompt"
+                        className="inline-flex shrink-0 items-center justify-center rounded-2xl bg-indigo-600 px-4 py-2.5 text-sm font-black text-white shadow-sm shadow-indigo-900/20 transition hover:bg-indigo-700"
+                      >
+                        Copy better prompt
+                      </button>
+                    </div>
+
+                    <div className="mt-4 rounded-2xl border border-indigo-100 bg-white p-4">
+                      <p className="text-sm leading-7 text-slate-800">{practiceFeedback.strongerExample}</p>
+                    </div>
                   </div>
                 </div>
               ) : null}
@@ -1500,3 +1564,4 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
     </main>
   )
 }
+
