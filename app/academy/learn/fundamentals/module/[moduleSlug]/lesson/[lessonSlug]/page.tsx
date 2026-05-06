@@ -976,7 +976,7 @@ function getTierGuidance(tier: string) {
     return 'Good start. Fix the missing areas, copy the better version, and notice how the task becomes easier for the AI to follow.'
   }
 
-  return 'This needs more structure before it becomes a reliable AI instruction. Use the better version below as your next attempt.'
+  return 'Your input needs more structure before it becomes a reliable AI instruction. Use the better version below as your next attempt.'
 }
 async function reviewPracticeInput(formData: FormData) {
   'use server'
@@ -1681,7 +1681,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-600">
-                        {practiceFeedback.source === 'openai' ? 'AI feedback result' : 'Training checker result'}
+                        DeepMind Resources feedback
                       </p>
                       <h3 className="mt-1 text-2xl font-black tracking-tight text-slate-950">
                         {practiceFeedback.tier}
@@ -2109,6 +2109,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
     </main>
   )
 }
+
 
 
 
