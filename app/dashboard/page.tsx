@@ -97,22 +97,32 @@ const pathModules: PathModule[] = [
   {
     title: 'Module 1',
     status: 'Ready',
-    detail: 'Modern AI systems',
+    detail: 'AI Orientation and Baseline',
   },
   {
     title: 'Module 2',
     status: 'Locked',
-    detail: 'Safe-use boundaries',
+    detail: 'What AI Is and Is Not',
   },
   {
     title: 'Module 3',
     status: 'Locked',
-    detail: 'Prompt foundations',
+    detail: 'How Modern AI Tools Work',
   },
   {
     title: 'Module 4',
     status: 'Locked',
-    detail: 'Output review',
+    detail: 'AI Strengths, Limits, and Risks',
+  },
+  {
+    title: 'Module 5',
+    status: 'Locked',
+    detail: 'AI Tool Categories and Use Cases',
+  },
+  {
+    title: 'Module 6',
+    status: 'Locked',
+    detail: 'Safe Practical AI Workflow',
   },
 ]
 
@@ -411,9 +421,9 @@ export default async function DashboardPage() {
       detail: 'Default starting path for the individual Academy workspace.',
     },
     {
-      label: 'Next lesson',
-      status: 'AI Operating Base',
-      detail: 'Recommended first lesson in AI Fundamentals.',
+      label: 'Next action',
+      status: 'Start Module 1',
+      detail: 'Open the course overview and begin AI Orientation and Baseline.',
     },
     {
       label: 'Progress state',
@@ -503,18 +513,17 @@ export default async function DashboardPage() {
               <SectionHeader
                 eyebrow="Continue"
                 title="Next learning action"
-                description="Your dashboard should make the next action obvious before anything else."
+                description="Your dashboard points you back into the course at the right place."
               />
 
               <div className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
                 <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
                   <StatusBadge state="ready">Ready</StatusBadge>
                   <h3 className="mt-4 text-2xl font-black tracking-tight text-slate-950">
-                    Start Lesson 1: AI Operating Base
+                    Start Module 1: AI Orientation and Baseline
                   </h3>
                   <p className="mt-3 text-sm leading-6 text-slate-600">
-                    Begin with the operating base for modern AI systems, safe-use boundaries, prompt foundations, and
-                    output review.
+                    Open the AI Fundamentals course overview, then begin Module 1 to set your baseline before deeper lessons, checks, and sandbox practice.
                   </p>
 
                   <div className="mt-5 flex flex-col gap-2 sm:flex-row">
@@ -588,7 +597,7 @@ export default async function DashboardPage() {
                   href={path.href}
                   className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-black text-white transition hover:bg-blue-700"
                 >
-                  Open pathway
+                  {path.href.startsWith('/academy/learn') ? 'Open course' : 'View pathway'}
                 </Link>
               </article>
             ))}
@@ -749,7 +758,7 @@ export default async function DashboardPage() {
 
         <footer className="flex flex-col gap-3 rounded-3xl border border-blue-100 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5">
           <p className="text-sm font-semibold text-slate-600">
-            Next action: start the first AI Fundamentals lesson and create your first sandbox evidence record.
+            Next action: open AI Fundamentals and begin Module 1.
           </p>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link
@@ -770,6 +779,7 @@ export default async function DashboardPage() {
     </main>
   )
 }
+
 
 
 
