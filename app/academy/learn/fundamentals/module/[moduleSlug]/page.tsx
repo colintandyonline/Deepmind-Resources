@@ -16,6 +16,7 @@ import {
   LockKeyhole,
   Route,
   ShieldCheck,
+  Sparkles,
   Target,
 } from 'lucide-react'
 import { aiFundamentalsLearningPath } from '@/lib/academy/fundamentals'
@@ -117,19 +118,73 @@ function getSandboxRequirementLabel(requirement: string) {
     return 'Required practice'
   }
 
-  return 'No practice task'
+  return 'Practice task'
 }
 
-function getSensitivityLabel(module: Module) {
+function getLiveRelevanceLabel(module: Module) {
   if (module.brainUpdateSensitivity === 'high') {
-    return 'High update sensitivity'
+    return 'Watch closely'
   }
 
   if (module.brainUpdateSensitivity === 'medium') {
-    return 'Medium update sensitivity'
+    return 'Refresh when needed'
   }
 
-  return 'Low update sensitivity'
+  return 'Stable foundation'
+}
+
+function getLessonHref(module: Module, lesson: Lesson) {
+  return `/academy/learn/fundamentals/module/${module.slug}/lesson/${lesson.slug}`
+}
+
+function isLessonAvailable(module: Module, lessonIndex: number, completedLessonIds: Set<string>) {
+  if (lessonIndex === 0) {
+    return true
+  }
+
+  const lesson = module.lessons[lessonIndex]
+
+  if (completedLessonIds.has(lesson.id)) {
+    return true
+  }
+
+  const previousLesson = module.lessons[lessonIndex - 1]
+
+  return previousLesson ? completedLessonIds.has(previousLesson.id) : false
+}
+
+function getNextAvailableLesson(module: Module, completedLessonIds: Set<string>) {
+  const nextIncompleteLesson = module.lessons.find((lesson, index) => {
+    const available = isLessonAvailable(module, index, completedLessonIds)
+
+    return available && !completedLessonIds.has(lesson.id)
+  })
+
+  return nextIncompleteLesson ?? module.lessons[0] ?? null
+}
+
+function getLessonStatusLabel({
+  isCompleted,
+  isAvailable,
+  isFirstLesson,
+}: {
+  isCompleted: boolean
+  isAvailable: boolean
+  isFirstLesson: boolean
+}) {
+  if (isCompleted) {
+    return 'Completed'
+  }
+
+  if (isAvailable && isFirstLesson) {
+    return 'Start here'
+  }
+
+  if (isAvailable) {
+    return 'Ready next'
+  }
+
+  return 'Locked'
 }
 
 function IconTile({ children, solid = false }: { children: ReactNode; solid?: boolean }) {
@@ -151,22 +206,66 @@ function ProgressCard({
   value,
   detail,
   icon,
+  tone = 'blue',
 }: {
   label: string
   value: string
   detail: string
   icon: ReactNode
+  tone?: 'blue' | 'emerald' | 'amber' | 'indigo'
 }) {
+  const toneClass =
+    tone === 'emerald'
+      ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+      : tone === 'amber'
+        ? 'border-amber-200 bg-amber-50 text-amber-700'
+        : tone === 'indigo'
+          ? 'border-indigo-200 bg-indigo-50 text-indigo-700'
+          : 'border-blue-100 bg-blue-50 text-blue-700'
+
   return (
     <article className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm shadow-blue-900/5">
       <div className="flex items-center gap-3">
-        <IconTile>{icon}</IconTile>
+        <span className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border ${toneClass}`}>
+          {icon}
+        </span>
         <div>
           <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-600">
             {label}
           </p>
-          <p className="mt-1 text-3xl font-black tracking-tight text-slate-950">{value}</p>
+          <p className="mt-1 text-2xl font-black tracking-tight text-slate-950">{value}</p>
           <p className="mt-1 text-xs leading-5 text-slate-500">{detail}</p>
+        </div>
+      </div>
+    </article>
+  )
+}
+
+function ModuleStep({
+  number,
+  title,
+  detail,
+  icon,
+}: {
+  number: string
+  title: string
+  detail: string
+  icon: ReactNode
+}) {
+  return (
+    <article className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm shadow-blue-900/5">
+      <div className="flex items-start gap-3">
+        <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-sm font-black text-white">
+          {number}
+        </span>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+              {icon}
+            </span>
+            <h2 className="text-base font-black tracking-tight text-slate-950">{title}</h2>
+          </div>
+          <p className="mt-3 text-sm leading-6 text-slate-600">{detail}</p>
         </div>
       </div>
     </article>
@@ -176,71 +275,83 @@ function ProgressCard({
 function LessonCard({
   lesson,
   module,
-  isFirstLesson,
+  lessonIndex,
+  isAvailable,
   isCompleted,
 }: {
   lesson: Lesson
   module: Module
-  isFirstLesson: boolean
+  lessonIndex: number
+  isAvailable: boolean
   isCompleted: boolean
 }) {
-  const lessonHref = `/academy/learn/fundamentals/module/${module.slug}/lesson/${lesson.slug}`
+  const lessonHref = getLessonHref(module, lesson)
+  const statusLabel = getLessonStatusLabel({
+    isCompleted,
+    isAvailable,
+    isFirstLesson: lessonIndex === 0,
+  })
+
+  const statusClass = isCompleted
+    ? 'bg-emerald-600 text-white'
+    : isAvailable
+      ? 'bg-blue-600 text-white'
+      : 'border border-slate-200 bg-slate-50 text-slate-500'
+
+  const numberClass = isCompleted
+    ? 'bg-emerald-600 text-white'
+    : isAvailable
+      ? 'bg-blue-50 text-blue-700'
+      : 'bg-slate-100 text-slate-400'
 
   return (
     <article className="rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm shadow-blue-900/5">
       <div className="flex items-start gap-4">
         <span
-          className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-sm font-black ${
-            isCompleted ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-700'
-          }`}
+          className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-sm font-black ${numberClass}`}
         >
           {isCompleted ? <CheckCircle2 className="h-5 w-5" aria-hidden="true" /> : lesson.sortOrder}
         </span>
 
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span
-              className={`rounded-full px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] ${
-                isFirstLesson ? 'bg-blue-600 text-white' : 'border border-slate-200 bg-slate-50 text-slate-600'
-              }`}
-            >
-              {isFirstLesson ? 'Start here' : 'Sequential lesson'}
+            <span className={`rounded-full px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] ${statusClass}`}>
+              {statusLabel}
             </span>
             <span className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-blue-700">
-              Version {lesson.versionNumber}
+              Lesson {lessonIndex + 1}
             </span>
           </div>
 
           <h2 className="mt-4 text-xl font-black tracking-tight text-slate-950">{lesson.title}</h2>
           <p className="mt-3 text-sm leading-7 text-slate-600">{lesson.outcome}</p>
 
-          <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">
-              Practical example
-            </p>
-            <p className="mt-2 text-sm leading-6 text-slate-700">{lesson.practicalExample}</p>
-          </div>
-
-          <div className="mt-3 rounded-2xl border border-blue-100 bg-blue-50 p-4">
+          <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 p-4">
             <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-700">
-              Common mistake
+              What this lesson builds
             </p>
-            <p className="mt-2 text-sm leading-6 text-slate-700">{lesson.commonMistake}</p>
+            <p className="mt-2 text-sm leading-6 text-slate-700">
+              A practical habit you will use inside the lesson: learn the idea, try an input, review feedback, and sign off understanding.
+            </p>
           </div>
 
           <div className="mt-5">
-            {isFirstLesson ? (
+            {isAvailable ? (
               <Link
                 href={lessonHref}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-sm shadow-blue-900/20 transition hover:bg-blue-700"
+                className={`inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-black text-white shadow-sm transition ${
+                  isCompleted
+                    ? 'bg-emerald-600 shadow-emerald-900/20 hover:bg-emerald-700'
+                    : 'bg-blue-600 shadow-blue-900/20 hover:bg-blue-700'
+                }`}
               >
-                Start lesson
+                {isCompleted ? 'Review lesson' : 'Start lesson'}
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             ) : (
               <span className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-100 px-5 py-3 text-sm font-black text-slate-500">
                 <LockKeyhole className="h-4 w-4" aria-hidden="true" />
-                Complete earlier lessons first
+                Complete the previous lesson first
               </span>
             )}
           </div>
@@ -303,11 +414,6 @@ export default async function AIFundamentalsModulePage({ params }: ModulePagePro
   }
 
   const lessonIds = module.lessons.map((lesson) => lesson.id)
-  const firstLesson = module.lessons[0]
-  const firstLessonHref = firstLesson
-    ? `/academy/learn/fundamentals/module/${module.slug}/lesson/${firstLesson.slug}`
-    : '/academy/learn/fundamentals'
-
   const [{ data: lessonRows }, { data: sandboxRows }] = await Promise.all([
     supabase
       .from('user_lesson_progress')
@@ -329,6 +435,9 @@ export default async function AIFundamentalsModulePage({ params }: ModulePagePro
   const reviewedSandboxCount = getReviewedSandboxCount(sandboxAttemptRows)
   const moduleProgress =
     module.lessons.length > 0 ? Math.round((completedLessonCount / module.lessons.length) * 100) : 0
+  const nextLesson = getNextAvailableLesson(module, completedLessonIds)
+  const nextLessonHref = nextLesson ? getLessonHref(module, nextLesson) : '/academy/learn/fundamentals'
+  const isModuleComplete = completedLessonCount === module.lessons.length
 
   const structuredData = [
     {
@@ -461,12 +570,12 @@ export default async function AIFundamentalsModulePage({ params }: ModulePagePro
 
             <aside className="rounded-[2rem] border border-blue-700 bg-blue-600 p-5 text-white shadow-2xl shadow-blue-900/25">
               <p className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-100">
-                Module progress
+                Your module progress
               </p>
 
               <div className="mt-4 rounded-3xl border border-white/15 bg-white/10 p-4">
                 <div className="flex items-center justify-between gap-4">
-                  <p className="text-sm font-bold text-blue-50">Lesson completion</p>
+                  <p className="text-sm font-bold text-blue-50">Lessons signed off</p>
                   <p className="text-3xl font-black text-white">{moduleProgress}%</p>
                 </div>
                 <div className="mt-4 h-3 overflow-hidden rounded-full bg-white/15">
@@ -481,23 +590,25 @@ export default async function AIFundamentalsModulePage({ params }: ModulePagePro
               <div className="mt-4 grid gap-3">
                 <div className="rounded-3xl border border-white/15 bg-white/10 p-4">
                   <p className="text-[10px] font-black uppercase tracking-[0.14em] text-blue-100">
-                    Current evidence
+                    Lesson progress
                   </p>
                   <p className="mt-2 text-2xl font-black text-white">
-                    {completedLessonCount}/{module.lessons.length} lessons
+                    {completedLessonCount}/{module.lessons.length} signed off
                   </p>
                   <p className="mt-2 text-sm leading-6 text-blue-50">
-                    Saved completion records for this module.
+                    Complete each lesson check to move through this module with evidence.
                   </p>
                 </div>
 
                 <div className="rounded-3xl border border-white/15 bg-white/10 p-4">
                   <p className="text-[10px] font-black uppercase tracking-[0.14em] text-blue-100">
-                    Practice evidence
+                    Practice progress
                   </p>
-                  <p className="mt-2 text-2xl font-black text-white">{submittedSandboxCount} submitted</p>
+                  <p className="mt-2 text-2xl font-black text-white">
+                    {submittedSandboxCount} submitted
+                  </p>
                   <p className="mt-2 text-sm leading-6 text-blue-50">
-                    {reviewedSandboxCount} reviewed sandbox attempt{reviewedSandboxCount === 1 ? '' : 's'}.
+                    {reviewedSandboxCount} practice attempt{reviewedSandboxCount === 1 ? '' : 's'} reviewed.
                   </p>
                 </div>
               </div>
@@ -509,26 +620,51 @@ export default async function AIFundamentalsModulePage({ params }: ModulePagePro
           <ProgressCard
             label="Lessons"
             value={String(module.lessons.length)}
-            detail={`${completedLessonCount} completed`}
+            detail={`${completedLessonCount} signed off`}
             icon={<BookOpenCheck className="h-5 w-5" aria-hidden="true" />}
+            tone={isModuleComplete ? 'emerald' : 'blue'}
           />
           <ProgressCard
-            label="Knowledge check"
-            value={module.knowledgeCheck.blocksProgressUntilPassed ? 'Required' : 'Diagnostic'}
+            label="Module review"
+            value={module.knowledgeCheck.blocksProgressUntilPassed ? 'Required' : 'Guided'}
             detail={module.knowledgeCheck.title}
             icon={<FileQuestion className="h-5 w-5" aria-hidden="true" />}
+            tone="amber"
           />
           <ProgressCard
             label="Practice"
             value={getSandboxRequirementLabel(module.sandboxTask.requirement)}
             detail={module.sandboxTask.title}
             icon={<Code2 className="h-5 w-5" aria-hidden="true" />}
+            tone="indigo"
           />
           <ProgressCard
-            label="Update state"
-            value={getSensitivityLabel(module)}
-            detail={`Version-aware learning path v${aiFundamentalsLearningPath.versionNumber}`}
+            label="Live relevance"
+            value={getLiveRelevanceLabel(module)}
+            detail="This module can be refreshed when AI behaviour changes."
             icon={<ShieldCheck className="h-5 w-5" aria-hidden="true" />}
+            tone="emerald"
+          />
+        </section>
+
+        <section className="mt-5 grid gap-4 md:grid-cols-3">
+          <ModuleStep
+            number="1"
+            title="Learn the idea"
+            detail="Open each lesson, work through the teaching, and use the practice input to test the skill."
+            icon={<BookOpenCheck className="h-5 w-5" aria-hidden="true" />}
+          />
+          <ModuleStep
+            number="2"
+            title="Improve the input"
+            detail="Use the feedback to tighten the prompt or workflow before signing off understanding."
+            icon={<Sparkles className="h-5 w-5" aria-hidden="true" />}
+          />
+          <ModuleStep
+            number="3"
+            title="Prove understanding"
+            detail="Complete the lesson check. Your dashboard progress updates when the lesson is completed."
+            icon={<BadgeCheck className="h-5 w-5" aria-hidden="true" />}
           />
         </section>
 
@@ -539,11 +675,11 @@ export default async function AIFundamentalsModulePage({ params }: ModulePagePro
                 Module lessons
               </p>
               <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
-                Four focused lessons for this module.
+                Work through the four lessons in order.
               </h2>
             </div>
             <p className="max-w-xl text-sm leading-6 text-slate-600">
-              Start with the first lesson. The remaining lessons stay sequential until the lesson completion flow is wired into the full course player.
+              Each lesson now has its own teaching, practice input, feedback, and understanding check. Complete one lesson to unlock the next.
             </p>
           </div>
 
@@ -553,7 +689,8 @@ export default async function AIFundamentalsModulePage({ params }: ModulePagePro
                 key={lesson.id}
                 lesson={lesson}
                 module={module}
-                isFirstLesson={index === 0}
+                lessonIndex={index}
+                isAvailable={isLessonAvailable(module, index, completedLessonIds)}
                 isCompleted={completedLessonIds.has(lesson.id)}
               />
             ))}
@@ -561,14 +698,14 @@ export default async function AIFundamentalsModulePage({ params }: ModulePagePro
         </section>
 
         <section className="mt-6 grid gap-5 lg:grid-cols-2">
-          <article className="rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm shadow-blue-900/10 sm:p-6">
+          <article className="rounded-[2rem] border border-amber-200 bg-amber-50 p-5 shadow-sm shadow-amber-900/5 sm:p-6">
             <div className="flex items-center gap-3">
-              <IconTile>
+              <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-amber-700 shadow-sm">
                 <FileQuestion className="h-5 w-5" aria-hidden="true" />
-              </IconTile>
+              </span>
               <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600">
-                  Knowledge check
+                <p className="text-[11px] font-black uppercase tracking-[0.22em] text-amber-700">
+                  Module review
                 </p>
                 <h2 className="text-2xl font-black tracking-tight text-slate-950">
                   {module.knowledgeCheck.title}
@@ -576,30 +713,30 @@ export default async function AIFundamentalsModulePage({ params }: ModulePagePro
               </div>
             </div>
 
-            <p className="mt-5 text-base leading-8 text-slate-600">{module.knowledgeCheck.purpose}</p>
+            <p className="mt-5 text-base leading-8 text-slate-700">{module.knowledgeCheck.purpose}</p>
 
-            <div className="mt-5 rounded-3xl border border-blue-100 bg-blue-50 p-4">
-              <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-700">
-                Check prompt
+            <div className="mt-5 rounded-3xl border border-amber-200 bg-white p-4">
+              <p className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-700">
+                Use this to check yourself
               </p>
               <p className="mt-2 text-sm leading-7 text-slate-700">{module.knowledgeCheck.prompt}</p>
             </div>
 
-            <div className="mt-4 rounded-3xl border border-slate-200 bg-slate-50 p-4">
-              <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">
-                Pass rule
+            <div className="mt-4 rounded-3xl border border-amber-200 bg-white p-4">
+              <p className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-700">
+                You are ready when
               </p>
               <p className="mt-2 text-sm leading-7 text-slate-700">{module.knowledgeCheck.passRule}</p>
             </div>
           </article>
 
-          <article className="rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm shadow-blue-900/10 sm:p-6">
+          <article className="rounded-[2rem] border border-indigo-200 bg-indigo-50 p-5 shadow-sm shadow-indigo-900/5 sm:p-6">
             <div className="flex items-center gap-3">
-              <IconTile>
+              <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-indigo-700 shadow-sm">
                 <Code2 className="h-5 w-5" aria-hidden="true" />
-              </IconTile>
+              </span>
               <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600">
+                <p className="text-[11px] font-black uppercase tracking-[0.22em] text-indigo-700">
                   Sandbox practice
                 </p>
                 <h2 className="text-2xl font-black tracking-tight text-slate-950">
@@ -608,13 +745,13 @@ export default async function AIFundamentalsModulePage({ params }: ModulePagePro
               </div>
             </div>
 
-            <p className="mt-5 text-base leading-8 text-slate-600">{module.sandboxTask.scenario}</p>
+            <p className="mt-5 text-base leading-8 text-slate-700">{module.sandboxTask.scenario}</p>
 
             <div className="mt-5 grid gap-3">
               {module.sandboxTask.successCriteria.slice(0, 3).map((criterion) => (
-                <div key={criterion} className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
+                <div key={criterion} className="rounded-2xl border border-indigo-200 bg-white p-4">
                   <div className="flex items-start gap-3">
-                    <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" aria-hidden="true" />
+                    <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-indigo-600" aria-hidden="true" />
                     <p className="text-sm font-semibold leading-6 text-slate-700">{criterion}</p>
                   </div>
                 </div>
@@ -629,9 +766,13 @@ export default async function AIFundamentalsModulePage({ params }: ModulePagePro
               <Route className="h-5 w-5" aria-hidden="true" />
             </IconTile>
             <div>
-              <p className="text-sm font-black text-slate-950">Continue the AI Fundamentals route.</p>
+              <p className="text-sm font-black text-slate-950">
+                {isModuleComplete ? 'Module lessons signed off.' : 'Continue your next available lesson.'}
+              </p>
               <p className="mt-1 text-sm leading-6 text-slate-600">
-                Return to the course overview or start the first lesson in this module.
+                {isModuleComplete
+                  ? 'Review the module check and sandbox practice, then return to the course overview when you are ready for the next module.'
+                  : 'Complete the lesson check to unlock the next step and update your Academy progress.'}
               </p>
             </div>
           </div>
@@ -644,10 +785,10 @@ export default async function AIFundamentalsModulePage({ params }: ModulePagePro
               Course overview
             </Link>
             <Link
-              href={firstLessonHref}
+              href={nextLessonHref}
               className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-sm shadow-blue-900/20 transition hover:bg-blue-700"
             >
-              Start lesson
+              {isModuleComplete ? 'Review first lesson' : 'Continue lesson'}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
