@@ -34,6 +34,10 @@ type LessonPageSearchParams = {
   example?: string
   input?: string
   draft?: string
+  originalInput?: string
+  improvedPrompt?: string
+  cycleLocked?: string
+  signedOff?: string
   check?: string
   checkScore?: string
   missedQuestions?: string
@@ -114,6 +118,10 @@ type PracticeFeedback = {
   advice: string[]
   missedLabels: string[]
   strongerExample: string
+  originalInput?: string
+  improvedPrompt?: string
+  cycleLocked?: boolean
+  signedOff?: boolean
   source?: 'openai' | 'deterministic'
   whyBetter?: string
   practiceInstruction?: string
@@ -1151,14 +1159,29 @@ function getPracticeFeedback(searchParams: LessonPageSearchParams | undefined): 
     return null
   }
 
+  const signedOff = searchParams.signedOff === 'true'
+  const improvedPrompt = searchParams.improvedPrompt ?? searchParams.example ?? ''
+  const originalInput = searchParams.originalInput ?? searchParams.input ?? ''
+
   return {
-    score,
-    tier: searchParams.tier,
-    learnerInput: searchParams.input ?? '',
-    strengths: splitSearchList(searchParams.strengths),
-    advice: splitSearchList(searchParams.advice),
-    missedLabels: splitSearchList(searchParams.missed),
+    score: signedOff ? 100 : score,
+    tier: signedOff ? 'Strong' : searchParams.tier,
+    learnerInput: signedOff && improvedPrompt ? improvedPrompt : searchParams.input ?? '',
+    strengths: signedOff
+      ? [
+          'Signed off. This is the improved prompt from the first practice cycle.',
+          'The original task, improved prompt, comparison, safety note, and why-better explanation are locked together.',
+        ]
+      : splitSearchList(searchParams.strengths),
+    advice: signedOff
+      ? ['No new rewrite is needed for this cycle. Start again to practise with a new original prompt.']
+      : splitSearchList(searchParams.advice),
+    missedLabels: signedOff ? [] : splitSearchList(searchParams.missed),
     strongerExample: searchParams.example ?? '',
+    originalInput,
+    improvedPrompt,
+    cycleLocked: searchParams.cycleLocked === 'true',
+    signedOff,
     source: searchParams.source === 'openai' ? 'openai' : 'deterministic',
     whyBetter: searchParams.whyBetter ?? '',
     practiceInstruction: searchParams.practiceInstruction ?? '',
@@ -1224,6 +1247,49 @@ async function reviewPracticeInput(formData: FormData) {
     throw new Error('Lesson could not be found.')
   }
 
+  const cycleLocked = formData.get('cycleLocked') === 'true'
+  const lockedOriginalInput = formData.get('originalInput')
+  const lockedImprovedPrompt = formData.get('improvedPrompt')
+
+  if (
+    cycleLocked &&
+    typeof lockedOriginalInput === 'string' &&
+    typeof lockedImprovedPrompt === 'string' &&
+    lockedImprovedPrompt.trim()
+  ) {
+    const query = new URLSearchParams()
+    const copyField = (name: string) => {
+      const value = formData.get(name)
+
+      if (typeof value === 'string') {
+        query.set(name, value)
+      }
+    }
+
+    query.set('score', '100')
+    query.set('tier', 'Strong')
+    query.set('input', limitText(lockedImprovedPrompt, 700))
+    query.set('draft', lockedImprovedPrompt)
+    query.set('example', lockedImprovedPrompt)
+    query.set('originalInput', lockedOriginalInput)
+    query.set('improvedPrompt', lockedImprovedPrompt)
+    query.set('cycleLocked', 'true')
+    query.set('signedOff', 'true')
+    query.set('missed', '')
+    copyField('source')
+    copyField('whyBetter')
+    copyField('practiceInstruction')
+    copyField('safetyNote')
+    copyField('originalOutputTitle')
+    copyField('improvedOutputTitle')
+    copyField('originalOutput')
+    copyField('improvedOutput')
+    copyField('differenceHighlights')
+    copyField('learningTakeaway')
+
+    redirect(`/academy/learn/fundamentals/module/${context.module.slug}/lesson/${context.lesson.slug}?${query.toString()}#practice`)
+  }
+
   const aiEvaluation = await getAIPromptFeedback({
     moduleSlug: context.module.slug,
     lessonSlug: context.lesson.slug,
@@ -1239,6 +1305,8 @@ async function reviewPracticeInput(formData: FormData) {
   query.set('advice', evaluation.advice.join(searchParamDivider))
   query.set('missed', evaluation.missedLabels.join(searchParamDivider))
   query.set('example', evaluation.strongerExample)
+  query.set('originalInput', evaluation.learnerInput)
+  query.set('improvedPrompt', evaluation.strongerExample)
   query.set('source', evaluation.source ?? 'deterministic')
   query.set('whyBetter', evaluation.whyBetter ?? '')
   query.set('practiceInstruction', evaluation.practiceInstruction ?? '')
@@ -1385,7 +1453,49 @@ async function useBetterPrompt(formData: FormData) {
   }
 
   const query = new URLSearchParams()
+  const copyField = (name: string) => {
+    const value = formData.get(name)
+
+    if (typeof value === 'string') {
+      query.set(name, value)
+    }
+  }
+
+  const feedbackFields = [
+    'score',
+    'tier',
+    'input',
+    'strengths',
+    'advice',
+    'missed',
+    'example',
+    'source',
+    'whyBetter',
+    'practiceInstruction',
+    'safetyNote',
+    'originalOutputTitle',
+    'improvedOutputTitle',
+    'originalOutput',
+    'improvedOutput',
+    'differenceHighlights',
+    'learningTakeaway',
+  ]
+  feedbackFields.forEach(copyField)
+
   query.set('draft', betterPrompt)
+  const originalInput = formData.get('originalInput')
+  const fallbackInput = formData.get('input')
+  query.set(
+    'originalInput',
+    typeof originalInput === 'string'
+      ? originalInput
+      : typeof fallbackInput === 'string'
+        ? fallbackInput
+        : '',
+  )
+  query.set('improvedPrompt', betterPrompt)
+  query.set('example', betterPrompt)
+  query.set('cycleLocked', 'true')
   query.set('reuse', 'true')
 
   redirect(`/academy/learn/fundamentals/module/${context.module.slug}/lesson/${context.lesson.slug}?${query.toString()}#practice`)
@@ -1605,6 +1715,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
   const { module, lesson, lessonIndex, flatIndex, previousItem, nextItem } = context
   const teaching = getTeachingContent(context)
   const practiceFeedback = getPracticeFeedback(resolvedSearchParams)
+  const practiceCycleLocked = practiceFeedback?.cycleLocked === true
   const understandingQuestions = getUnderstandingQuestions(context)
   const understandingAttempted =
     resolvedSearchParams?.check === 'passed' || resolvedSearchParams?.check === 'needs_review'
@@ -1874,6 +1985,27 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
               <form action={reviewPracticeInput} className="mt-5 space-y-4">
                 <input type="hidden" name="moduleSlug" value={module.slug} />
                 <input type="hidden" name="lessonSlug" value={lesson.slug} />
+                {practiceCycleLocked && practiceFeedback ? (
+                  <>
+                    <input type="hidden" name="cycleLocked" value="true" />
+                    <input type="hidden" name="originalInput" value={practiceFeedback.originalInput ?? practiceFeedback.learnerInput} />
+                    <input type="hidden" name="improvedPrompt" value={practiceFeedback.improvedPrompt ?? practiceFeedback.strongerExample} />
+                    <input type="hidden" name="source" value={practiceFeedback.source ?? 'deterministic'} />
+                    <input type="hidden" name="whyBetter" value={practiceFeedback.whyBetter ?? ''} />
+                    <input type="hidden" name="practiceInstruction" value={practiceFeedback.practiceInstruction ?? ''} />
+                    <input type="hidden" name="safetyNote" value={practiceFeedback.safetyNote ?? ''} />
+                    <input type="hidden" name="originalOutputTitle" value={practiceFeedback.outputComparison?.originalOutputTitle ?? ''} />
+                    <input type="hidden" name="improvedOutputTitle" value={practiceFeedback.outputComparison?.improvedOutputTitle ?? ''} />
+                    <input type="hidden" name="originalOutput" value={practiceFeedback.outputComparison?.originalOutput ?? ''} />
+                    <input type="hidden" name="improvedOutput" value={practiceFeedback.outputComparison?.improvedOutput ?? ''} />
+                    <input
+                      type="hidden"
+                      name="differenceHighlights"
+                      value={practiceFeedback.outputComparison?.differenceHighlights.join(searchParamDivider) ?? ''}
+                    />
+                    <input type="hidden" name="learningTakeaway" value={practiceFeedback.outputComparison?.learningTakeaway ?? ''} />
+                  </>
+                ) : null}
                 <textarea
                       key={resolvedSearchParams?.draft ?? practiceFeedback?.learnerInput ?? 'empty-practice-input'}
                   name="learnerInput"
@@ -1901,10 +2033,12 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                         DeepMind Resources feedback
                       </p>
                       <h3 className="mt-1 text-2xl font-black tracking-tight text-slate-950">
-                        {practiceFeedback.tier}
+                        {practiceFeedback.signedOff ? 'Strong - signed off' : practiceFeedback.tier}
                       </h3>
                       <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-700">
-                        {getTierGuidance(practiceFeedback.tier)}
+                        {practiceFeedback.signedOff
+                          ? 'The improved prompt is signed off. This check reused the locked first-cycle feedback instead of creating another rewrite.'
+                          : getTierGuidance(practiceFeedback.tier)}
                       </p>
                     </div>
                     <span className={`inline-flex h-16 w-16 items-center justify-center rounded-3xl text-xl font-black ${getTierScoreClass(practiceFeedback.tier)}`}>
@@ -1914,10 +2048,19 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
 
                   <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">
-                      Prompt reviewed
+                      {practiceFeedback.signedOff ? 'Improved prompt reviewed' : 'Prompt reviewed'}
                     </p>
                     <p className="mt-2 text-sm leading-7 text-slate-700">{practiceFeedback.learnerInput}</p>
                   </div>
+
+                  {practiceFeedback.signedOff && practiceFeedback.originalInput ? (
+                    <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
+                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">
+                        Original prompt locked
+                      </p>
+                      <p className="mt-2 text-sm leading-7 text-slate-700">{practiceFeedback.originalInput}</p>
+                    </div>
+                  ) : null}
 
                   {practiceFeedback.missedLabels.length > 0 ? (
                     <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 p-4">
@@ -1989,6 +2132,8 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                           <input type="hidden" name="advice" value={practiceFeedback.advice.join(searchParamDivider)} />
                           <input type="hidden" name="missed" value={practiceFeedback.missedLabels.join(searchParamDivider)} />
                           <input type="hidden" name="example" value={practiceFeedback.strongerExample} />
+                          <input type="hidden" name="originalInput" value={practiceFeedback.originalInput ?? practiceFeedback.learnerInput} />
+                          <input type="hidden" name="improvedPrompt" value={practiceFeedback.improvedPrompt ?? practiceFeedback.strongerExample} />
                           <input type="hidden" name="source" value={practiceFeedback.source ?? 'deterministic'} />
                           <input type="hidden" name="whyBetter" value={practiceFeedback.whyBetter ?? ''} />
                           <input type="hidden" name="practiceInstruction" value={practiceFeedback.practiceInstruction ?? ''} />
