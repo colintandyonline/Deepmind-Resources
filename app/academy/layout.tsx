@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+﻿import type { ReactNode } from 'react'
 
 type AcademyLayoutProps = {
   children: ReactNode
@@ -49,12 +49,44 @@ export default function AcademyLayout({ children }: AcademyLayoutProps) {
           }
 
           .dmr-academy-route #academy-onboarding-close::after {
-            content: '×';
+            content: 'Ã—';
             display: block;
             color: #07152f;
             font-size: 1.5rem;
             font-weight: 700;
             line-height: 1;
+          }
+
+          /*
+            Disable Academy scroll reveal animations on mobile.
+            The sitewide reveal effect works well on marketing pages, but Academy lesson/module pages
+            are dense learning interfaces and need instant rendering on small screens.
+          */
+          @media (max-width: 767px) {
+            .dmr-academy-route main section,
+            .dmr-academy-route main article {
+              animation: none !important;
+              animation-timeline: auto !important;
+              animation-range: normal !important;
+              opacity: 1 !important;
+              transform: none !important;
+              filter: none !important;
+              will-change: auto !important;
+            }
+
+            .dmr-academy-route main a,
+            .dmr-academy-route main button {
+              transition:
+                border-color 160ms ease,
+                background-color 160ms ease,
+                color 160ms ease,
+                box-shadow 160ms ease !important;
+            }
+
+            .dmr-academy-route main a:hover,
+            .dmr-academy-route main button:hover {
+              transform: none !important;
+            }
           }
 
           @media (max-width: 640px) {
@@ -77,3 +109,4 @@ export default function AcademyLayout({ children }: AcademyLayoutProps) {
     </div>
   )
 }
+
