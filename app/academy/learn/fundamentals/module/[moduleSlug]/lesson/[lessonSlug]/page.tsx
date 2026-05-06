@@ -30,6 +30,9 @@ type LessonPageSearchParams = {
   tier?: string
   strengths?: string
   advice?: string
+  missed?: string
+  example?: string
+  input?: string
 }
 
 type LessonPageProps = {
@@ -73,16 +76,33 @@ type LessonTeachingContent = {
   recap: string[]
 }
 
+type PracticeCheck = {
+  label: string
+  passed: boolean
+  strength: string
+  advice: string
+}
+
 type PracticeFeedback = {
   score: number
   tier: string
+  learnerInput: string
   strengths: string[]
   advice: string[]
-}
-
-type PracticeEvaluation = PracticeFeedback & {
+  missedLabels: string[]
   strongerExample: string
 }
+
+type TopicProfile = {
+  task: string
+  audience: string
+  context: string
+  format: string
+  safetyOrReview: string
+  constraints: string
+}
+
+const searchParamDivider = '~~~'
 
 const specificTeachingBySlug: Record<string, LessonTeachingContent> = {
   'what-you-will-learn-in-ai-fundamentals': {
@@ -467,57 +487,282 @@ function includesAny(text: string, words: string[]) {
   return words.some((word) => text.includes(word))
 }
 
-function evaluatePracticeSubmission(input: string, context: LessonContext): PracticeEvaluation {
-  const teaching = getTeachingContent(context)
-  const trimmed = input.trim()
+function cleanInput(input: string) {
+  return input.replace(/\s+/g, ' ').trim()
+}
+
+function limitText(input: string, maxLength: number) {
+  const cleaned = cleanInput(input)
+
+  if (cleaned.length <= maxLength) {
+    return cleaned
+  }
+
+  return `${cleaned.slice(0, maxLength - 1).trim()}…`
+}
+
+function inferTopicProfile(rawInput: string): TopicProfile {
+  const text = rawInput.toLowerCase()
+  const taskSummary = limitText(rawInput, 150)
+
+  if (includesAny(text, ['tyre', 'tire', 'wheel', 'puncture', 'flat tyre', 'flat tire'])) {
+    return {
+      task: 'Create a plain-English, step-by-step safety checklist for changing a car tyre',
+      audience: includesAny(text, ['beginner', 'new driver', 'learner'])
+        ? 'a beginner driver'
+        : 'a driver who may not have changed a tyre before',
+      context: includesAny(text, ['roadside', 'motorway', 'highway'])
+        ? 'at the roadside, where traffic and location safety matter'
+        : 'in a realistic roadside or driveway situation where the ground, traffic, tools, and weather may affect safety',
+      format: includesAny(text, ['bullet', 'bullets'])
+        ? 'bullet points under clear headings'
+        : 'clear sections with short bullet points',
+      safetyOrReview:
+        'include when not to attempt the change, when to call roadside assistance, and final checks before driving',
+      constraints:
+        'avoid risky shortcuts, do not assume the reader knows where the jack point is, and keep the language plain',
+    }
+  }
+
+  if (includesAny(text, ['customer', 'client', 'support', 'complaint', 'refund', 'delivery'])) {
+    return {
+      task: 'Draft a customer support response',
+      audience: includesAny(text, ['customer']) ? 'the customer' : 'a customer or client',
+      context:
+        'based on the customer issue, company policy, what is known, and what still needs checking',
+      format: includesAny(text, ['email']) ? 'a short email' : 'a clear customer message',
+      safetyOrReview:
+        'check order details, avoid unsupported promises, and flag anything that needs approval',
+      constraints: 'use a calm tone, keep it concise, and do not invent policy or compensation details',
+    }
+  }
+
+  if (includesAny(text, ['meeting', 'notes', 'minutes', 'action items', 'actions'])) {
+    return {
+      task: 'Turn meeting notes into a useful follow-up summary',
+      audience: 'the meeting attendees or project team',
+      context: 'using only the supplied meeting notes and any known project constraints',
+      format: 'a table with action item, owner, deadline, and open question',
+      safetyOrReview: 'mark missing owners or dates as not stated instead of guessing',
+      constraints: 'keep the output concise and separate confirmed actions from assumptions',
+    }
+  }
+
+  if (includesAny(text, ['policy', 'procedure', 'compliance', 'handbook', 'guidance'])) {
+    return {
+      task: 'Summarise a policy or procedure',
+      audience: 'staff who need to follow the policy',
+      context: 'using only the supplied source text',
+      format: 'plain-English bullet points with a short checklist',
+      safetyOrReview: 'flag anything not stated in the source and recommend human review for high-risk points',
+      constraints: 'do not invent rules, legal obligations, or approvals',
+    }
+  }
+
+  if (includesAny(text, ['code', 'bug', 'function', 'component', 'typescript', 'javascript', 'error'])) {
+    return {
+      task: 'Review or improve a code-related task',
+      audience: 'a developer working on the project',
+      context: 'using the exact error, file, expected behaviour, and current constraints',
+      format: 'a short diagnosis followed by a safe fix plan',
+      safetyOrReview: 'explain what should be tested before the change is trusted',
+      constraints: 'do not refactor unrelated code or guess missing project context',
+    }
+  }
+
+  return {
+    task: taskSummary
+      ? `Improve this AI instruction: ${taskSummary}`
+      : 'Create a clearer AI instruction for the task',
+    audience: includesAny(text, ['staff', 'team'])
+      ? 'the relevant staff or team'
+      : 'the intended reader or user',
+    context: 'the situation, source material, background, or constraints the AI needs before answering',
+    format: includesAny(text, ['bullet', 'table', 'checklist'])
+      ? 'the requested structured format'
+      : 'a clear format such as bullets, a table, a checklist, or a short answer',
+    safetyOrReview: 'state what should be checked before the output is trusted or used',
+    constraints: 'avoid assumptions, unsupported claims, and vague output',
+  }
+}
+
+function buildPersonalisedExample(rawInput: string) {
+  const profile = inferTopicProfile(rawInput)
+
+  return `${profile.task} for ${profile.audience}. Set the context: ${profile.context}. Format the answer as ${profile.format}. Add a safety and review rule: ${profile.safetyOrReview}. Constraints: ${profile.constraints}.`
+}
+
+function getPracticeChecks(input: string): PracticeCheck[] {
+  const trimmed = cleanInput(input)
   const text = trimmed.toLowerCase()
 
-  const checks = [
+  return [
     {
-      passed: trimmed.length >= 80,
-      strength: 'You gave enough detail for the task to be reviewed.',
-      advice: 'Add more detail. A useful practice answer usually needs at least a few specific sentences.',
+      label: 'Task clarity',
+      passed:
+        trimmed.length >= 45 &&
+        includesAny(text, [
+          'draft',
+          'write',
+          'summarise',
+          'summarize',
+          'compare',
+          'review',
+          'classify',
+          'explain',
+          'turn',
+          'create',
+          'list',
+          'plan',
+        ]),
+      strength: 'Your input gives the AI a recognisable task to perform.',
+      advice:
+        'Make the task unmistakable. Start with a strong verb such as create, draft, review, compare, list, summarise, or explain.',
     },
     {
-      passed: includesAny(text, ['draft', 'write', 'summarise', 'summarize', 'compare', 'review', 'classify', 'explain', 'turn', 'create']),
-      strength: 'You included a clear action for the AI or learner to perform.',
-      advice: 'State the action clearly: draft, summarise, compare, classify, review, explain, or create.',
+      label: 'Audience',
+      passed: includesAny(text, [
+        'beginner',
+        'driver',
+        'customer',
+        'client',
+        'staff',
+        'team',
+        'manager',
+        'learner',
+        'student',
+        'reader',
+        'user',
+        'non-technical',
+        'non technical',
+      ]),
+      strength: 'You named or implied who the output is for.',
+      advice:
+        'Add the audience. Say who will use the answer, for example a beginner driver, non-technical staff member, customer, manager, or learner.',
     },
     {
-      passed: includesAny(text, ['context', 'audience', 'customer', 'staff', 'team', 'notes', 'document', 'policy', 'source', 'background']),
-      strength: 'You gave useful context rather than leaving the situation vague.',
-      advice: 'Add context: who the output is for, what source material is used, or what situation the task belongs to.',
+      label: 'Context',
+      passed: includesAny(text, [
+        'context',
+        'source',
+        'document',
+        'policy',
+        'notes',
+        'roadside',
+        'driveway',
+        'traffic',
+        'workplace',
+        'company',
+        'order',
+        'meeting',
+        'background',
+        'scenario',
+        'situation',
+      ]),
+      strength: 'You gave context so the answer does not have to rely only on guesswork.',
+      advice:
+        'Add the situation. Include where the task happens, what source material matters, or what background the AI needs.',
     },
     {
-      passed: includesAny(text, ['check', 'review', 'verify', 'source', 'evidence', 'unsupported', 'assumption', 'risk']),
-      strength: 'You included a review or verification step.',
-      advice: 'Add a review step. Say what should be checked before the output is trusted or used.',
+      label: 'Output shape',
+      passed: includesAny(text, [
+        'bullet',
+        'bullets',
+        'table',
+        'checklist',
+        'steps',
+        'step-by-step',
+        'step by step',
+        'plain english',
+        'short',
+        'words',
+        'headings',
+        'sections',
+        'format',
+      ]),
+      strength: 'You gave the output a useful shape or quality standard.',
+      advice:
+        'Define the output shape. Ask for bullets, sections, a checklist, a table, a word limit, or a plain-English structure.',
     },
     {
-      passed: includesAny(text, ['format', 'bullet', 'table', 'short', 'words', 'tone', 'plain english', 'checklist']),
-      strength: 'You gave the output a shape or quality standard.',
-      advice: 'Define the output format or quality standard: bullets, table, checklist, short answer, tone, or word limit.',
+      label: 'Boundaries',
+      passed: includesAny(text, [
+        'do not',
+        "don't",
+        'avoid',
+        'must',
+        'should',
+        'include',
+        'only',
+        'safe',
+        'safely',
+        'safety',
+        'important',
+        'most important',
+        'risk',
+      ]),
+      strength: 'You gave the AI at least one boundary or priority.',
+      advice:
+        'Add boundaries. Say what must be included, what should be avoided, or which risks matter most.',
+    },
+    {
+      label: 'Review step',
+      passed: includesAny(text, [
+        'check',
+        'review',
+        'verify',
+        'confirm',
+        'source',
+        'evidence',
+        'unsupported',
+        'assumption',
+        'warning',
+        'call',
+        'stop',
+        'final checks',
+        'before using',
+        'before sharing',
+      ]),
+      strength: 'You included a review, warning, or verification habit.',
+      advice:
+        'Add a review step. Say what the learner should check, when to stop, what needs verification, or when a human should review the output.',
     },
   ]
+}
 
+function evaluatePracticeSubmission(input: string): PracticeFeedback {
+  const learnerInput = limitText(input, 700)
+  const checks = getPracticeChecks(learnerInput)
   const passedChecks = checks.filter((check) => check.passed)
   const missedChecks = checks.filter((check) => !check.passed)
   const score = Math.round((passedChecks.length / checks.length) * 100)
-  const tier = score >= 80 ? 'Strong' : score >= 55 ? 'Developing' : 'Needs work'
+  const tier = score >= 84 ? 'Strong' : score >= 60 ? 'Developing' : 'Needs work'
 
   return {
     score,
     tier,
+    learnerInput,
     strengths:
       passedChecks.length > 0
-        ? passedChecks.map((check) => check.strength).slice(0, 3)
-        : ['You made a start. Now make the task more specific so it can be assessed.'],
+        ? passedChecks.map((check) => check.strength).slice(0, 4)
+        : ['You made a start. Now make the task more specific so it can be assessed properly.'],
     advice:
       missedChecks.length > 0
-        ? missedChecks.map((check) => check.advice).slice(0, 3)
-        : ['Good structure. The next improvement is to make the review rule more precise for the risk level of the task.'],
-    strongerExample: teaching.strongerExample,
+        ? missedChecks.map((check) => check.advice).slice(0, 4)
+        : [
+            'Good structure. The next improvement is to make the review rule more precise for the risk level of the task.',
+          ],
+    missedLabels: missedChecks.map((check) => check.label),
+    strongerExample: buildPersonalisedExample(learnerInput),
   }
+}
+
+function splitSearchList(value: string | undefined) {
+  if (!value) {
+    return []
+  }
+
+  return value.split(searchParamDivider).filter(Boolean)
 }
 
 function getPracticeFeedback(searchParams: LessonPageSearchParams | undefined): PracticeFeedback | null {
@@ -534,8 +779,11 @@ function getPracticeFeedback(searchParams: LessonPageSearchParams | undefined): 
   return {
     score,
     tier: searchParams.tier,
-    strengths: searchParams.strengths ? searchParams.strengths.split('|') : [],
-    advice: searchParams.advice ? searchParams.advice.split('|') : [],
+    learnerInput: searchParams.input ?? '',
+    strengths: splitSearchList(searchParams.strengths),
+    advice: splitSearchList(searchParams.advice),
+    missedLabels: splitSearchList(searchParams.missed),
+    strongerExample: searchParams.example ?? '',
   }
 }
 
@@ -560,13 +808,16 @@ async function reviewPracticeInput(formData: FormData) {
     throw new Error('Lesson could not be found.')
   }
 
-  const evaluation = evaluatePracticeSubmission(learnerInput, context)
+  const evaluation = evaluatePracticeSubmission(learnerInput)
   const query = new URLSearchParams()
 
   query.set('score', String(evaluation.score))
   query.set('tier', evaluation.tier)
-  query.set('strengths', evaluation.strengths.join('|'))
-  query.set('advice', evaluation.advice.join('|'))
+  query.set('input', evaluation.learnerInput)
+  query.set('strengths', evaluation.strengths.join(searchParamDivider))
+  query.set('advice', evaluation.advice.join(searchParamDivider))
+  query.set('missed', evaluation.missedLabels.join(searchParamDivider))
+  query.set('example', evaluation.strongerExample)
 
   redirect(`/academy/learn/fundamentals/module/${context.module.slug}/lesson/${context.lesson.slug}?${query.toString()}#practice`)
 }
@@ -980,7 +1231,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
               <div id="practice" className="rounded-3xl border border-blue-100 bg-blue-50 p-4">
                 <p className="text-sm font-black leading-6 text-slate-950">{teaching.practicePrompt}</p>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  The checker looks for task clarity, context, output shape, and review behaviour. It does not judge truth; it checks whether the input is structured enough to work with.
+                  The checker looks for task clarity, audience, context, output shape, boundaries, and a review step. It then rewrites the example around your actual task.
                 </p>
               </div>
 
@@ -992,8 +1243,9 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                   required
                   minLength={40}
                   rows={7}
+                  defaultValue={practiceFeedback?.learnerInput ?? ''}
                   className="w-full rounded-3xl border border-blue-100 bg-white p-4 text-sm leading-7 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
-                  placeholder="Write your practice input here. Include the task, context, output you want, and how the result should be checked."
+                  placeholder="Write your practice input here. Include the task, who it is for, the situation, the output format, and what should be checked."
                 />
                 <button
                   type="submit"
@@ -1019,6 +1271,31 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                       {practiceFeedback.score}%
                     </span>
                   </div>
+
+                  <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">
+                      Your input reviewed
+                    </p>
+                    <p className="mt-2 text-sm leading-7 text-slate-700">{practiceFeedback.learnerInput}</p>
+                  </div>
+
+                  {practiceFeedback.missedLabels.length > 0 ? (
+                    <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 p-4">
+                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-700">
+                        Areas to improve
+                      </p>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {practiceFeedback.missedLabels.map((label) => (
+                          <span
+                            key={label}
+                            className="inline-flex rounded-full bg-white px-3 py-1.5 text-xs font-black text-blue-700"
+                          >
+                            {label}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
 
                   <div className="mt-5 grid gap-4 lg:grid-cols-2">
                     <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
@@ -1052,9 +1329,9 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
 
                   <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 p-4">
                     <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-700">
-                      Stronger example
+                      Better version of your input
                     </p>
-                    <p className="mt-2 text-sm leading-7 text-slate-700">{teaching.strongerExample}</p>
+                    <p className="mt-2 text-sm leading-7 text-slate-700">{practiceFeedback.strongerExample}</p>
                   </div>
                 </div>
               ) : null}
