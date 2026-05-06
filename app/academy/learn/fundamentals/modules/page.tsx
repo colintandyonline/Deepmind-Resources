@@ -468,7 +468,12 @@ function buildTabCss(modules: Module[]) {
   animation: academyGlowFloat 6s ease-in-out infinite;
 }
 
+.academy-module-panels img,
+.academy-module-panels picture,
+.academy-module-panels [data-nimg],
 .academy-module-panels img[src*="/brand/"],
+.academy-module-panels img[src*="%2Fbrand%2F"],
+.academy-module-panels img[src*="deepmind-resources-emblem"],
 .academy-module-panels img[alt="DeepMind Resources"] {
   display: none !important;
 }
@@ -824,5 +829,6 @@ export default async function AIFundamentalsModulesPage() {
     </main>
   )
 }
+
 
 
