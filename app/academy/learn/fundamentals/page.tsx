@@ -28,13 +28,13 @@ export const metadata: Metadata = {
   description:
     'A focused beginner Academy course for building AI fundamentals, safe-use judgement, prompt basics, tool selection, validation habits, sandbox practice, and final skill evidence.',
   alternates: {
-    canonical: 'https://deepmindresources.pro/academy/learn/fundamentals/modules',
+    canonical: 'https://deepmindresources.pro/academy/learn/fundamentals',
   },
   openGraph: {
     title: 'AI Fundamentals Beginner Course | DeepMind Resources Academy',
     description:
       'Build AI fundamentals from the ground up with beginner modules, safe-use judgement, prompt basics, tool awareness, validation habits, and sandbox practice.',
-    url: 'https://deepmindresources.pro/academy/learn/fundamentals/modules',
+    url: 'https://deepmindresources.pro/academy/learn/fundamentals',
     siteName: 'DeepMind Resources',
     type: 'website',
   },
@@ -532,14 +532,14 @@ export default async function AIFundamentalsModulesPage() {
           <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600">
-                Course modules
+                Course route
               </p>
               <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
-                Follow the six-module route.
+                Your six-module foundation path.
               </h2>
             </div>
             <p className="max-w-xl text-sm leading-6 text-slate-600">
-              Open a module card to preview its lesson titles. Start with Module 1, then continue through each module in order.
+              Preview the module route, start with Module 1, and return from your dashboard whenever you are ready to continue.
             </p>
           </div>
 
@@ -613,4 +613,5 @@ export default async function AIFundamentalsModulesPage() {
     </main>
   )
 }
+
 
