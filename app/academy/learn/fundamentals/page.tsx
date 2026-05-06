@@ -301,21 +301,19 @@ function ModuleCard({ module }: { module: Module }) {
               <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">{getModuleSummary(module)}</p>
             </div>
 
-            <div className="grid min-w-full grid-cols-3 gap-2 sm:min-w-72">
-              <div className="rounded-[1.35rem] border border-blue-100 bg-gradient-to-br from-white to-blue-50 p-3 shadow-sm shadow-blue-900/5">
-                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-blue-600">Lessons</p>
-                <p className="mt-1 text-xl font-black text-slate-950">{module.lessons.length}</p>
-              </div>
-              <div className="rounded-[1.35rem] border border-blue-100 bg-gradient-to-br from-white to-blue-50 p-3 shadow-sm shadow-blue-900/5">
-                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-blue-600">Check</p>
-                <p className="mt-1 text-sm font-black leading-5 text-slate-950">
-                  {module.knowledgeCheck.blocksProgressUntilPassed ? 'Required' : 'Diagnostic'}
-                </p>
-              </div>
-              <div className="rounded-[1.35rem] border border-blue-100 bg-gradient-to-br from-white to-blue-50 p-3 shadow-sm shadow-blue-900/5">
-                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-blue-600">Practice</p>
-                <p className="mt-1 text-sm font-black leading-5 text-slate-950">{requirementLabel}</p>
-              </div>
+            <div className="flex min-w-full flex-wrap gap-2 sm:min-w-72 sm:justify-end">
+              <span className="inline-flex items-center gap-2 rounded-2xl border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-black text-blue-700">
+                <BookOpenCheck className="h-4 w-4" aria-hidden="true" />
+                {module.lessons.length} lessons
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-2xl border border-blue-100 bg-white px-3 py-2 text-xs font-black text-slate-700">
+                <FileQuestion className="h-4 w-4 text-blue-600" aria-hidden="true" />
+                {module.knowledgeCheck.blocksProgressUntilPassed ? 'Required check' : 'Diagnostic check'}
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-2xl border border-blue-100 bg-white px-3 py-2 text-xs font-black text-slate-700">
+                <Code2 className="h-4 w-4 text-blue-600" aria-hidden="true" />
+                {requirementLabel}
+              </span>
             </div>
           </div>
 
@@ -364,7 +362,7 @@ function ModuleCard({ module }: { module: Module }) {
           ) : (
             <>
               <LockKeyhole className="h-5 w-5 text-slate-400" aria-hidden="true" />
-              <span>This opens when the earlier module evidence is complete.</span>
+              <span className="sr-only">This module opens after earlier course evidence is complete.</span>
             </>
           )}
         </div>
@@ -572,8 +570,7 @@ export default async function AIFundamentalsCoursePage() {
               </h1>
 
               <p className="mt-5 max-w-3xl text-base leading-8 text-slate-600 sm:text-lg">
-                Build the foundation before advanced AI work: safe-use judgement, prompt basics, tool awareness,
-                output validation, sandbox practice, and verified skill evidence.
+                Build the foundation for safe, practical AI use before prompting, tools, agents, automation, and advanced workflow design.
               </p>
 
               <div className="mt-6 rounded-3xl border border-blue-100 bg-blue-50 p-4">
@@ -694,8 +691,8 @@ export default async function AIFundamentalsCoursePage() {
         </section>
 
         <section className="mt-6 overflow-hidden rounded-[2rem] border border-blue-100 bg-white shadow-sm shadow-blue-900/10">
-          <div className="grid gap-0 xl:grid-cols-[minmax(0,1fr)_360px]">
-            <div className="p-5 sm:p-7">
+          <div className="grid gap-0 xl:grid-cols-[minmax(0,1fr)_300px]">
+            <div className="p-5 sm:p-6">
               <div className="flex items-center gap-3">
                 <IconTile>
                   <Trophy className="h-5 w-5" aria-hidden="true" />
@@ -715,7 +712,7 @@ export default async function AIFundamentalsCoursePage() {
               </p>
             </div>
 
-            <div className="border-t border-blue-100 bg-gradient-to-br from-blue-600 to-[#0736db] p-5 text-white sm:p-7 xl:border-l xl:border-t-0">
+            <div className="border-t border-blue-100 bg-gradient-to-br from-blue-600 to-[#0736db] p-5 text-white sm:p-6 xl:border-l xl:border-t-0">
               <IconTile solid>
                 <BadgeCheck className="h-5 w-5" aria-hidden="true" />
               </IconTile>
@@ -756,3 +753,4 @@ export default async function AIFundamentalsCoursePage() {
     </main>
   )
 }
+
