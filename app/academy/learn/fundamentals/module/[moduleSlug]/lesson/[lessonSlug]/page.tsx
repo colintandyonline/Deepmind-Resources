@@ -63,6 +63,40 @@ type LessonTeachingContent = {
   action: string
 }
 
+function getSupabaseKey() {
+  return (
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  )
+}
+
+async function createSupabaseServerClient() {
+  const cookieStore = await cookies()
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = getSupabaseKey()
+
+  if (!supabaseUrl || !supabaseKey) {
+    return null
+  }
+
+  return createServerClient(supabaseUrl, supabaseKey, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll()
+      },
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options)
+          })
+        } catch {
+          // Server components cannot always write cookies during render.
+        }
+      },
+    },
+  })
+}
+
 const specificTeachingBySlug: Record<string, LessonTeachingContent> = {
   'what-you-will-learn-in-ai-fundamentals': {
     plainEnglish: [
@@ -1128,3 +1162,4 @@ export default async function AIFundamentalsLessonPage({ params }: LessonPagePro
     </main>
   )
 }
+
