@@ -203,7 +203,7 @@ function ModuleCard({ module }: { module: Module }) {
                     : 'border border-slate-200 bg-white text-slate-500'
                 }`}
               >
-                {isFirstModule ? 'Ready to start' : `After module ${module.moduleNumber - 1}`}
+                {isFirstModule ? 'Ready to start' : 'Sequential module'}
               </span>
             </div>
 
@@ -212,18 +212,18 @@ function ModuleCard({ module }: { module: Module }) {
           </div>
 
           <div className="grid min-w-full grid-cols-3 gap-2 sm:min-w-72">
-            <div className="rounded-2xl border border-blue-100 bg-white p-3">
-              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Lessons</p>
+            <div className="rounded-[1.35rem] border border-blue-100 bg-gradient-to-br from-white to-blue-50 p-3 shadow-sm shadow-blue-900/5">
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-blue-600">Lessons</p>
               <p className="mt-1 text-xl font-black text-slate-950">{module.lessons.length}</p>
             </div>
-            <div className="rounded-2xl border border-blue-100 bg-white p-3">
-              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Check</p>
+            <div className="rounded-[1.35rem] border border-blue-100 bg-gradient-to-br from-white to-blue-50 p-3 shadow-sm shadow-blue-900/5">
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-blue-600">Check</p>
               <p className="mt-1 text-sm font-black leading-5 text-slate-950">
                 {module.knowledgeCheck.blocksProgressUntilPassed ? 'Required' : 'Diagnostic'}
               </p>
             </div>
-            <div className="rounded-2xl border border-blue-100 bg-white p-3">
-              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Practice</p>
+            <div className="rounded-[1.35rem] border border-blue-100 bg-gradient-to-br from-white to-blue-50 p-3 shadow-sm shadow-blue-900/5">
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-blue-600">Practice</p>
               <p className="mt-1 text-sm font-black leading-5 text-slate-950">{requirementLabel}</p>
             </div>
           </div>
@@ -274,7 +274,7 @@ function ModuleCard({ module }: { module: Module }) {
             ) : (
               <>
                 <LockKeyhole className="h-5 w-5 text-slate-400" aria-hidden="true" />
-                <span>Complete the previous module first.</span>
+                <span>This opens when the earlier module evidence is complete.</span>
               </>
             )}
           </div>
@@ -568,7 +568,7 @@ export default async function AIFundamentalsModulesPage() {
               </div>
 
               <p className="mt-5 max-w-4xl text-base leading-8 text-slate-600">
-                {aiFundamentalsLearningPath.finalSkillCheck.scenario}
+                At the end of this learning path, you complete a final assessment that brings together the skills built across the course: safe-use judgement, prompt structure, tool awareness, output validation, and sandbox practice.
               </p>
             </div>
 
@@ -613,3 +613,4 @@ export default async function AIFundamentalsModulesPage() {
     </main>
   )
 }
+
