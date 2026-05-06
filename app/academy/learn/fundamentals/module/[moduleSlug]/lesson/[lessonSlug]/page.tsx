@@ -62,16 +62,6 @@ type LessonProgressRow = {
   status: string | null
   progress_percentage: number | null
   completed_at: string | null
-  last_seen_at: string | null
-}
-
-type ProgressContentRow = {
-  id: string
-  current_version_id: string | null
-}
-
-type ProgressVersionRow = {
-  id: string
 }
 
 type Module = (typeof aiFundamentalsLearningPath.modules)[number]
@@ -172,6 +162,11 @@ type TopicProfile = {
 }
 
 const searchParamDivider = '~~~'
+const academyProgressPathId = 'ai-fundamentals'
+
+function getLearningProgressLessonKey(moduleSlug: string, lessonSlug: string, versionNumber: number) {
+  return `${academyProgressPathId}|${moduleSlug}|${lessonSlug}|v${versionNumber}`
+}
 
 function isNextRedirectError(error: unknown) {
   return (
@@ -1580,86 +1575,34 @@ async function completeLesson(formData: FormData) {
 
   const now = new Date().toISOString()
   const moduleHref = `/academy/learn/fundamentals/module/${context.module.slug}`
+  const lessonProgressKey = getLearningProgressLessonKey(
+    context.module.slug,
+    context.lesson.slug,
+    context.lesson.versionNumber,
+  )
 
-  const { data: moduleRows, error: moduleLookupError } = await supabase
-    .from('modules')
-    .select('id')
-    .eq('slug', context.module.slug)
-    .limit(1)
+  const { error: progressError } = await supabase.from('learning_progress').upsert(
+    {
+      user_id: user.id,
+      module_id: lessonProgressKey,
+      module_title: `${context.module.title} | ${context.lesson.title}`,
+      status: 'completed',
+      progress_percentage: 100,
+      started_at: now,
+      completed_at: now,
+    },
+    {
+      onConflict: 'user_id,module_id',
+    },
+  )
 
-  if (moduleLookupError) {
-    throw new Error(`Could not read module progress target: ${moduleLookupError.message}`)
-  }
-
-  const moduleRow = moduleRows?.[0] as { id?: string } | undefined
-  const { data: lessonRows, error: lessonLookupError } = moduleRow?.id
-    ? await supabase
-        .from('lessons')
-        .select('id, current_version_id')
-        .eq('module_id', moduleRow.id)
-        .eq('slug', context.lesson.slug)
-        .limit(1)
-    : { data: null, error: null }
-
-  if (lessonLookupError) {
-    throw new Error(`Could not read lesson progress target: ${lessonLookupError.message}`)
-  }
-
-  const progressLesson = ((lessonRows ?? []) as ProgressContentRow[])[0] ?? null
-  const { data: versionRows, error: versionLookupError } = progressLesson?.id
-    ? await supabase
-        .from('lesson_versions')
-        .select('id')
-        .eq('lesson_id', progressLesson.id)
-        .eq('version_number', context.lesson.versionNumber)
-        .limit(1)
-    : { data: null, error: null }
-
-  if (versionLookupError) {
-    throw new Error(`Could not read lesson version progress target: ${versionLookupError.message}`)
-  }
-
-  const progressVersion = ((versionRows ?? []) as ProgressVersionRow[])[0] ?? null
-
-  if (progressLesson && progressVersion) {
-    const { error: upsertError } = await supabase.from('user_lesson_progress').upsert(
-      {
-        user_id: user.id,
-        lesson_id: progressLesson.id,
-        lesson_version_id: progressVersion.id,
-        status: 'completed',
-        progress_percentage: 100,
-        started_at: now,
-        completed_at: now,
-        last_seen_at: now,
-      },
-      {
-        onConflict: 'user_id,lesson_id,lesson_version_id',
-      },
-    )
-
-    if (upsertError) {
-      throw new Error(`Could not save lesson progress: ${upsertError.message}`)
-    }
-  } else {
-    const { error: fallbackError } = await supabase.from('learning_progress').upsert(
-      {
-        user_id: user.id,
-        module_id: context.module.slug,
-        module_title: context.module.title,
-        status: 'completed',
-        progress_percentage: 100,
-        started_at: now,
-        completed_at: now,
-      },
-      {
-        onConflict: 'user_id,module_id',
-      },
-    )
-
-    if (fallbackError) {
-      throw new Error(`Could not save lesson progress: ${fallbackError.message}`)
-    }
+  if (progressError) {
+    console.error('[Academy progress] Could not save lesson progress', {
+      moduleSlug: context.module.slug,
+      lessonSlug: context.lesson.slug,
+      error: progressError.message,
+    })
+    throw new Error(`Could not save lesson progress: ${progressError.message}`)
   }
 
   redirect(moduleHref)
@@ -1782,12 +1725,21 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
     redirect('/auth/login')
   }
 
-  const { data: progressRows } = await supabase
-    .from('user_lesson_progress')
-    .select('status, progress_percentage, completed_at, last_seen_at')
+  const { data: progressRows, error: progressError } = await supabase
+    .from('learning_progress')
+    .select('status, progress_percentage, completed_at')
     .eq('user_id', user.id)
-    .eq('lesson_id', lesson.id)
+    .eq('module_id', getLearningProgressLessonKey(module.slug, lesson.slug, lesson.versionNumber))
     .limit(1)
+
+  if (progressError) {
+    console.error('[Academy progress] Could not read lesson progress', {
+      moduleSlug: module.slug,
+      lessonSlug: lesson.slug,
+      error: progressError.message,
+    })
+    throw new Error(`Could not read lesson progress: ${progressError.message}`)
+  }
 
   const progress = ((progressRows ?? []) as LessonProgressRow[])[0] ?? null
   const isCompleted = progress?.status === 'completed' || Boolean(progress?.completed_at)

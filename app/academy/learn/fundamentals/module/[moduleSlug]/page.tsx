@@ -30,7 +30,7 @@ type ModulePageProps = {
 }
 
 type LessonProgressRow = {
-  lesson_id: string | null
+  module_id: string | null
   status: string | null
   completed_at: string | null
 }
@@ -43,6 +43,8 @@ type SandboxAttemptRow = {
 
 type Module = (typeof aiFundamentalsLearningPath.modules)[number]
 type Lesson = Module['lessons'][number]
+
+const academyProgressPathId = 'ai-fundamentals'
 
 function getSupabaseKey() {
   return (
@@ -82,11 +84,30 @@ function getModuleBySlug(moduleSlug: string) {
   return aiFundamentalsLearningPath.modules.find((module) => module.slug === moduleSlug)
 }
 
-function getCompletedLessonIds(rows: LessonProgressRow[]) {
+function getLearningProgressModulePrefix(moduleSlug: string) {
+  return `${academyProgressPathId}|${moduleSlug}|`
+}
+
+function getLearningProgressLessonSlug(moduleId: string | null, moduleSlug: string) {
+  if (!moduleId) {
+    return null
+  }
+
+  const [pathId, rowModuleSlug, lessonSlug] = moduleId.split('|')
+
+  if (pathId !== academyProgressPathId || rowModuleSlug !== moduleSlug || !lessonSlug) {
+    return null
+  }
+
+  return lessonSlug
+}
+
+function getCompletedLessonSlugs(rows: LessonProgressRow[], moduleSlug: string) {
   return new Set(
     rows
-      .filter((row) => row.lesson_id && (row.status === 'completed' || row.completed_at))
-      .map((row) => row.lesson_id as string),
+      .filter((row) => row.status === 'completed' || row.completed_at)
+      .map((row) => getLearningProgressLessonSlug(row.module_id, moduleSlug))
+      .filter((lessonSlug): lessonSlug is string => Boolean(lessonSlug)),
   )
 }
 
@@ -137,27 +158,27 @@ function getLessonHref(module: Module, lesson: Lesson) {
   return `/academy/learn/fundamentals/module/${module.slug}/lesson/${lesson.slug}`
 }
 
-function isLessonAvailable(module: Module, lessonIndex: number, completedLessonIds: Set<string>) {
+function isLessonAvailable(module: Module, lessonIndex: number, completedLessonSlugs: Set<string>) {
   if (lessonIndex === 0) {
     return true
   }
 
   const lesson = module.lessons[lessonIndex]
 
-  if (completedLessonIds.has(lesson.id)) {
+  if (completedLessonSlugs.has(lesson.slug)) {
     return true
   }
 
   const previousLesson = module.lessons[lessonIndex - 1]
 
-  return previousLesson ? completedLessonIds.has(previousLesson.id) : false
+  return previousLesson ? completedLessonSlugs.has(previousLesson.slug) : false
 }
 
-function getNextAvailableLesson(module: Module, completedLessonIds: Set<string>) {
+function getNextAvailableLesson(module: Module, completedLessonSlugs: Set<string>) {
   const nextIncompleteLesson = module.lessons.find((lesson, index) => {
-    const available = isLessonAvailable(module, index, completedLessonIds)
+    const available = isLessonAvailable(module, index, completedLessonSlugs)
 
-    return available && !completedLessonIds.has(lesson.id)
+    return available && !completedLessonSlugs.has(lesson.slug)
   })
 
   return nextIncompleteLesson ?? module.lessons[0] ?? null
@@ -413,13 +434,12 @@ export default async function AIFundamentalsModulePage({ params }: ModulePagePro
     redirect('/auth/login')
   }
 
-  const lessonIds = module.lessons.map((lesson) => lesson.id)
-  const [{ data: lessonRows }, { data: sandboxRows }] = await Promise.all([
+  const [{ data: lessonRows, error: lessonError }, { data: sandboxRows }] = await Promise.all([
     supabase
-      .from('user_lesson_progress')
-      .select('lesson_id, status, completed_at')
+      .from('learning_progress')
+      .select('module_id, status, completed_at')
       .eq('user_id', user.id)
-      .in('lesson_id', lessonIds),
+      .like('module_id', `${getLearningProgressModulePrefix(module.slug)}%`),
     supabase
       .from('sandbox_attempts')
       .select('status, submitted_at, reviewed_at')
@@ -427,15 +447,23 @@ export default async function AIFundamentalsModulePage({ params }: ModulePagePro
       .eq('sandbox_task_id', module.sandboxTask.id),
   ])
 
+  if (lessonError) {
+    console.error('[Academy progress] Could not read module lesson progress', {
+      moduleSlug: module.slug,
+      error: lessonError.message,
+    })
+    throw new Error(`Could not read module lesson progress: ${lessonError.message}`)
+  }
+
   const lessonProgressRows = (lessonRows ?? []) as LessonProgressRow[]
   const sandboxAttemptRows = (sandboxRows ?? []) as SandboxAttemptRow[]
-  const completedLessonIds = getCompletedLessonIds(lessonProgressRows)
-  const completedLessonCount = completedLessonIds.size
+  const completedLessonSlugs = getCompletedLessonSlugs(lessonProgressRows, module.slug)
+  const completedLessonCount = completedLessonSlugs.size
   const submittedSandboxCount = getSubmittedSandboxCount(sandboxAttemptRows)
   const reviewedSandboxCount = getReviewedSandboxCount(sandboxAttemptRows)
   const moduleProgress =
     module.lessons.length > 0 ? Math.round((completedLessonCount / module.lessons.length) * 100) : 0
-  const nextLesson = getNextAvailableLesson(module, completedLessonIds)
+  const nextLesson = getNextAvailableLesson(module, completedLessonSlugs)
   const nextLessonHref = nextLesson ? getLessonHref(module, nextLesson) : '/academy/learn/fundamentals'
   const isModuleComplete = completedLessonCount === module.lessons.length
 
@@ -690,8 +718,8 @@ export default async function AIFundamentalsModulePage({ params }: ModulePagePro
                 lesson={lesson}
                 module={module}
                 lessonIndex={index}
-                isAvailable={isLessonAvailable(module, index, completedLessonIds)}
-                isCompleted={completedLessonIds.has(lesson.id)}
+                isAvailable={isLessonAvailable(module, index, completedLessonSlugs)}
+                isCompleted={completedLessonSlugs.has(lesson.slug)}
               />
             ))}
           </div>

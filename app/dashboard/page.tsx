@@ -5,14 +5,11 @@ import { redirect } from 'next/navigation'
 import { createServerClient } from '@supabase/ssr'
 
 type LessonProgressRow = {
+  module_id: string | null
   status: string | null
   progress_percentage: number | null
   started_at: string | null
   completed_at: string | null
-  last_seen_at: string | null
-  refresher_recommended_at: string | null
-  lesson_id: string | null
-  lesson_version_id: string | null
 }
 
 type SandboxAttemptRow = {
@@ -126,6 +123,8 @@ const pathModules: PathModule[] = [
   },
 ]
 
+const academyProgressPathId = 'ai-fundamentals'
+
 function getSupabaseKey() {
   return (
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
@@ -178,31 +177,38 @@ function formatCount(count: number, singular: string, plural: string) {
 }
 
 function getCompletedLessons(rows: LessonProgressRow[]) {
-  return rows.filter((row) => row.status === 'completed' || row.completed_at).length
+  return rows.filter(
+    (row) =>
+      row.module_id?.startsWith(`${academyProgressPathId}|`) &&
+      (row.status === 'completed' || row.completed_at),
+  ).length
 }
 
 function getStartedLessons(rows: LessonProgressRow[]) {
   return rows.filter(
     (row) =>
-      row.status === 'in_progress' ||
-      row.started_at ||
-      row.last_seen_at ||
-      (row.progress_percentage ?? 0) > 0,
+      row.module_id?.startsWith(`${academyProgressPathId}|`) &&
+      (row.status === 'in_progress' ||
+        row.started_at ||
+        row.completed_at ||
+        (row.progress_percentage ?? 0) > 0),
   ).length
 }
 
 function getAverageLessonProgress(rows: LessonProgressRow[]) {
-  if (rows.length === 0) {
+  const academyRows = rows.filter((row) => row.module_id?.startsWith(`${academyProgressPathId}|`))
+
+  if (academyRows.length === 0) {
     return 0
   }
 
-  const total = rows.reduce((sum, row) => sum + (row.progress_percentage ?? 0), 0)
+  const total = academyRows.reduce((sum, row) => sum + (row.progress_percentage ?? 0), 0)
 
-  return Math.min(Math.round(total / rows.length), 100)
+  return Math.min(Math.round(total / academyRows.length), 100)
 }
 
-function getRefresherCount(rows: LessonProgressRow[]) {
-  return rows.filter((row) => row.refresher_recommended_at).length
+function getRefresherCount() {
+  return 0
 }
 
 function getSubmittedSandboxAttempts(rows: SandboxAttemptRow[]) {
@@ -322,11 +328,10 @@ export default async function DashboardPage() {
     { data: entitlementRows, error: entitlementError },
   ] = await Promise.all([
     supabase
-      .from('user_lesson_progress')
-      .select(
-        'status, progress_percentage, started_at, completed_at, last_seen_at, refresher_recommended_at, lesson_id, lesson_version_id',
-      )
-      .eq('user_id', user.id),
+      .from('learning_progress')
+      .select('module_id, status, progress_percentage, started_at, completed_at')
+      .eq('user_id', user.id)
+      .like('module_id', `${academyProgressPathId}|%`),
     supabase
       .from('sandbox_attempts')
       .select('status, submitted_at, reviewed_at, sandbox_task_id, sandbox_task_version_id')
@@ -346,6 +351,13 @@ export default async function DashboardPage() {
       .order('created_at', { ascending: false }),
   ])
 
+  if (lessonError) {
+    console.error('[Academy progress] Could not read dashboard lesson progress', {
+      error: lessonError.message,
+    })
+    throw new Error(`Could not read dashboard lesson progress: ${lessonError.message}`)
+  }
+
   const lessonProgressRows = (lessonRows ?? []) as LessonProgressRow[]
   const sandboxAttemptRows = (sandboxRows ?? []) as SandboxAttemptRow[]
   const personalSubscriptions = (subscriptionRows ?? []) as SubscriptionRow[]
@@ -358,7 +370,7 @@ export default async function DashboardPage() {
   const startedLessons = getStartedLessons(lessonProgressRows)
   const trackedLessons = lessonProgressRows.length
   const averageLessonProgress = getAverageLessonProgress(lessonProgressRows)
-  const refresherCount = getRefresherCount(lessonProgressRows)
+  const refresherCount = getRefresherCount()
 
   const submittedSandboxAttempts = getSubmittedSandboxAttempts(sandboxAttemptRows)
   const reviewedSandboxAttempts = getReviewedSandboxAttempts(sandboxAttemptRows)
