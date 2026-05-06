@@ -567,6 +567,24 @@ function inferTopicProfile(rawInput: string): TopicProfile {
   const text = rawInput.toLowerCase()
   const taskSummary = limitText(rawInput, 150)
 
+  if (includesAny(text, ['wordpress', 'blog article', 'blog post', 'article', 'post in wordpress', 'wp post'])) {
+    return {
+      task: 'Create a plain-English, step-by-step guide for writing and publishing a blog article in WordPress',
+      audience: includesAny(text, ['beginner', 'first time', 'new'])
+        ? 'a beginner WordPress user'
+        : 'a WordPress user who wants a clear publishing workflow',
+      context:
+        'for creating a useful article from an idea through draft, structure, editing, SEO basics, images, categories, preview, and publishing checks',
+      format: includesAny(text, ['bullet', 'bullets', 'checklist'])
+        ? 'bullet points under clear workflow headings'
+        : 'clear numbered sections with short practical steps',
+      safetyOrReview:
+        'include checking factual claims, links, spelling, formatting, image rights, SEO title, meta description, preview, and mobile readability before publishing',
+      constraints:
+        'avoid unsupported claims, keyword stuffing, copied content, unclear sources, and publishing without previewing or proofreading',
+    }
+  }
+
   if (includesAny(text, ['lightbulb', 'light bulb', 'bulb', 'lamp', 'ceiling light'])) {
     return {
       task: 'Create a plain-English, step-by-step safety checklist for changing a lightbulb',
@@ -678,6 +696,37 @@ function buildDeterministicOutputComparison(
 ): OutputComparison {
   const profile = inferTopicProfile(learnerInput)
   const text = learnerInput.toLowerCase()
+
+  if (includesAny(text, ['wordpress', 'blog article', 'blog post', 'article', 'post in wordpress', 'wp post'])) {
+    return {
+      originalOutputTitle: 'Likely result from your first prompt',
+      improvedOutputTitle: 'Likely result from the stronger prompt',
+      originalOutput:
+        'To create a blog article in WordPress, write your article, add it to a new post, choose a title, add images if needed, then publish it when finished.',
+      improvedOutput:
+        'Step-by-step WordPress blog article workflow:\n\n1. Plan the article:\n- Define the topic, reader, purpose, and main takeaway.\n- List the key points the article must cover.\n\n2. Draft the article:\n- Create a clear introduction, useful subheadings, practical sections, and a conclusion.\n- Keep paragraphs short and easy to scan.\n\n3. Add it in WordPress:\n- Go to Posts, create a new post, add the title, paste or write the article, and format headings correctly.\n- Add internal links, categories, tags, and a featured image if suitable.\n\n4. Review before publishing:\n- Check facts, links, spelling, image rights, SEO title, meta description, mobile layout, and preview.\n- Do not publish unsupported claims or copied content.\n\n5. Publish and recheck:\n- Publish only when the preview looks correct.\n- Open the live post and confirm formatting, links, images, and readability.',
+      originalWeaknesses: [
+        'The answer is too broad for someone learning the workflow.',
+        'It misses planning, structure, SEO, links, categories, preview, and review steps.',
+        'It does not explain what to check before publishing.',
+        'The learner would still need to work out most of the WordPress process alone.',
+      ],
+      improvedStrengths: [
+        'The answer follows the full workflow from planning to publishing.',
+        'It gives clearer WordPress-specific actions.',
+        'It includes review checks before the article goes live.',
+        'It makes publishing safer by warning against unsupported claims and copied content.',
+      ],
+      differenceHighlights: [
+        'The stronger output is specific to WordPress instead of giving a vague writing instruction.',
+        'It separates planning, drafting, formatting, review, publishing, and live checks.',
+        'It includes SEO, image rights, links, categories, and preview checks.',
+        'It gives the learner a usable workflow rather than a loose summary.',
+      ],
+      learningTakeaway:
+        'A stronger prompt produces a better training answer because it names the platform, learner level, workflow stages, output format, and review checks.',
+    }
+  }
 
   if (includesAny(text, ['lightbulb', 'light bulb', 'bulb', 'lamp', 'ceiling light'])) {
     return {
@@ -1145,7 +1194,7 @@ function getTierScoreClass(tier: string) {
 
 function getTierGuidance(tier: string) {
   if (tier === 'Strong') {
-    return 'Strong structure. Use the better version in the practice box, check it again, then compare the feedback with your first attempt.'
+    return 'Strong structure. Use the better version in the practice box, check it again, then review the new comparison.'
   }
 
   if (tier === 'Developing') {
@@ -1336,29 +1385,8 @@ async function useBetterPrompt(formData: FormData) {
   }
 
   const query = new URLSearchParams()
-  const fieldsToKeep = [
-    'score',
-    'tier',
-    'input',
-    'strengths',
-    'advice',
-    'missed',
-    'example',
-    'source',
-    'whyBetter',
-    'practiceInstruction',
-    'safetyNote',
-  ]
-
-  fieldsToKeep.forEach((field) => {
-    const value = formData.get(field)
-
-    if (typeof value === 'string' && value.length > 0) {
-      query.set(field, value)
-    }
-  })
-
   query.set('draft', betterPrompt)
+  query.set('reuse', 'true')
 
   redirect(`/academy/learn/fundamentals/module/${context.module.slug}/lesson/${context.lesson.slug}?${query.toString()}#practice`)
 }
