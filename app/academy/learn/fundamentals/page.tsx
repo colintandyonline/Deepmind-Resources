@@ -42,6 +42,7 @@ export const metadata: Metadata = {
 }
 
 type LessonProgressRow = {
+  lesson_id: string | null
   status: string | null
   completed_at: string | null
 }
@@ -57,9 +58,11 @@ type CourseMetric = {
   value: string | number
   detail: string
   icon: ReactNode
+  tone?: 'blue' | 'emerald' | 'amber' | 'indigo'
 }
 
 type Module = (typeof aiFundamentalsLearningPath.modules)[number]
+type Lesson = Module['lessons'][number]
 
 function getSupabaseKey() {
   return (
@@ -95,8 +98,12 @@ async function createSupabaseServerClient() {
   })
 }
 
-function getCompletedLessonCount(rows: LessonProgressRow[]) {
-  return rows.filter((row) => row.status === 'completed' || row.completed_at).length
+function getCompletedLessonIds(rows: LessonProgressRow[]) {
+  return new Set(
+    rows
+      .filter((row) => row.lesson_id && (row.status === 'completed' || row.completed_at))
+      .map((row) => row.lesson_id as string),
+  )
 }
 
 function getSubmittedSandboxCount(rows: SandboxAttemptRow[]) {
@@ -120,7 +127,7 @@ function getSandboxRequirementLabel(requirement: string) {
     return 'Required practice'
   }
 
-  return 'No practice task'
+  return 'Practice task'
 }
 
 function getModuleSummary(module: Module) {
@@ -137,7 +144,7 @@ function getModuleSummary(module: Module) {
   }
 
   if (module.moduleNumber === 4) {
-    return 'Learn safe-use judgement, output review, privacy boundaries, and common risk signals.'
+    return 'Build safe-use judgement, output review habits, privacy boundaries, and risk awareness.'
   }
 
   if (module.moduleNumber === 5) {
@@ -171,6 +178,116 @@ function getShortModuleLabel(module: Module) {
   return 'Workflow'
 }
 
+function getLessonHref(module: Module, lesson: Lesson) {
+  return `/academy/learn/fundamentals/module/${module.slug}/lesson/${lesson.slug}`
+}
+
+function getModuleHref(module: Module) {
+  return `/academy/learn/fundamentals/module/${module.slug}`
+}
+
+function getModuleCompletedCount(module: Module, completedLessonIds: Set<string>) {
+  return module.lessons.filter((lesson) => completedLessonIds.has(lesson.id)).length
+}
+
+function getModuleProgress(module: Module, completedLessonIds: Set<string>) {
+  if (module.lessons.length === 0) {
+    return 0
+  }
+
+  return Math.round((getModuleCompletedCount(module, completedLessonIds) / module.lessons.length) * 100)
+}
+
+function isModuleComplete(module: Module, completedLessonIds: Set<string>) {
+  return module.lessons.length > 0 && module.lessons.every((lesson) => completedLessonIds.has(lesson.id))
+}
+
+function isModuleAvailable(modules: Module[], moduleIndex: number, completedLessonIds: Set<string>) {
+  if (moduleIndex === 0) {
+    return true
+  }
+
+  const previousModule = modules[moduleIndex - 1]
+
+  return previousModule ? isModuleComplete(previousModule, completedLessonIds) : false
+}
+
+function getNextAvailableLesson(module: Module, completedLessonIds: Set<string>) {
+  return module.lessons.find((lesson) => !completedLessonIds.has(lesson.id)) ?? module.lessons[0] ?? null
+}
+
+function getNextCourseTarget(modules: Module[], completedLessonIds: Set<string>) {
+  for (let index = 0; index < modules.length; index += 1) {
+    const module = modules[index]
+    const available = isModuleAvailable(modules, index, completedLessonIds)
+
+    if (!available) {
+      continue
+    }
+
+    const nextLesson = getNextAvailableLesson(module, completedLessonIds)
+
+    if (nextLesson && !isModuleComplete(module, completedLessonIds)) {
+      return {
+        module,
+        lesson: nextLesson,
+        href: getLessonHref(module, nextLesson),
+        label: `Continue: ${nextLesson.title}`,
+      }
+    }
+  }
+
+  const firstModule = modules[0]
+  const firstLesson = firstModule?.lessons[0]
+
+  return {
+    module: firstModule,
+    lesson: firstLesson,
+    href: firstModule && firstLesson ? getLessonHref(firstModule, firstLesson) : '/academy/learn/fundamentals',
+    label: 'Review the first lesson',
+  }
+}
+
+function getModuleStatusLabel({
+  available,
+  complete,
+  moduleIndex,
+}: {
+  available: boolean
+  complete: boolean
+  moduleIndex: number
+}) {
+  if (complete) {
+    return 'Completed'
+  }
+
+  if (available && moduleIndex === 0) {
+    return 'Ready to start'
+  }
+
+  if (available) {
+    return 'Ready next'
+  }
+
+  return 'Locked'
+}
+
+function getToneClasses(tone: CourseMetric['tone']) {
+  if (tone === 'emerald') {
+    return 'border-emerald-200 bg-emerald-50 text-emerald-700'
+  }
+
+  if (tone === 'amber') {
+    return 'border-amber-200 bg-amber-50 text-amber-700'
+  }
+
+  if (tone === 'indigo') {
+    return 'border-indigo-200 bg-indigo-50 text-indigo-700'
+  }
+
+  return 'border-blue-100 bg-blue-50 text-blue-700'
+}
+
 function IconTile({ children, solid = false }: { children: ReactNode; solid?: boolean }) {
   return (
     <span
@@ -189,7 +306,13 @@ function CourseMetricCard({ metric }: { metric: CourseMetric }) {
   return (
     <article className="rounded-3xl border border-blue-100 bg-white/95 p-4 shadow-sm shadow-blue-900/5">
       <div className="flex items-center gap-3">
-        <IconTile>{metric.icon}</IconTile>
+        <span
+          className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border ${getToneClasses(
+            metric.tone,
+          )}`}
+        >
+          {metric.icon}
+        </span>
         <div>
           <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-600">
             {metric.label}
@@ -206,15 +329,23 @@ function MethodCard({
   icon,
   title,
   detail,
+  tone = 'blue',
 }: {
   icon: ReactNode
   title: string
   detail: string
+  tone?: CourseMetric['tone']
 }) {
   return (
     <article className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm shadow-blue-900/5">
       <div className="flex items-start gap-3">
-        <IconTile>{icon}</IconTile>
+        <span
+          className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border ${getToneClasses(
+            tone,
+          )}`}
+        >
+          {icon}
+        </span>
         <div>
           <h3 className="text-sm font-black text-slate-950">{title}</h3>
           <p className="mt-1 text-sm leading-6 text-slate-600">{detail}</p>
@@ -224,7 +355,13 @@ function MethodCard({
   )
 }
 
-function RouteRail({ modules }: { modules: Module[] }) {
+function RouteRail({
+  modules,
+  completedLessonIds,
+}: {
+  modules: Module[]
+  completedLessonIds: Set<string>
+}) {
   return (
     <section className="mt-5 rounded-[2rem] border border-blue-100 bg-white p-4 shadow-sm shadow-blue-900/5">
       <div className="flex items-center gap-3">
@@ -240,18 +377,37 @@ function RouteRail({ modules }: { modules: Module[] }) {
       </div>
 
       <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
-        {modules.map((module) => (
-          <a
-            key={module.id}
-            href={`#module-${module.moduleNumber}`}
-            className="inline-flex min-w-fit items-center gap-2 rounded-2xl border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-black text-blue-700 transition hover:border-blue-200 hover:bg-white"
-          >
-            <span className="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-blue-600 text-white">
-              {module.moduleNumber}
-            </span>
-            {getShortModuleLabel(module)}
-          </a>
-        ))}
+        {modules.map((module, index) => {
+          const complete = isModuleComplete(module, completedLessonIds)
+          const available = isModuleAvailable(modules, index, completedLessonIds)
+
+          return (
+            <a
+              key={module.id}
+              href={`#module-${module.moduleNumber}`}
+              className={`inline-flex min-w-fit items-center gap-2 rounded-2xl border px-3 py-2 text-xs font-black transition ${
+                complete
+                  ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                  : available
+                    ? 'border-blue-100 bg-blue-50 text-blue-700 hover:border-blue-200 hover:bg-white'
+                    : 'border-slate-200 bg-slate-50 text-slate-500'
+              }`}
+            >
+              <span
+                className={`inline-flex h-7 w-7 items-center justify-center rounded-xl ${
+                  complete
+                    ? 'bg-emerald-600 text-white'
+                    : available
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-slate-200 text-slate-500'
+                }`}
+              >
+                {complete ? <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> : module.moduleNumber}
+              </span>
+              {getShortModuleLabel(module)}
+            </a>
+          )
+        })}
         <span className="inline-flex min-w-fit items-center gap-2 rounded-2xl border border-blue-100 bg-white px-3 py-2 text-xs font-black text-blue-700">
           <Trophy className="h-4 w-4" aria-hidden="true" />
           Final check
@@ -261,10 +417,32 @@ function RouteRail({ modules }: { modules: Module[] }) {
   )
 }
 
-function ModuleCard({ module }: { module: Module }) {
-  const isFirstModule = module.moduleNumber === 1
+function ModuleCard({
+  module,
+  moduleIndex,
+  modules,
+  completedLessonIds,
+}: {
+  module: Module
+  moduleIndex: number
+  modules: Module[]
+  completedLessonIds: Set<string>
+}) {
+  const available = isModuleAvailable(modules, moduleIndex, completedLessonIds)
+  const complete = isModuleComplete(module, completedLessonIds)
+  const completedCount = getModuleCompletedCount(module, completedLessonIds)
+  const moduleProgress = getModuleProgress(module, completedLessonIds)
   const requirementLabel = getSandboxRequirementLabel(module.sandboxTask.requirement)
-  const moduleHref = `/academy/learn/fundamentals/module/${module.slug}`
+  const moduleHref = getModuleHref(module)
+  const nextLesson = getNextAvailableLesson(module, completedLessonIds)
+  const nextLessonHref = nextLesson ? getLessonHref(module, nextLesson) : moduleHref
+  const statusLabel = getModuleStatusLabel({ available, complete, moduleIndex })
+
+  const statusClass = complete
+    ? 'bg-emerald-600 text-white'
+    : available
+      ? 'bg-blue-600 text-white'
+      : 'border border-slate-200 bg-white text-slate-600'
 
   return (
     <article
@@ -278,27 +456,41 @@ function ModuleCard({ module }: { module: Module }) {
               <div className="flex flex-wrap items-center gap-2">
                 <span
                   className={`inline-flex h-11 w-11 items-center justify-center rounded-2xl text-sm font-black shadow-sm ${
-                    isFirstModule
-                      ? 'bg-blue-600 text-white shadow-blue-900/20'
-                      : 'bg-slate-100 text-slate-600'
+                    complete
+                      ? 'bg-emerald-600 text-white shadow-emerald-900/20'
+                      : available
+                        ? 'bg-blue-600 text-white shadow-blue-900/20'
+                        : 'bg-slate-100 text-slate-500'
                   }`}
                 >
-                  {module.moduleNumber}
+                  {complete ? <CheckCircle2 className="h-5 w-5" aria-hidden="true" /> : module.moduleNumber}
                 </span>
 
-                <span
-                  className={`rounded-full px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.16em] ${
-                    isFirstModule
-                      ? 'bg-blue-600 text-white'
-                      : 'border border-slate-200 bg-white text-slate-600'
-                  }`}
-                >
-                  {isFirstModule ? 'Ready to start' : 'Sequential module'}
+                <span className={`rounded-full px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.16em] ${statusClass}`}>
+                  {statusLabel}
                 </span>
               </div>
 
               <h2 className="mt-4 text-2xl font-black tracking-tight text-slate-950">{module.title}</h2>
               <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">{getModuleSummary(module)}</p>
+
+              <div className="mt-4 rounded-2xl border border-blue-100 bg-white p-3">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-blue-600">
+                    Module progress
+                  </p>
+                  <p className="text-sm font-black text-slate-950">
+                    {completedCount}/{module.lessons.length} lessons signed off
+                  </p>
+                </div>
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-blue-50">
+                  <div
+                    className={`h-full rounded-full ${complete ? 'bg-emerald-600' : 'bg-blue-600'}`}
+                    style={{ width: `${moduleProgress}%` }}
+                    aria-hidden="true"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="flex min-w-full flex-wrap gap-2 sm:min-w-72 sm:justify-end">
@@ -306,12 +498,12 @@ function ModuleCard({ module }: { module: Module }) {
                 <BookOpenCheck className="h-4 w-4" aria-hidden="true" />
                 {module.lessons.length} lessons
               </span>
-              <span className="inline-flex items-center gap-2 rounded-2xl border border-blue-100 bg-white px-3 py-2 text-xs font-black text-slate-700">
-                <FileQuestion className="h-4 w-4 text-blue-600" aria-hidden="true" />
-                {module.knowledgeCheck.blocksProgressUntilPassed ? 'Required check' : 'Diagnostic check'}
+              <span className="inline-flex items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-black text-amber-700">
+                <FileQuestion className="h-4 w-4" aria-hidden="true" />
+                {module.knowledgeCheck.blocksProgressUntilPassed ? 'Module review' : 'Diagnostic'}
               </span>
-              <span className="inline-flex items-center gap-2 rounded-2xl border border-blue-100 bg-white px-3 py-2 text-xs font-black text-slate-700">
-                <Code2 className="h-4 w-4 text-blue-600" aria-hidden="true" />
+              <span className="inline-flex items-center gap-2 rounded-2xl border border-indigo-200 bg-indigo-50 px-3 py-2 text-xs font-black text-indigo-700">
+                <Code2 className="h-4 w-4" aria-hidden="true" />
                 {requirementLabel}
               </span>
             </div>
@@ -337,16 +529,31 @@ function ModuleCard({ module }: { module: Module }) {
             </summary>
 
             <ol className="grid gap-2 border-t border-blue-100 p-4 sm:grid-cols-2">
-              {module.lessons.map((lesson) => (
-                <li key={lesson.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="flex gap-3">
-                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xs font-black text-blue-700">
-                      {lesson.sortOrder}
-                    </span>
-                    <p className="text-sm font-black leading-5 text-slate-950">{lesson.title}</p>
-                  </div>
-                </li>
-              ))}
+              {module.lessons.map((lesson) => {
+                const lessonComplete = completedLessonIds.has(lesson.id)
+
+                return (
+                  <li
+                    key={lesson.id}
+                    className={`rounded-2xl border p-3 ${
+                      lessonComplete
+                        ? 'border-emerald-200 bg-emerald-50'
+                        : 'border-slate-200 bg-slate-50'
+                    }`}
+                  >
+                    <div className="flex gap-3">
+                      <span
+                        className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl text-xs font-black ${
+                          lessonComplete ? 'bg-emerald-600 text-white' : 'bg-blue-50 text-blue-700'
+                        }`}
+                      >
+                        {lessonComplete ? <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> : lesson.sortOrder}
+                      </span>
+                      <p className="text-sm font-black leading-5 text-slate-950">{lesson.title}</p>
+                    </div>
+                  </li>
+                )
+              })}
             </ol>
           </details>
         </div>
@@ -354,25 +561,34 @@ function ModuleCard({ module }: { module: Module }) {
 
       <div className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
         <div className="flex items-center gap-2 text-sm leading-6 text-slate-600">
-          {isFirstModule ? (
+          {complete ? (
+            <>
+              <CheckCircle2 className="h-5 w-5 text-emerald-600" aria-hidden="true" />
+              <span>This module is signed off. Review it anytime from your dashboard path.</span>
+            </>
+          ) : available ? (
             <>
               <CheckCircle2 className="h-5 w-5 text-blue-600" aria-hidden="true" />
-              <span>Begin here. This module sets the course baseline.</span>
+              <span>Continue the next lesson and sign off understanding to progress.</span>
             </>
           ) : (
             <>
               <LockKeyhole className="h-5 w-5 text-slate-400" aria-hidden="true" />
-              <span className="sr-only">This module opens after earlier course evidence is complete.</span>
+              <span>Complete the previous module before starting this one.</span>
             </>
           )}
         </div>
 
-        {isFirstModule ? (
+        {available ? (
           <Link
-            href={moduleHref}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-sm shadow-blue-900/20 transition hover:bg-blue-700"
+            href={complete ? moduleHref : nextLessonHref}
+            className={`inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-black text-white shadow-sm transition ${
+              complete
+                ? 'bg-emerald-600 shadow-emerald-900/20 hover:bg-emerald-700'
+                : 'bg-blue-600 shadow-blue-900/20 hover:bg-blue-700'
+            }`}
           >
-            Start Module 1
+            {complete ? 'Review module' : 'Continue module'}
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
         ) : (
@@ -404,7 +620,7 @@ export default async function AIFundamentalsCoursePage() {
   const [{ data: lessonRows }, { data: sandboxRows }] = await Promise.all([
     supabase
       .from('user_lesson_progress')
-      .select('status, completed_at')
+      .select('lesson_id, status, completed_at')
       .eq('user_id', user.id),
     supabase
       .from('sandbox_attempts')
@@ -423,37 +639,42 @@ export default async function AIFundamentalsCoursePage() {
   const lessonProgressRows = (lessonRows ?? []) as LessonProgressRow[]
   const sandboxAttemptRows = (sandboxRows ?? []) as SandboxAttemptRow[]
 
-  const completedLessons = getCompletedLessonCount(lessonProgressRows)
+  const completedLessonIds = getCompletedLessonIds(lessonProgressRows)
+  const completedLessons = completedLessonIds.size
   const submittedSandboxAttempts = getSubmittedSandboxCount(sandboxAttemptRows)
   const reviewedSandboxAttempts = getReviewedSandboxCount(sandboxAttemptRows)
-  const completedModules = 0
+  const completedModules = modules.filter((module) => isModuleComplete(module, completedLessonIds)).length
   const courseProgress = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
-  const firstModule = modules[0]
+  const nextTarget = getNextCourseTarget(modules, completedLessonIds)
 
   const metrics: CourseMetric[] = [
     {
       label: 'Modules',
       value: modules.length,
-      detail: `${completedModules} completed`,
+      detail: `${completedModules} signed off`,
       icon: <Grid3X3 className="h-5 w-5" aria-hidden="true" />,
+      tone: completedModules > 0 ? 'emerald' : 'blue',
     },
     {
       label: 'Lessons',
       value: totalLessons,
-      detail: `${completedLessons} completed`,
+      detail: `${completedLessons} signed off`,
       icon: <BookOpenCheck className="h-5 w-5" aria-hidden="true" />,
+      tone: completedLessons > 0 ? 'emerald' : 'blue',
     },
     {
       label: 'Practice',
       value: requiredSandboxTasks,
       detail: `${submittedSandboxAttempts} submitted`,
       icon: <Code2 className="h-5 w-5" aria-hidden="true" />,
+      tone: 'indigo',
     },
     {
       label: 'Review',
       value: reviewedSandboxAttempts,
-      detail: 'Sandbox attempts reviewed',
+      detail: 'Practice attempts reviewed',
       icon: <BadgeCheck className="h-5 w-5" aria-hidden="true" />,
+      tone: 'amber',
     },
   ]
 
@@ -584,19 +805,19 @@ export default async function AIFundamentalsCoursePage() {
                         Continue learning
                       </p>
                       <p className="mt-1 text-base font-black text-slate-950">
-                        Next: {firstModule?.title ?? 'AI Orientation and Baseline'}
+                        {nextTarget.label}
                       </p>
                       <p className="mt-1 text-sm leading-6 text-slate-600">
-                        Start with Module 1 and complete the baseline before the deeper course sequence opens.
+                        Complete each lesson check to unlock the next step and update your Academy progress.
                       </p>
                     </div>
                   </div>
 
                   <Link
-                    href="/academy/learn/fundamentals/module/orientation-and-baseline"
+                    href={nextTarget.href}
                     className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-sm shadow-blue-900/20 transition hover:bg-blue-700"
                   >
-                    Start Module 1
+                    Continue learning
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </Link>
                 </div>
@@ -643,28 +864,32 @@ export default async function AIFundamentalsCoursePage() {
           </div>
         </section>
 
-        <RouteRail modules={modules} />
+        <RouteRail modules={modules} completedLessonIds={completedLessonIds} />
 
         <section className="mt-5 grid gap-3 md:grid-cols-4">
           <MethodCard
             icon={<ShieldCheck className="h-5 w-5" aria-hidden="true" />}
             title="Understand"
             detail="Build the concept before moving into tools and workflows."
+            tone="blue"
           />
           <MethodCard
             icon={<FileQuestion className="h-5 w-5" aria-hidden="true" />}
             title="Check"
-            detail="Confirm understanding before the module is treated as complete."
+            detail="Sign off understanding before the next lesson or module opens."
+            tone="amber"
           />
           <MethodCard
             icon={<Code2 className="h-5 w-5" aria-hidden="true" />}
             title="Practise"
-            detail="Use sandbox practice to turn knowledge into visible skill."
+            detail="Use practice feedback to improve the input, not just read the lesson."
+            tone="indigo"
           />
           <MethodCard
             icon={<Trophy className="h-5 w-5" aria-hidden="true" />}
             title="Prove"
-            detail="Complete the final check to earn course evidence."
+            detail="Complete the route with enough evidence to trust the progress."
+            tone="emerald"
           />
         </section>
 
@@ -679,13 +904,19 @@ export default async function AIFundamentalsCoursePage() {
               </h2>
             </div>
             <p className="max-w-xl text-sm leading-6 text-slate-600">
-              Preview each module, open lesson titles when needed, and start with Module 1. Later modules unlock as earlier evidence is completed.
+              Preview each module, open lesson titles when needed, and continue from the next available step. Modules unlock as earlier lessons are signed off.
             </p>
           </div>
 
           <div className="grid gap-5 xl:grid-cols-2">
-            {modules.map((module) => (
-              <ModuleCard key={module.id} module={module} />
+            {modules.map((module, index) => (
+              <ModuleCard
+                key={module.id}
+                module={module}
+                moduleIndex={index}
+                modules={modules}
+                completedLessonIds={completedLessonIds}
+              />
             ))}
           </div>
         </section>
@@ -731,7 +962,7 @@ export default async function AIFundamentalsCoursePage() {
 
         <footer className="mt-6 flex flex-col gap-3 rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm shadow-blue-900/10 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm font-semibold leading-6 text-slate-600">
-            Your next action is Module 1: AI Orientation and Baseline.
+            Your next action: {nextTarget.label}
           </p>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link
@@ -741,10 +972,10 @@ export default async function AIFundamentalsCoursePage() {
               Dashboard
             </Link>
             <Link
-              href="/academy/learn/fundamentals/module/orientation-and-baseline"
+              href={nextTarget.href}
               className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-sm shadow-blue-900/20 transition hover:bg-blue-700"
             >
-              Start Module 1
+              Continue learning
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
@@ -753,4 +984,3 @@ export default async function AIFundamentalsCoursePage() {
     </main>
   )
 }
-
