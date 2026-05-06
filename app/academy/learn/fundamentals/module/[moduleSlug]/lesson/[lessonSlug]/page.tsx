@@ -1527,13 +1527,18 @@ async function checkUnderstanding(formData: FormData) {
   redirect(`/academy/learn/fundamentals/module/${context.module.slug}/lesson/${context.lesson.slug}?${query.toString()}#understanding`)
 }
 
-async function completeLesson(formData: FormData) {
+async function completeLesson(moduleSlug: string, lessonSlug: string, formData: FormData) {
   'use server'
 
-  const moduleSlug = formData.get('moduleSlug')
-  const lessonSlug = formData.get('lessonSlug')
+  const submittedModuleSlug = formData.get('moduleSlug')
+  const submittedLessonSlug = formData.get('lessonSlug')
 
-  if (typeof moduleSlug !== 'string' || typeof lessonSlug !== 'string') {
+  if (
+    typeof submittedModuleSlug !== 'string' ||
+    typeof submittedLessonSlug !== 'string' ||
+    submittedModuleSlug !== moduleSlug ||
+    submittedLessonSlug !== lessonSlug
+  ) {
     throw new Error('Missing lesson route data.')
   }
 
@@ -1747,6 +1752,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
   const isCompleted = progress?.status === 'completed' || Boolean(progress?.completed_at)
   const understandingPassed = isCompleted || resolvedSearchParams?.check === 'passed'
   const lessonHref = `/academy/learn/fundamentals/module/${module.slug}/lesson/${lesson.slug}`
+  const completeLessonAction = completeLesson.bind(null, module.slug, lesson.slug)
   const nextHref = nextItem ? getLessonHref(nextItem) : '/academy/learn/fundamentals'
 
   const structuredData = [
@@ -2564,7 +2570,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                   : 'Complete the understanding check first. The lesson completion button unlocks once your understanding is signed off.'}
               </p>
 
-              <form action={completeLesson} className="mt-5">
+              <form action={completeLessonAction} className="mt-5">
                 <input type="hidden" name="moduleSlug" value={module.slug} />
                 <input type="hidden" name="lessonSlug" value={lesson.slug} />
                 <input type="hidden" name="understandingPassed" value={understandingPassed ? 'true' : 'false'} />
