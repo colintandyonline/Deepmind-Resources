@@ -25,8 +25,16 @@ type LessonPageParams = {
   lessonSlug: string
 }
 
+type LessonPageSearchParams = {
+  score?: string
+  tier?: string
+  strengths?: string
+  advice?: string
+}
+
 type LessonPageProps = {
   params: Promise<LessonPageParams>
+  searchParams?: Promise<LessonPageSearchParams>
 }
 
 type LessonProgressRow = {
@@ -54,13 +62,283 @@ type LessonContext = {
 }
 
 type LessonTeachingContent = {
-  plainEnglish: string[]
+  mainIdea: string
+  teaching: string[]
   whyItMatters: string
-  steps: string[]
   workedExampleTitle: string
   workedExample: string[]
-  selfCheck: string[]
-  action: string
+  practicePrompt: string
+  strongerExample: string
+  commonMistakeFix: string
+  recap: string[]
+}
+
+type PracticeFeedback = {
+  score: number
+  tier: string
+  strengths: string[]
+  advice: string[]
+}
+
+type PracticeEvaluation = PracticeFeedback & {
+  strongerExample: string
+}
+
+const specificTeachingBySlug: Record<string, LessonTeachingContent> = {
+  'what-you-will-learn-in-ai-fundamentals': {
+    mainIdea:
+      'AI skill starts with controlled use: clear tasks, useful context, safe boundaries, and review before trust.',
+    teaching: [
+      'AI Fundamentals is not a warm-up page before the “real” course. It is where the core habits are built. If you skip these habits, advanced prompting, tool choice, agents, and automation become guesswork.',
+      'The first habit is task clarity. AI performs better when the job is specific. “Help me with work” gives the model almost nothing to work with. “Turn these meeting notes into five action items with owners and open questions” gives the model a clear job.',
+      'The second habit is context. AI does not automatically know your audience, purpose, constraints, company rules, or risk level. You have to provide the context that matters.',
+      'The third habit is review. AI output can be polished and still wrong. A capable learner knows which parts need checking before the result is used.',
+    ],
+    whyItMatters:
+      'Most weak AI use comes from treating the model like a magic answer box. Strong AI use treats the model like a powerful assistant inside a controlled workflow.',
+    workedExampleTitle: 'The same learner, two different approaches',
+    workedExample: [
+      'Weak approach: “Write something about AI for my team.” The task is vague, the audience is unclear, and there is no review standard.',
+      'Stronger approach: “Draft a short internal note for non-technical staff explaining why AI answers need checking. Use a calm tone, include one example, and finish with three review rules.”',
+      'The stronger version works better because it defines the task, audience, tone, content, and success criteria. That is the foundation this course keeps building.',
+    ],
+    practicePrompt:
+      'Write a short AI task instruction. Include what you want the AI to do, who the output is for, what context matters, and how the answer should be checked.',
+    strongerExample:
+      'Draft a 120-word explanation for non-technical staff about why AI output needs review. Use plain English, include one workplace example, avoid hype, and finish with a checklist of three things to verify before sharing.',
+    commonMistakeFix:
+      'Do not start with a vague request and hope the tool guesses correctly. Start by defining task, audience, context, limits, and review step.',
+    recap: [
+      'AI skill is not just knowing terms; it is using AI in a controlled way.',
+      'A good AI task includes task, context, output shape, and review expectations.',
+      'The learner stays responsible for checking important output before using it.',
+    ],
+  },
+  'how-deepmind-resources-teaches-ai': {
+    mainIdea:
+      'The Academy teaches AI as a living skill: learn the concept, practise it, prove it, then refresh it when tools change.',
+    teaching: [
+      'AI training goes stale when it treats lessons as fixed forever. Tools change. Models change. File handling changes. Search, memory, coding, and automation features change.',
+      'That is why this learning path connects lessons to practice. Reading gives you understanding, but practice shows whether you can apply the idea.',
+      'The important pattern is simple: learn the concept, apply it to a realistic task, check the result, and save evidence of progress.',
+      'When AI changes affect a lesson, the platform can later point learners back to a refresher. That is how training remains useful instead of becoming an archive of old advice.',
+    ],
+    whyItMatters:
+      'If your AI skill is based on outdated workflows, you can make confident mistakes. A version-aware course protects against that.',
+    workedExampleTitle: 'A tool changes how file answers work',
+    workedExample: [
+      'Imagine you learned a workflow for asking questions about uploaded files. Later, the tool changes how it searches those files.',
+      'A static course leaves the old workflow untouched. A living course can flag that lesson for review and add a new practice task.',
+      'The point is not to chase every update. The point is to update training when behaviour changes what users should do.',
+    ],
+    practicePrompt:
+      'Write a short example of an AI workflow that might need retraining after a tool update. Include what changed and what the learner should recheck.',
+    strongerExample:
+      'If an AI tool changes how it searches uploaded policy documents, staff should recheck any workflow that relies on policy answers. The refresher should test whether answers cite the right section, avoid unsupported claims, and include a human review step before use.',
+    commonMistakeFix:
+      'Do not assume an old AI workflow remains safe forever. Recheck workflows when the tool behaviour changes.',
+    recap: [
+      'AI lessons should connect to practice, not just explanation.',
+      'Progress should be based on skill evidence, not page views.',
+      'Important tool changes can create refresher training.',
+    ],
+  },
+  'ai-skill-levels-beginner-user-builder-manager': {
+    mainIdea:
+      'AI competency depends on role. A beginner, daily user, builder, and manager need different levels of training.',
+    teaching: [
+      'AI skill is not one single ladder that everyone climbs in the same way. A beginner needs safe foundations. A practical user needs repeatable prompting and review habits. A builder needs systems thinking. A manager needs risk awareness and staff-readiness signals.',
+      'A receptionist using AI to draft customer replies does not need the same training as a developer building a retrieval workflow. A manager approving team use needs different training again.',
+      'Good AI training starts by asking what the person is responsible for. The more impact their AI use has, the more review, privacy, and workflow control they need.',
+    ],
+    whyItMatters:
+      'Role-aware training prevents people from being overwhelmed by the wrong material or undertrained for high-risk responsibilities.',
+    workedExampleTitle: 'Four people, four training needs',
+    workedExample: [
+      'A beginner needs to understand that AI output is not automatically true.',
+      'A daily user needs to know how to write a structured prompt and check the answer.',
+      'A builder needs to design tools, retrieval, permissions, and failure handling.',
+      'A manager needs to assign training, set safe-use rules, and understand whether staff can apply AI responsibly.',
+    ],
+    practicePrompt:
+      'Choose one role: beginner, daily AI user, builder, or manager. Write what that person needs to learn first and why.',
+    strongerExample:
+      'A customer support team member should first learn safe drafting, privacy boundaries, and output review. They do not need agent architecture yet. Their first skill is writing controlled replies that do not expose data, overpromise, or skip human review.',
+    commonMistakeFix:
+      'Do not give everyone the same AI training. Match the training depth to the role, task, and risk.',
+    recap: [
+      'Different AI roles need different skills.',
+      'Higher-impact work needs stronger review and control.',
+      'Training should match what the learner is expected to do.',
+    ],
+  },
+  'baseline-check-what-do-you-already-understand': {
+    mainIdea:
+      'A baseline check is a starting measurement. It shows what you understand now and what needs attention next.',
+    teaching: [
+      'A baseline is not a pass-or-fail exam. It is a map of your starting point.',
+      'The best way to use a baseline is to answer honestly. Guessing to look advanced does not help. The course can only guide you well if the starting signal is realistic.',
+      'The baseline checks concepts, tool awareness, prompt habits, privacy, and output trust because those are the foundations of safe AI use.',
+    ],
+    whyItMatters:
+      'Without a baseline, progress becomes vague. With a baseline, you can see whether your judgement and confidence are improving.',
+    workedExampleTitle: 'A low score can still be useful',
+    workedExample: [
+      'A learner may understand privacy risks but struggle with tool categories. That does not mean they failed; it tells them where to focus next.',
+      'Another learner may feel confident with prompts but miss questions about hallucination. That is a useful warning: polished answers may be getting trusted too quickly.',
+    ],
+    practicePrompt:
+      'Write one AI topic you already understand, one topic you are unsure about, and one skill you want to improve first.',
+    strongerExample:
+      'I understand that AI can draft text, but I am unsure how to check whether factual claims are reliable. My first skill goal is learning how to spot unsupported claims and add a review step before using AI output.',
+    commonMistakeFix:
+      'Do not treat uncertainty as failure. Use it as the route marker for what to learn next.',
+    recap: [
+      'A baseline records where you are starting.',
+      'Honest uncertainty is useful training data.',
+      'Progress should become visible as you practise.',
+    ],
+  },
+  'what-artificial-intelligence-means-in-practical-terms': {
+    mainIdea:
+      'Artificial intelligence is software that performs tasks using patterns, data, models, rules, or learned behaviour.',
+    teaching: [
+      'In practical terms, AI is not one thing. A chatbot, coding assistant, image generator, research tool, and automation workflow can all use AI, but they do different jobs.',
+      'The useful question is not just “is this AI?” The useful question is “what task is this system performing, what information is it using, and how should the result be checked?”',
+      'That shift matters because different AI tasks carry different risks. Drafting a first version of an email is not the same as making a legal decision or triggering an automated payment.',
+    ],
+    whyItMatters:
+      'Clear definitions prevent vague thinking. Vague thinking leads to bad tool choices and unsafe trust.',
+    workedExampleTitle: 'AI as task support',
+    workedExample: [
+      'Autocomplete predicts text. A chatbot generates a response. A research assistant may search and summarise sources. An automation tool may move data between systems.',
+      'All of these can involve AI, but they do not require the same controls.',
+      'A practical learner identifies the task first, then decides how much review is needed.',
+    ],
+    practicePrompt:
+      'Describe one AI tool or feature you use. Name the task it performs, the input it needs, and the review step required before using the output.',
+    strongerExample:
+      'A chatbot can draft a customer email from order notes. The input is the customer issue, order status, tone requirement, and company policy. The review step is checking the facts, removing unsupported promises, and confirming the reply follows policy.',
+    commonMistakeFix:
+      'Do not use “AI” as a vague label. Name the task: draft, classify, retrieve, compare, generate, summarise, or automate.',
+    recap: [
+      'AI is a broad category of task-performing systems.',
+      'Different AI tasks need different review standards.',
+      'The safest habit is to identify the task before trusting the output.',
+    ],
+  },
+  'what-large-language-models-are': {
+    mainIdea:
+      'A large language model generates likely language from patterns and context. It can be useful without being automatically truthful.',
+    teaching: [
+      'Large language models are trained to produce language that fits the prompt and surrounding context. That makes them useful for drafting, explaining, summarising, rewriting, coding, planning, and structuring information.',
+      'But the model is not automatically checking truth. It may answer from patterns, incomplete context, or a wrong assumption.',
+      'This is why fluent writing must be separated from verified information. An answer can look professional and still need checking.',
+    ],
+    whyItMatters:
+      'When you understand what a language model is, you stop treating it as a guaranteed fact source.',
+    workedExampleTitle: 'Fluent output needs review',
+    workedExample: [
+      'If you provide a policy document and ask for a summary, the model can transform that supplied context into a useful draft.',
+      'If you ask about a policy it has not seen, it may still produce a confident answer.',
+      'Both answers may sound good. Only the first is grounded in the supplied source.',
+    ],
+    practicePrompt:
+      'Write an instruction for a language model that includes a task, context, output format, and a reminder to flag uncertainty.',
+    strongerExample:
+      'Summarise the pasted policy for new staff in five bullet points. Use only the supplied text. If a detail is missing, write “not stated in the source” instead of guessing.',
+    commonMistakeFix:
+      'Do not treat fluent output as verified truth. Ask what source or context supports it.',
+    recap: [
+      'Language models generate useful text from patterns and context.',
+      'Fluent does not mean verified.',
+      'Important claims still need checking.',
+    ],
+  },
+  'why-ai-sounds-confident-even-when-wrong': {
+    mainIdea:
+      'AI often sounds confident because it is good at producing polished language, not because every claim has been verified.',
+    teaching: [
+      'A model can use confident wording, neat formatting, and detailed explanations even when the answer is incomplete or unsupported.',
+      'Confidence is a tone signal. It is not an accuracy signal.',
+      'A careful learner looks for evidence, uncertainty, assumptions, and whether the answer is grounded in the information provided.',
+    ],
+    whyItMatters:
+      'Many AI mistakes are accepted because the answer sounds professional.',
+    workedExampleTitle: 'A risky confident claim',
+    workedExample: [
+      'An AI answer says, “This process is fully compliant.” That sounds reassuring, but it is a high-impact claim.',
+      'A safer answer would say what was checked, what remains uncertain, and who should review it.',
+      'The issue is not whether the answer sounds helpful. The issue is whether it is safe to rely on.',
+    ],
+    practicePrompt:
+      'Write a review instruction that tells AI to flag unsupported claims, assumptions, and anything that needs a human check.',
+    strongerExample:
+      'Review this answer and mark each factual claim as supported, unsupported, or needing a source. Do not treat confident wording as evidence. List any assumptions and recommend what a human should verify before use.',
+    commonMistakeFix:
+      'Do not trust polish. Check support.',
+    recap: [
+      'Confident tone is not proof.',
+      'Important claims need evidence.',
+      'Safe AI use includes a review step.',
+    ],
+  },
+  'prediction-reasoning-retrieval-and-automation': {
+    mainIdea:
+      'Prediction, reasoning-style output, retrieval, and automation are different parts of AI workflows.',
+    teaching: [
+      'Prediction means the model generates likely output from patterns and context. Reasoning-style output means the model works through a task or plan. Retrieval means the system pulls information from files, search, or a knowledge base. Automation means software takes an action.',
+      'These can appear together, but they are not the same. Drafting an answer is not the same as retrieving a source. Suggesting an action is not the same as performing it.',
+      'A safe workflow separates these steps so each one can be checked properly.',
+    ],
+    whyItMatters:
+      'Confusing these concepts leads to poor tool choice and unsafe automation.',
+    workedExampleTitle: 'A support workflow split into steps',
+    workedExample: [
+      'A support assistant may draft a reply, retrieve the refund policy, reason about whether the case fits the policy, and prepare a refund request.',
+      'The reply can be drafted quickly. The policy needs source checking. The refund request needs permission and review.',
+      'Good workflow design keeps those controls separate.',
+    ],
+    practicePrompt:
+      'Describe an AI workflow and label which steps are generation, retrieval, reasoning, or automation.',
+    strongerExample:
+      'For a customer refund workflow: generate a draft reply, retrieve the refund policy, compare the case against the policy, then ask a human to approve any refund action before it is submitted.',
+    commonMistakeFix:
+      'Do not let an AI action run just because the explanation sounded reasonable. Separate advice from action.',
+    recap: [
+      'Generation, retrieval, reasoning, and automation are different.',
+      'Automation needs stronger controls.',
+      'Good workflows separate steps for review.',
+    ],
+  },
+  'prompts-context-and-instructions': {
+    mainIdea:
+      'A prompt is an instruction package: task, context, constraints, output format, and review rules.',
+    teaching: [
+      'A weak prompt makes the model guess. A strong prompt gives it the information needed to produce useful output.',
+      'The goal is not to write long prompts. The goal is to include the right information.',
+      'A good instruction explains what you want, who it is for, what background matters, what format you need, and what the model should avoid.',
+    ],
+    whyItMatters:
+      'Better instructions reduce vague output, bad assumptions, and unnecessary rewrites.',
+    workedExampleTitle: 'Weak prompt to strong prompt',
+    workedExample: [
+      'Weak: “Write an email.”',
+      'Stronger: “Draft a polite email to a customer whose delivery is delayed. Keep it under 120 words, apologise once, do not offer compensation, and include a line saying I will confirm the new delivery date.”',
+      'The stronger prompt defines task, audience, tone, limit, and business rule.',
+    ],
+    practicePrompt:
+      'Write a prompt for a real or sample task. Include task, context, format, constraints, and review expectations.',
+    strongerExample:
+      'Turn these meeting notes into a table with action item, owner, deadline, and open question. Use only the notes provided. If an owner or deadline is missing, write “not stated” instead of guessing.',
+    commonMistakeFix:
+      'Do not add more words without adding useful context. Add the missing task details, limits, and review criteria.',
+    recap: [
+      'Prompts work best when they brief the model clearly.',
+      'Context and constraints matter.',
+      'Review expectations should be part of the instruction.',
+    ],
+  },
 }
 
 function getSupabaseKey() {
@@ -95,411 +373,6 @@ async function createSupabaseServerClient() {
       },
     },
   })
-}
-
-const specificTeachingBySlug: Record<string, LessonTeachingContent> = {
-  'what-you-will-learn-in-ai-fundamentals': {
-    plainEnglish: [
-      'AI Fundamentals is the starting point for using AI well. Before you learn advanced prompting, tool selection, agents, automation, or business workflows, you need a reliable mental model for what AI can do, what it cannot do, and where human judgement still matters.',
-      'This path teaches AI as a practical skill, not as a collection of buzzwords. You will learn how to understand AI output, spot weak claims, protect sensitive information, choose the right tool category, and practise safely before using AI in real work.',
-      'The important shift is this: you are not here to become impressed by AI. You are here to become capable with it. Capability means knowing when to use AI, when to check it, when to avoid it, and how to turn a vague task into a controlled workflow.',
-    ],
-    whyItMatters:
-      'Most people start with AI by asking random questions and trusting whatever sounds polished. That creates shallow habits. A strong foundation helps you build repeatable skill instead of guessing your way through every new tool.',
-    steps: [
-      'First, build a practical definition of AI so you are not fooled by hype or vague marketing claims.',
-      'Next, learn how language models produce useful but unverified output.',
-      'Then, practise giving AI enough context, constraints, and review instructions to make the output safer and more useful.',
-      'Finally, connect lessons to sandbox tasks so your progress is based on practical evidence, not just page views.',
-    ],
-    workedExampleTitle: 'Two learners use AI very differently',
-    workedExample: [
-      'Learner A opens an AI tool and asks, “Help me with work.” The answer might be fluent, but the task is unclear, the context is missing, and there is no review standard.',
-      'Learner B says, “Draft a plain-English customer reply for a delayed order. Use a calm tone, do not promise compensation, and list what I should verify before sending.” That prompt gives the model a task, context, boundaries, and a review step.',
-      'The second learner is not just “better at prompts”. They are using AI with a controlled workflow. That is the kind of practical skill this course is designed to build.',
-    ],
-    selfCheck: [
-      'Can you explain why AI Fundamentals comes before advanced prompting or agents?',
-      'Can you name one risk of using AI without checking the output?',
-      'Can you describe the difference between reading a lesson and proving a skill?',
-    ],
-    action:
-      'Treat this lesson as your orientation. You are starting a structured path that moves from understanding to practice to evidence.',
-  },
-  'how-deepmind-resources-teaches-ai': {
-    plainEnglish: [
-      'DeepMind Resources teaches AI as a living skill system. That matters because AI tools, models, interfaces, and best practices change quickly. A normal static lesson can become outdated when a tool changes how it handles files, memory, search, code, or automation.',
-      'The learning model is simple: understand the concept, practise it safely, record evidence of the skill, then refresh the skill when the AI landscape changes. This is why lessons connect to sandbox tasks and why progress needs to be version-aware.',
-      'A lesson is not just a page to read. It is a step in a larger training loop. The goal is to help you build judgement, repeatable workflows, and practical confidence.',
-    ],
-    whyItMatters:
-      'If AI training does not update, learners build habits around old tool behaviour. A living training system keeps the learner focused on current, verified, practical use.',
-    steps: [
-      'Learn the concept in plain English.',
-      'See how the concept appears in a real AI task.',
-      'Notice the common mistake that causes weak or risky output.',
-      'Practise the skill in a sandbox task where there are success criteria.',
-      'Use saved progress to know what you have done and what may need a refresher later.',
-    ],
-    workedExampleTitle: 'A model update changes a workflow',
-    workedExample: [
-      'Imagine a learner completed a lesson about using files inside an AI tool. Later, the tool changes how file search works. The old lesson may still be partly useful, but the exact workflow may no longer be reliable.',
-      'In a static course, nothing happens. In a living learning system, the affected lesson can be reviewed, updated, and connected to a new sandbox task.',
-      'That is why the Academy is not only about consuming content. It is about keeping your skill current as tools change.',
-    ],
-    selfCheck: [
-      'Can you explain why a completed AI lesson may need a refresher later?',
-      'Can you explain how a sandbox task proves more than reading alone?',
-      'Can you describe the platform loop from update to lesson to practice?',
-    ],
-    action:
-      'Use this course as a skill route. Read actively, practise deliberately, and expect important AI changes to create future refreshers.',
-  },
-  'ai-skill-levels-beginner-user-builder-manager': {
-    plainEnglish: [
-      'Not everyone needs the same depth of AI training. A beginner needs core concepts and safety habits. A practical user needs prompting, tool choice, and output review. A builder needs workflows, retrieval, tools, agents, and debugging. A manager needs enough understanding to assign training, set rules, and judge risk.',
-      'The mistake is treating AI skill as one thing. In reality, AI competency depends on role and responsibility. A non-technical staff member using AI for email support needs different training from a developer building a tool-calling workflow.',
-      'This lesson helps you locate yourself on the path so the next steps feel useful instead of overwhelming.',
-    ],
-    whyItMatters:
-      'Role-aware training prevents beginners from being pushed into advanced tools too early and prevents managers from judging AI adoption only by enthusiasm or tool access.',
-    steps: [
-      'Beginner: learn what AI is, what it is not, and how to avoid unsafe trust.',
-      'Practical user: learn structured prompts, common workflows, tool categories, and review habits.',
-      'Builder: learn systems, APIs, tool calling, retrieval, agents, and workflow controls.',
-      'Manager: learn risk, training assignment, staff readiness, tool suitability, and evidence of skill.',
-    ],
-    workedExampleTitle: 'Four people need different AI training',
-    workedExample: [
-      'A receptionist may need safe drafting and summarising habits. A marketing assistant may need prompt structure and output review. A developer may need to design an agent with strict tool permissions. A manager may need a training plan and a way to see who is ready for which workflow.',
-      'All four people are learning AI, but they are not learning the same thing at the same depth.',
-      'DeepMind Resources separates those levels so learners can move forward without being buried in the wrong material.',
-    ],
-    selfCheck: [
-      'Which level describes you today?',
-      'Which level do you want to reach next?',
-      'What would count as real evidence that you improved?',
-    ],
-    action:
-      'Choose your starting level honestly. The goal is not to sound advanced; it is to build the next useful layer of skill.',
-  },
-  'baseline-check-what-do-you-already-understand': {
-    plainEnglish: [
-      'A baseline check is not a school exam. It is a starting measurement. It helps you see what you already understand and which areas need more attention before the course gets more practical.',
-      'The useful mindset is honesty. If you guess correctly but cannot explain why, that is still a signal. If you get something wrong, that is not failure; it tells the system where the next lesson should help.',
-      'The baseline covers concepts, tool awareness, prompt habits, privacy, and output trust because those are the foundations for safe AI use.',
-    ],
-    whyItMatters:
-      'Without a baseline, progress becomes vague. With a baseline, you can see whether your confidence, judgement, and practical skill improve over time.',
-    steps: [
-      'Answer based on what you understand now, not what you think you should know.',
-      'Notice which questions feel uncertain.',
-      'Use uncertainty as a map for what to study next.',
-      'Repeat or review later when the course asks for a refresher.',
-    ],
-    workedExampleTitle: 'A weak score can still be useful',
-    workedExample: [
-      'A learner scores low on tool categories but high on privacy awareness. That tells them they do not need to restart everything; they need more practice choosing the right tool type for a task.',
-      'Another learner feels confident with prompts but misses questions about hallucination. That is a warning sign: they may be producing polished outputs without enough review.',
-      'The baseline turns those differences into direction.',
-    ],
-    selfCheck: [
-      'Which AI topic already feels familiar?',
-      'Which topic feels uncertain?',
-      'What is one skill you want to measure again after this path?',
-    ],
-    action:
-      'Complete the baseline as a starting signal. Do not treat it as a judgement of your ability.',
-  },
-  'what-artificial-intelligence-means-in-practical-terms': {
-    plainEnglish: [
-      'Artificial intelligence is software designed to perform tasks that normally require pattern recognition, prediction, language understanding, decision support, or adaptive behaviour. In practical work, AI is not one single tool. It is a broad category of systems that help with different kinds of tasks.',
-      'A chatbot, an image generator, a coding assistant, a search-grounded research tool, and an automation workflow can all be described as AI, but they do not work the same way or carry the same risks.',
-      'The practical question is not “Is this AI?” The better question is “What task is this system performing, what information is it using, and how should the output be checked?”',
-    ],
-    whyItMatters:
-      'Clear definitions help you avoid treating every AI product as interchangeable. That protects you from choosing the wrong tool for the job.',
-    steps: [
-      'Identify the task the AI system is meant to help with.',
-      'Identify what kind of input it needs.',
-      'Identify what kind of output it produces.',
-      'Decide whether the output needs human review, source checking, or approval before use.',
-    ],
-    workedExampleTitle: 'AI is a category, not a single behaviour',
-    workedExample: [
-      'Autocomplete predicts the next word. A chatbot generates a response from context. A research assistant may search sources and summarise them. An automation tool may move information between systems.',
-      'Calling all of these “AI” is technically acceptable, but not specific enough for safe use.',
-      'A practical learner names the job: drafting, searching, classifying, extracting, generating, checking, or automating.',
-    ],
-    selfCheck: [
-      'Can you name the task an AI system is performing?',
-      'Can you explain why a chatbot and an automation workflow are not the same thing?',
-      'Can you describe what kind of review the output needs?',
-    ],
-    action:
-      'When you see an AI tool, classify the task first. That habit makes tool choice and output review much easier.',
-  },
-  'what-large-language-models-are': {
-    plainEnglish: [
-      'A large language model is a system trained to generate language by using patterns learned from large amounts of text and other training data. It can produce fluent answers, summaries, plans, code, tables, and explanations because it has learned relationships between words, concepts, and formats.',
-      'The important limitation is that fluent language is not the same as verified truth. A model can produce a confident answer even when it has not checked a source, misunderstood the task, or filled in missing information.',
-      'This is why language models are useful for drafting, explaining, transforming, structuring, and brainstorming, but their output still needs review when accuracy matters.',
-    ],
-    whyItMatters:
-      'Understanding language models helps you use them without treating them as fact machines.',
-    steps: [
-      'Give the model the task and context it needs.',
-      'Ask for the output format you want.',
-      'Tell it what uncertainty or assumptions to flag.',
-      'Check important claims before using the result.',
-    ],
-    workedExampleTitle: 'Fluent does not mean verified',
-    workedExample: [
-      'A language model can summarise a policy document well when the document is provided. But if you ask it about a policy it has not seen, it may produce a plausible answer from general patterns.',
-      'Both answers may sound professional. Only one is grounded in the supplied source.',
-      'The practical skill is knowing when the model is transforming provided context and when it may be inventing missing detail.',
-    ],
-    selfCheck: [
-      'Can you explain why a language model can sound confident when it is wrong?',
-      'Can you name a task where a language model is useful?',
-      'Can you name a task where its answer must be checked?',
-    ],
-    action:
-      'Use language models as powerful drafting and reasoning assistants, but keep verification as part of the workflow.',
-  },
-  'why-ai-sounds-confident-even-when-wrong': {
-    plainEnglish: [
-      'AI tools often sound confident because they are optimised to produce fluent, helpful-looking responses. Polished structure, professional tone, and detailed wording can make an answer feel reliable even when the facts are unsupported.',
-      'This is one of the most important beginner lessons: confidence is a style signal, not an accuracy signal. The model may not know which claims need evidence unless you ask for sources, provide trusted material, or build a review step into the workflow.',
-      'A reliable AI user separates tone from truth. They look for source support, uncertainty, assumptions, and whether the answer matches the actual task.',
-    ],
-    whyItMatters:
-      'Many AI mistakes are accepted because the answer sounds polished. Learning to distrust polish protects your work.',
-    steps: [
-      'Underline claims that would matter if wrong.',
-      'Ask whether each claim is supported by provided context or a reliable source.',
-      'Look for missing caveats or overconfident wording.',
-      'Rewrite the answer with uncertainty labels where needed.',
-    ],
-    workedExampleTitle: 'A confident answer can still be unsafe',
-    workedExample: [
-      'Suppose an AI answer says, “This software is fully compliant with your industry rules.” That sounds reassuring, but it is a high-risk claim.',
-      'A safer answer would say what evidence was checked, what is unknown, and what needs legal or compliance review.',
-      'The issue is not whether the AI sounded helpful. The issue is whether the claim was safe to rely on.',
-    ],
-    selfCheck: [
-      'Can you identify a claim that needs evidence?',
-      'Can you explain why confident tone is not proof?',
-      'Can you rewrite an overconfident answer more safely?',
-    ],
-    action:
-      'Before trusting an AI answer, separate what sounds good from what is actually supported.',
-  },
-  'prediction-reasoning-retrieval-and-automation': {
-    plainEnglish: [
-      'Modern AI work often mixes four ideas: prediction, reasoning-style output, retrieval, and automation. They sound similar in marketing copy, but they are different in practice.',
-      'Prediction is the model generating likely text or output from patterns and context. Reasoning-style output is the model working through a task or plan. Retrieval is the system pulling in external information from files, search, or a knowledge base. Automation is when software takes an action or moves data through a workflow.',
-      'A safe workflow depends on knowing which one you are using. Asking a model to answer from memory is not the same as retrieving a source. Getting a suggested action is not the same as allowing an automated action.',
-    ],
-    whyItMatters:
-      'Confusing these concepts leads to weak workflows, bad tool choices, and unsafe trust.',
-    steps: [
-      'Ask whether the task needs generated language, source-backed information, or a real action.',
-      'Use retrieval when the answer must depend on specific documents or current sources.',
-      'Use automation only when the action is safe, permissioned, and reviewable.',
-      'Keep human approval in place for high-impact actions.',
-    ],
-    workedExampleTitle: 'A support workflow uses all four ideas',
-    workedExample: [
-      'An AI support assistant may predict a helpful reply, reason through the customer issue, retrieve the order policy, and prepare an action such as creating a refund request.',
-      'Those are not the same step. Drafting the reply is lower risk than issuing the refund.',
-      'Good AI workflow design separates these steps so each one can be checked properly.',
-    ],
-    selfCheck: [
-      'Can you tell whether a task needs retrieval or just drafting?',
-      'Can you explain why automation requires stronger controls?',
-      'Can you classify an AI feature by what it actually does?',
-    ],
-    action:
-      'When reviewing an AI workflow, label each step: generate, reason, retrieve, or act.',
-  },
-  'prompts-context-and-instructions': {
-    plainEnglish: [
-      'A prompt is not just a question. It is an instruction package. Strong prompts give the model enough information to understand the task, the audience, the constraints, the desired format, and the review standard.',
-      'Weak prompts often fail because the model has to guess too much. If you do not provide context, it may invent context. If you do not define the output format, it may choose one that is not useful. If you do not set limits, it may include assumptions you did not want.',
-      'The goal is not to write long prompts. The goal is to provide the right information for the job.',
-    ],
-    whyItMatters:
-      'Better instructions create better output and reduce the amount of cleanup needed afterwards.',
-    steps: [
-      'State the task clearly.',
-      'Add the relevant background or source material.',
-      'Name the audience and purpose.',
-      'Set constraints, tone, and format.',
-      'Tell the model what to flag or avoid.',
-    ],
-    workedExampleTitle: 'A vague prompt becomes a useful instruction',
-    workedExample: [
-      'Weak prompt: “Write an email.”',
-      'Better prompt: “Draft a polite email to a customer whose delivery is delayed. Keep it under 120 words, do not offer compensation, apologise once, and include a line saying I will confirm the new delivery date.”',
-      'The second prompt gives task, audience, tone, limits, and business rules.',
-    ],
-    selfCheck: [
-      'Does your prompt include a clear task?',
-      'Does it include the context the model needs?',
-      'Does it explain what a good answer should look like?',
-    ],
-    action:
-      'Before asking AI for output, write the instruction like you are briefing a capable assistant who does not know your situation yet.',
-  },
-  'models-apps-and-platforms': {
-    plainEnglish: [
-      'A model, an app, and a platform are related but not the same. The model is the underlying AI capability. The app is the user-facing product experience. The platform is the wider system around the model, including tools, files, memory, permissions, APIs, billing, and integrations.',
-      'This distinction matters because a feature you like may come from the app, not the model. A model may be powerful, but the product around it may limit what you can do. A platform may add useful workflow features that are not part of the raw model.',
-      'When choosing AI tools, you need to evaluate the whole product, not only the model name.',
-    ],
-    whyItMatters:
-      'Confusing models, apps, and platforms causes poor tool comparisons and unrealistic expectations.',
-    steps: [
-      'Identify the underlying model or model family where possible.',
-      'Identify the app interface and what it adds.',
-      'Identify platform features such as files, tools, memory, team controls, or APIs.',
-      'Choose based on the workflow, not just the model label.',
-    ],
-    workedExampleTitle: 'The same model can feel different in different products',
-    workedExample: [
-      'A model used inside a chat app may support conversation, file uploads, memory, and browsing-like features. The same model through an API may require a developer to build those features separately.',
-      'The capability is not only the model. It is the model plus the product environment.',
-      'That is why tool intelligence needs scenario-based comparison.',
-    ],
-    selfCheck: [
-      'Can you identify what belongs to the model?',
-      'Can you identify what belongs to the app interface?',
-      'Can you identify what belongs to the wider platform?',
-    ],
-    action:
-      'When comparing tools, write down whether you are judging the model, the app, or the full platform.',
-  },
-  'files-memory-retrieval-and-search': {
-    plainEnglish: [
-      'Files, memory, retrieval, and search are different ways an AI system may use information beyond the immediate prompt. Uploaded files give the system material to inspect. Memory stores user preferences or facts over time. Retrieval pulls relevant chunks from a knowledge base. Search looks for external or current information.',
-      'The danger is assuming these all mean “the AI knows the truth.” They do not. A file can be misread. Memory can be incomplete. Retrieval can pull the wrong chunk. Search can find weak sources.',
-      'A good learner asks where the information came from and whether it supports the answer.',
-    ],
-    whyItMatters:
-      'Source awareness is one of the foundations of safe AI use.',
-    steps: [
-      'Ask what information source the answer depends on.',
-      'Check whether that source was actually provided or retrieved.',
-      'Look for missing citations or unsupported claims.',
-      'Use stronger source checks for business, legal, financial, or safety-sensitive work.',
-    ],
-    workedExampleTitle: 'Memory is not the same as retrieval',
-    workedExample: [
-      'If an AI tool remembers that you prefer short answers, that is memory. If it pulls a policy paragraph from your company handbook, that is retrieval.',
-      'Those should not be treated the same. A preference can guide style; a retrieved policy can support an answer if the right source was found.',
-      'The review step is checking whether the answer is grounded in the right information.',
-    ],
-    selfCheck: [
-      'Can you tell whether an answer used a file, memory, retrieval, or search?',
-      'Can you explain why each source type can still fail?',
-      'Can you name a review step for source-backed answers?',
-    ],
-    action:
-      'Do not ask only “what did the AI say?” Ask “what information did it use?”',
-  },
-  'why-model-updates-change-behaviour': {
-    plainEnglish: [
-      'AI tools change because models, apps, interfaces, policies, and platform features are updated. A workflow that worked last month may behave differently after a model update, a file-handling change, a new safety rule, or a pricing-plan change.',
-      'This does not mean AI is unusable. It means AI training needs refresh logic. Learners should expect important workflows to be reviewed when the underlying tool changes.',
-      'Version-aware learning prevents old habits from silently becoming risky.',
-    ],
-    whyItMatters:
-      'AI changes quickly. Skill stays useful only when important changes are noticed, translated, and practised.',
-    steps: [
-      'Notice when a tool, model, API, or workflow has changed.',
-      'Ask whether the change affects a lesson, prompt, sandbox task, or business workflow.',
-      'Update the training material if practical behaviour has changed.',
-      'Recommend refreshers for learners who completed the old version.',
-    ],
-    workedExampleTitle: 'An old workflow becomes unreliable',
-    workedExample: [
-      'A team learns a file-summary workflow. Later, the tool changes how uploaded files are processed. The old instructions may still look correct but produce different results.',
-      'A living Academy flags that the lesson needs review and may create a new sandbox task.',
-      'That keeps user progress connected to current capability, not old screenshots or assumptions.',
-    ],
-    selfCheck: [
-      'Can you name a reason an AI workflow might change?',
-      'Can you explain why old tutorials can become unsafe?',
-      'Can you describe what a refresher is for?',
-    ],
-    action:
-      'Treat AI learning as current training. Recheck important workflows when tools change.',
-  },
-  'what-ai-is-good-at': {
-    plainEnglish: [
-      'AI is especially useful for first drafts, summaries, brainstorming, classification, rewriting, pattern spotting, translation-style transformation, and turning messy input into a clearer structure. These tasks are valuable because they save time without automatically handing over final judgement.',
-      'The safest beginner habit is to use AI where the output can be reviewed easily. Drafting a meeting summary is lower risk than approving a contract. Brainstorming ideas is lower risk than making a medical, legal, or financial decision.',
-      'AI is strongest when it helps you move from blank page to useful draft, from messy notes to structure, or from many options to a clearer starting point.',
-    ],
-    whyItMatters:
-      'Knowing AI strengths helps you pick useful low-risk tasks instead of forcing AI into work it should not control.',
-    steps: [
-      'Choose tasks where a human can review the result.',
-      'Use AI to draft, organise, compare, or explain.',
-      'Keep final judgement with a human for important work.',
-      'Add source checks when factual accuracy matters.',
-    ],
-    workedExampleTitle: 'A good beginner workflow',
-    workedExample: [
-      'A manager pastes non-sensitive meeting notes and asks AI to produce action items, owners, and open questions.',
-      'That is a strong use case because the input is provided, the output is easy to review, and the manager can correct mistakes before sharing.',
-      'The AI speeds up structure; the human keeps responsibility.',
-    ],
-    selfCheck: [
-      'Can you name three low-risk AI tasks?',
-      'Can you explain why review still matters?',
-      'Can you decide whether a task is suitable for a beginner AI workflow?',
-    ],
-    action:
-      'Start with tasks where AI creates a draft or structure and you remain the final reviewer.',
-  },
-}
-
-function getFallbackTeachingContent(context: LessonContext): LessonTeachingContent {
-  const { module, lesson } = context
-
-  return {
-    plainEnglish: [
-      `${lesson.title} is part of ${module.title}. The purpose of this lesson is to help you turn one AI concept into a practical working habit rather than leaving it as theory.`,
-      lesson.outcome,
-      'A useful AI lesson should change how you behave with a tool. After this lesson, you should be able to recognise the situation, apply the idea, avoid the common mistake, and decide what needs checking before the output is used.',
-    ],
-    whyItMatters:
-      'AI skill is built through judgement. A learner who can explain the concept, apply it to a task, and review the result is far safer and more capable than someone who only knows the terminology.',
-    steps: [
-      'Read the core idea and put it into your own words.',
-      'Connect the idea to a real task or workflow.',
-      'Notice the common mistake and how it would weaken the result.',
-      'Decide what evidence, context, or human review is needed before using the output.',
-    ],
-    workedExampleTitle: 'Apply the lesson to a real task',
-    workedExample: [
-      lesson.practicalExample,
-      'The practical move is to slow down just enough to identify the task, the risk, the expected output, and the review step.',
-      'That habit is what turns AI from a novelty into a controlled working method.',
-    ],
-    selfCheck: [
-      'Can you explain the lesson in plain English?',
-      'Can you apply it to a real AI task?',
-      'Can you identify the mistake this lesson is warning you about?',
-    ],
-    action: lesson.completionRequirement,
-  }
-}
-
-function getTeachingContent(context: LessonContext) {
-  return specificTeachingBySlug[context.lesson.slug] ?? getFallbackTeachingContent(context)
 }
 
 function getFlatLessons() {
@@ -555,46 +428,147 @@ function getBlockLabel(block: string) {
     .join(' ')
 }
 
-function IconTile({ children, solid = false }: { children: ReactNode; solid?: boolean }) {
-  return (
-    <span
-      className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-sm ${
-        solid
-          ? 'bg-white text-blue-700'
-          : 'bg-gradient-to-br from-blue-600 to-[#0A63FF] text-white shadow-blue-900/20'
-      }`}
-    >
-      {children}
-    </span>
-  )
+function getFallbackTeachingContent(context: LessonContext): LessonTeachingContent {
+  const { module, lesson } = context
+
+  return {
+    mainIdea: lesson.outcome,
+    teaching: [
+      `${lesson.title} belongs to ${module.title}. The skill is practical: understand the idea, use it in a task, and know what to check before relying on the result.`,
+      lesson.outcome,
+      'As you read, focus on behaviour. What would you do differently when writing a prompt, choosing a tool, checking an answer, or deciding whether AI is safe for the task?',
+    ],
+    whyItMatters:
+      'AI skill is built through judgement. A useful learner can explain the concept, apply it to a task, and avoid the mistake that would make the output weak or risky.',
+    workedExampleTitle: 'Apply the lesson to a realistic AI task',
+    workedExample: [
+      lesson.practicalExample,
+      'The practical move is to define the task, add context, set the expected output, and decide how the result will be reviewed.',
+      'That turns the idea from a definition into a working habit.',
+    ],
+    practicePrompt:
+      'Write a short AI instruction or workflow note that applies this lesson. Include the task, context, expected output, and review step.',
+    strongerExample:
+      'Use AI to draft a first version of the output, but provide the source material, define the audience, state the constraints, and require unsupported claims to be flagged before the answer is used.',
+    commonMistakeFix: lesson.commonMistake,
+    recap: [
+      'Explain the concept in plain English.',
+      'Apply it to a realistic task.',
+      'Name the review step that keeps the output safe or useful.',
+    ],
+  }
 }
 
-function LessonSection({
-  eyebrow,
-  title,
-  children,
-  icon,
-}: {
-  eyebrow: string
-  title: string
-  children: ReactNode
-  icon: ReactNode
-}) {
-  return (
-    <section className="rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm shadow-blue-900/10 sm:p-6">
-      <div className="flex items-center gap-3">
-        <IconTile>{icon}</IconTile>
-        <div>
-          <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600">
-            {eyebrow}
-          </p>
-          <h2 className="text-2xl font-black tracking-tight text-slate-950">{title}</h2>
-        </div>
-      </div>
+function getTeachingContent(context: LessonContext) {
+  return specificTeachingBySlug[context.lesson.slug] ?? getFallbackTeachingContent(context)
+}
 
-      <div className="mt-5">{children}</div>
-    </section>
-  )
+function includesAny(text: string, words: string[]) {
+  return words.some((word) => text.includes(word))
+}
+
+function evaluatePracticeSubmission(input: string, context: LessonContext): PracticeEvaluation {
+  const teaching = getTeachingContent(context)
+  const trimmed = input.trim()
+  const text = trimmed.toLowerCase()
+
+  const checks = [
+    {
+      passed: trimmed.length >= 80,
+      strength: 'You gave enough detail for the task to be reviewed.',
+      advice: 'Add more detail. A useful practice answer usually needs at least a few specific sentences.',
+    },
+    {
+      passed: includesAny(text, ['draft', 'write', 'summarise', 'summarize', 'compare', 'review', 'classify', 'explain', 'turn', 'create']),
+      strength: 'You included a clear action for the AI or learner to perform.',
+      advice: 'State the action clearly: draft, summarise, compare, classify, review, explain, or create.',
+    },
+    {
+      passed: includesAny(text, ['context', 'audience', 'customer', 'staff', 'team', 'notes', 'document', 'policy', 'source', 'background']),
+      strength: 'You gave useful context rather than leaving the situation vague.',
+      advice: 'Add context: who the output is for, what source material is used, or what situation the task belongs to.',
+    },
+    {
+      passed: includesAny(text, ['check', 'review', 'verify', 'source', 'evidence', 'unsupported', 'assumption', 'risk']),
+      strength: 'You included a review or verification step.',
+      advice: 'Add a review step. Say what should be checked before the output is trusted or used.',
+    },
+    {
+      passed: includesAny(text, ['format', 'bullet', 'table', 'short', 'words', 'tone', 'plain english', 'checklist']),
+      strength: 'You gave the output a shape or quality standard.',
+      advice: 'Define the output format or quality standard: bullets, table, checklist, short answer, tone, or word limit.',
+    },
+  ]
+
+  const passedChecks = checks.filter((check) => check.passed)
+  const missedChecks = checks.filter((check) => !check.passed)
+  const score = Math.round((passedChecks.length / checks.length) * 100)
+  const tier = score >= 80 ? 'Strong' : score >= 55 ? 'Developing' : 'Needs work'
+
+  return {
+    score,
+    tier,
+    strengths:
+      passedChecks.length > 0
+        ? passedChecks.map((check) => check.strength).slice(0, 3)
+        : ['You made a start. Now make the task more specific so it can be assessed.'],
+    advice:
+      missedChecks.length > 0
+        ? missedChecks.map((check) => check.advice).slice(0, 3)
+        : ['Good structure. The next improvement is to make the review rule more precise for the risk level of the task.'],
+    strongerExample: teaching.strongerExample,
+  }
+}
+
+function getPracticeFeedback(searchParams: LessonPageSearchParams | undefined): PracticeFeedback | null {
+  if (!searchParams?.score || !searchParams.tier) {
+    return null
+  }
+
+  const score = Number(searchParams.score)
+
+  if (Number.isNaN(score)) {
+    return null
+  }
+
+  return {
+    score,
+    tier: searchParams.tier,
+    strengths: searchParams.strengths ? searchParams.strengths.split('|') : [],
+    advice: searchParams.advice ? searchParams.advice.split('|') : [],
+  }
+}
+
+async function reviewPracticeInput(formData: FormData) {
+  'use server'
+
+  const moduleSlug = formData.get('moduleSlug')
+  const lessonSlug = formData.get('lessonSlug')
+  const learnerInput = formData.get('learnerInput')
+
+  if (typeof moduleSlug !== 'string' || typeof lessonSlug !== 'string') {
+    throw new Error('Missing lesson route data.')
+  }
+
+  if (typeof learnerInput !== 'string') {
+    throw new Error('Missing practice input.')
+  }
+
+  const context = getLessonContext(moduleSlug, lessonSlug)
+
+  if (!context) {
+    throw new Error('Lesson could not be found.')
+  }
+
+  const evaluation = evaluatePracticeSubmission(learnerInput, context)
+  const query = new URLSearchParams()
+
+  query.set('score', String(evaluation.score))
+  query.set('tier', evaluation.tier)
+  query.set('strengths', evaluation.strengths.join('|'))
+  query.set('advice', evaluation.advice.join('|'))
+
+  redirect(`/academy/learn/fundamentals/module/${context.module.slug}/lesson/${context.lesson.slug}?${query.toString()}#practice`)
 }
 
 async function completeLesson(formData: FormData) {
@@ -677,6 +651,57 @@ async function completeLesson(formData: FormData) {
   redirect(nextHref)
 }
 
+function IconTile({ children, solid = false }: { children: ReactNode; solid?: boolean }) {
+  return (
+    <span
+      className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-sm ${
+        solid
+          ? 'bg-white text-blue-700'
+          : 'bg-gradient-to-br from-blue-600 to-[#0A63FF] text-white shadow-blue-900/20'
+      }`}
+    >
+      {children}
+    </span>
+  )
+}
+
+function LessonSection({
+  number,
+  eyebrow,
+  title,
+  children,
+  icon,
+}: {
+  number: string
+  eyebrow: string
+  title: string
+  children: ReactNode
+  icon: ReactNode
+}) {
+  return (
+    <section className="rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm shadow-blue-900/10 sm:p-6">
+      <div className="flex items-start gap-4">
+        <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-sm font-black text-white">
+          {number}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-3">
+            <IconTile>{icon}</IconTile>
+            <div>
+              <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600">
+                {eyebrow}
+              </p>
+              <h2 className="text-2xl font-black tracking-tight text-slate-950">{title}</h2>
+            </div>
+          </div>
+
+          <div className="mt-5">{children}</div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export function generateStaticParams() {
   return aiFundamentalsLearningPath.modules.flatMap((module) =>
     module.lessons.map((lesson) => ({
@@ -710,8 +735,9 @@ export async function generateMetadata({ params }: LessonPageProps): Promise<Met
   }
 }
 
-export default async function AIFundamentalsLessonPage({ params }: LessonPageProps) {
+export default async function AIFundamentalsLessonPage({ params, searchParams }: LessonPageProps) {
   const { moduleSlug, lessonSlug } = await params
+  const resolvedSearchParams = searchParams ? await searchParams : undefined
   const context = getLessonContext(moduleSlug, lessonSlug)
 
   if (!context) {
@@ -720,6 +746,7 @@ export default async function AIFundamentalsLessonPage({ params }: LessonPagePro
 
   const { module, lesson, lessonIndex, flatIndex, previousItem, nextItem } = context
   const teaching = getTeachingContent(context)
+  const practiceFeedback = getPracticeFeedback(resolvedSearchParams)
   const supabase = await createSupabaseServerClient()
 
   if (!supabase) {
@@ -840,7 +867,7 @@ export default async function AIFundamentalsLessonPage({ params }: LessonPagePro
           <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-blue-100 blur-3xl" />
           <div className="absolute -bottom-24 right-56 h-64 w-64 rounded-full bg-cyan-100 blur-3xl" />
 
-          <div className="relative z-10 grid gap-6 p-5 sm:p-7 xl:grid-cols-[minmax(0,1fr)_420px] xl:items-center">
+          <div className="relative z-10 grid gap-6 p-5 sm:p-7 xl:grid-cols-[minmax(0,1fr)_430px] xl:items-center">
             <div className="min-w-0">
               <Link
                 href={`/academy/learn/fundamentals/module/${module.slug}`}
@@ -855,7 +882,7 @@ export default async function AIFundamentalsLessonPage({ params }: LessonPagePro
                   Lesson {lessonIndex + 1} of {module.lessons.length}
                 </span>
                 <span className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-blue-700">
-                  Module {module.moduleNumber}
+                  Module {module.moduleNumber}: {module.title}
                 </span>
               </div>
 
@@ -864,99 +891,57 @@ export default async function AIFundamentalsLessonPage({ params }: LessonPagePro
               </h1>
 
               <p className="mt-5 max-w-3xl text-base leading-8 text-slate-600 sm:text-lg">
-                {lesson.outcome}
+                {teaching.mainIdea}
               </p>
             </div>
 
             <aside className="rounded-[2rem] border border-blue-700 bg-blue-600 p-5 text-white shadow-2xl shadow-blue-900/25">
               <p className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-100">
-                Your lesson
+                Lesson flow
               </p>
 
-              <div className="mt-4 rounded-3xl border border-white/15 bg-white/10 p-4">
-                <div className="flex items-center gap-3">
-                  <IconTile solid>
-                    {isCompleted ? (
-                      <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
-                    ) : (
-                      <BookOpenCheck className="h-5 w-5" aria-hidden="true" />
-                    )}
-                  </IconTile>
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-blue-100">
-                      Progress
-                    </p>
-                    <p className="mt-1 text-2xl font-black text-white">
-                      {isCompleted ? 'Completed' : 'Ready to learn'}
-                    </p>
-                  </div>
-                </div>
-                <p className="mt-4 text-sm leading-6 text-blue-50">
-                  {isCompleted
-                    ? 'This lesson has already been saved as complete.'
-                    : 'Read the teaching, work through the example, then mark the lesson complete.'}
-                </p>
+              <div className="mt-4 space-y-3">
+                {['Learn the idea', 'See it used', 'Try your own input', 'Check and improve'].map(
+                  (step, index) => (
+                    <div key={step} className="rounded-2xl border border-white/15 bg-white/10 p-3">
+                      <div className="flex items-center gap-3">
+                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white text-xs font-black text-blue-700">
+                          {index + 1}
+                        </span>
+                        <p className="text-sm font-black text-white">{step}</p>
+                      </div>
+                    </div>
+                  ),
+                )}
               </div>
 
               <div className="mt-4 rounded-3xl border border-white/15 bg-white/10 p-4">
                 <p className="text-[10px] font-black uppercase tracking-[0.14em] text-blue-100">
-                  Coming next
+                  Progress
                 </p>
-                <p className="mt-2 text-sm font-bold leading-6 text-white">
-                  {nextItem ? nextItem.lesson.title : 'Return to course overview'}
+                <p className="mt-1 text-2xl font-black text-white">
+                  {isCompleted ? 'Completed' : 'Ready'}
+                </p>
+                <p className="mt-2 text-sm leading-6 text-blue-50">
+                  {isCompleted
+                    ? 'This lesson has already been saved as complete.'
+                    : 'Finish the practice section before marking this lesson complete.'}
                 </p>
               </div>
             </aside>
           </div>
         </section>
 
-        <section className="mt-5 grid gap-4 md:grid-cols-3">
-          <article className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm shadow-blue-900/5">
-            <IconTile>
-              <Target className="h-5 w-5" aria-hidden="true" />
-            </IconTile>
-            <p className="mt-4 text-[11px] font-black uppercase tracking-[0.16em] text-blue-600">
-              Learn
-            </p>
-            <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">
-              Understand the concept in plain English before using it in a workflow.
-            </p>
-          </article>
-
-          <article className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm shadow-blue-900/5">
-            <IconTile>
-              <Code2 className="h-5 w-5" aria-hidden="true" />
-            </IconTile>
-            <p className="mt-4 text-[11px] font-black uppercase tracking-[0.16em] text-blue-600">
-              Apply
-            </p>
-            <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">
-              Connect the lesson to a practical AI task, not just a definition.
-            </p>
-          </article>
-
-          <article className="rounded-3xl border border-blue-100 bg-white p-4 shadow-sm shadow-blue-900/5">
-            <IconTile>
-              <ShieldCheck className="h-5 w-5" aria-hidden="true" />
-            </IconTile>
-            <p className="mt-4 text-[11px] font-black uppercase tracking-[0.16em] text-blue-600">
-              Check
-            </p>
-            <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">
-              Spot the mistake this lesson is designed to prevent.
-            </p>
-          </article>
-        </section>
-
-        <section className="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
+        <section className="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1fr)_390px]">
           <div className="space-y-5">
             <LessonSection
-              eyebrow="Lesson teaching"
+              number="1"
+              eyebrow="Learn"
               title="Understand the idea"
               icon={<BookOpenCheck className="h-5 w-5" aria-hidden="true" />}
             >
               <div className="space-y-4">
-                {teaching.plainEnglish.map((paragraph) => (
+                {teaching.teaching.map((paragraph) => (
                   <p key={paragraph} className="text-base leading-8 text-slate-600">
                     {paragraph}
                   </p>
@@ -972,26 +957,8 @@ export default async function AIFundamentalsLessonPage({ params }: LessonPagePro
             </LessonSection>
 
             <LessonSection
-              eyebrow="How to use it"
-              title="Apply the lesson"
-              icon={<Sparkles className="h-5 w-5" aria-hidden="true" />}
-            >
-              <ol className="space-y-3">
-                {teaching.steps.map((step, index) => (
-                  <li key={step} className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
-                    <div className="flex items-start gap-3">
-                      <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-xs font-black text-white">
-                        {index + 1}
-                      </span>
-                      <p className="text-sm font-semibold leading-6 text-slate-700">{step}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </LessonSection>
-
-            <LessonSection
-              eyebrow="Worked example"
+              number="2"
+              eyebrow="Example"
               title={teaching.workedExampleTitle}
               icon={<Code2 className="h-5 w-5" aria-hidden="true" />}
             >
@@ -1005,8 +972,98 @@ export default async function AIFundamentalsLessonPage({ params }: LessonPagePro
             </LessonSection>
 
             <LessonSection
-              eyebrow="Common mistake"
-              title="Avoid the usual trap"
+              number="3"
+              eyebrow="Practice"
+              title="Try your own input"
+              icon={<Sparkles className="h-5 w-5" aria-hidden="true" />}
+            >
+              <div id="practice" className="rounded-3xl border border-blue-100 bg-blue-50 p-4">
+                <p className="text-sm font-black leading-6 text-slate-950">{teaching.practicePrompt}</p>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  The checker looks for task clarity, context, output shape, and review behaviour. It does not judge truth; it checks whether the input is structured enough to work with.
+                </p>
+              </div>
+
+              <form action={reviewPracticeInput} className="mt-5 space-y-4">
+                <input type="hidden" name="moduleSlug" value={module.slug} />
+                <input type="hidden" name="lessonSlug" value={lesson.slug} />
+                <textarea
+                  name="learnerInput"
+                  required
+                  minLength={40}
+                  rows={7}
+                  className="w-full rounded-3xl border border-blue-100 bg-white p-4 text-sm leading-7 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
+                  placeholder="Write your practice input here. Include the task, context, output you want, and how the result should be checked."
+                />
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-sm shadow-blue-900/20 transition hover:bg-blue-700"
+                >
+                  Check my input
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </form>
+
+              {practiceFeedback ? (
+                <div className="mt-5 rounded-3xl border border-blue-100 bg-white p-4">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-600">
+                        Practice result
+                      </p>
+                      <h3 className="mt-1 text-2xl font-black tracking-tight text-slate-950">
+                        {practiceFeedback.tier}
+                      </h3>
+                    </div>
+                    <span className="inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-blue-600 text-xl font-black text-white">
+                      {practiceFeedback.score}%
+                    </span>
+                  </div>
+
+                  <div className="mt-5 grid gap-4 lg:grid-cols-2">
+                    <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
+                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-700">
+                        What worked
+                      </p>
+                      <ul className="mt-3 space-y-2">
+                        {practiceFeedback.strengths.map((item) => (
+                          <li key={item} className="flex gap-2 text-sm leading-6 text-slate-700">
+                            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" aria-hidden="true" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">
+                        Improve next
+                      </p>
+                      <ul className="mt-3 space-y-2">
+                        {practiceFeedback.advice.map((item) => (
+                          <li key={item} className="flex gap-2 text-sm leading-6 text-slate-700">
+                            <FileQuestion className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" aria-hidden="true" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 p-4">
+                    <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-700">
+                      Stronger example
+                    </p>
+                    <p className="mt-2 text-sm leading-7 text-slate-700">{teaching.strongerExample}</p>
+                  </div>
+                </div>
+              ) : null}
+            </LessonSection>
+
+            <LessonSection
+              number="4"
+              eyebrow="Fix"
+              title="Avoid the common mistake"
               icon={<ShieldCheck className="h-5 w-5" aria-hidden="true" />}
             >
               <p className="text-base leading-8 text-slate-600">{lesson.commonMistake}</p>
@@ -1015,19 +1072,18 @@ export default async function AIFundamentalsLessonPage({ params }: LessonPagePro
                 <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-700">
                   Practical fix
                 </p>
-                <p className="mt-2 text-sm leading-7 text-slate-700">
-                  Slow the task down. Name the goal, the context, the output you need, and the review step before trusting the result.
-                </p>
+                <p className="mt-2 text-sm leading-7 text-slate-700">{teaching.commonMistakeFix}</p>
               </div>
             </LessonSection>
 
             <LessonSection
+              number="5"
               eyebrow="Recap"
               title="Check your understanding"
               icon={<BadgeCheck className="h-5 w-5" aria-hidden="true" />}
             >
               <div className="grid gap-3">
-                {teaching.selfCheck.map((item) => (
+                {teaching.recap.map((item) => (
                   <div key={item} className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
                     <div className="flex items-start gap-3">
                       <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" aria-hidden="true" />
@@ -1039,7 +1095,7 @@ export default async function AIFundamentalsLessonPage({ params }: LessonPagePro
             </LessonSection>
           </div>
 
-          <aside className="space-y-5">
+          <aside className="space-y-5 xl:sticky xl:top-24 xl:self-start">
             <section className="rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm shadow-blue-900/10">
               <div className="flex items-center gap-3">
                 <IconTile>
@@ -1047,19 +1103,22 @@ export default async function AIFundamentalsLessonPage({ params }: LessonPagePro
                 </IconTile>
                 <div>
                   <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600">
-                    Lesson route
+                    Route
                   </p>
-                  <h2 className="text-xl font-black tracking-tight text-slate-950">Position in course</h2>
+                  <h2 className="text-xl font-black tracking-tight text-slate-950">Keep moving</h2>
                 </div>
               </div>
 
               <div className="mt-5 space-y-3">
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <Link
+                  href={`/academy/learn/fundamentals/module/${module.slug}`}
+                  className="block rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-blue-200 hover:bg-blue-50"
+                >
                   <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">
-                    Current module
+                    Module
                   </p>
                   <p className="mt-2 text-sm font-black leading-6 text-slate-950">{module.title}</p>
-                </div>
+                </Link>
 
                 {previousItem ? (
                   <Link
@@ -1067,7 +1126,7 @@ export default async function AIFundamentalsLessonPage({ params }: LessonPagePro
                     className="block rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-blue-200 hover:bg-blue-50"
                   >
                     <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">
-                      Previous lesson
+                      Previous
                     </p>
                     <p className="mt-2 text-sm font-black leading-6 text-slate-950">
                       {previousItem.lesson.title}
@@ -1080,10 +1139,10 @@ export default async function AIFundamentalsLessonPage({ params }: LessonPagePro
                   className="block rounded-2xl border border-blue-100 bg-blue-50 p-4 transition hover:border-blue-200 hover:bg-white"
                 >
                   <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-700">
-                    Next lesson
+                    Next
                   </p>
                   <p className="mt-2 text-sm font-black leading-6 text-slate-950">
-                    {nextItem ? nextItem.lesson.title : 'Return to course overview'}
+                    {nextItem ? nextItem.lesson.title : 'Course overview'}
                   </p>
                 </Link>
               </div>
@@ -1091,7 +1150,7 @@ export default async function AIFundamentalsLessonPage({ params }: LessonPagePro
 
             <section className="rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm shadow-blue-900/10">
               <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600">
-                Focus areas
+                Skill focus
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {lesson.blocks.map((block) => (
@@ -1107,12 +1166,14 @@ export default async function AIFundamentalsLessonPage({ params }: LessonPagePro
 
             <section className="rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm shadow-blue-900/10">
               <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600">
-                Lesson action
+                Complete
               </p>
               <h2 className="mt-2 text-xl font-black tracking-tight text-slate-950">
-                {isCompleted ? 'Continue learning' : 'Mark this lesson complete'}
+                {isCompleted ? 'Lesson complete' : 'Finish this lesson'}
               </h2>
-              <p className="mt-3 text-sm leading-6 text-slate-600">{teaching.action}</p>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                Mark the lesson complete after you have read the teaching, tried the practice input, and reviewed the feedback.
+              </p>
 
               <form action={completeLesson} className="mt-5">
                 <input type="hidden" name="moduleSlug" value={module.slug} />
@@ -1132,12 +1193,12 @@ export default async function AIFundamentalsLessonPage({ params }: LessonPagePro
         <footer className="mt-6 flex flex-col gap-3 rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm shadow-blue-900/10 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
             <IconTile>
-              <FileQuestion className="h-5 w-5" aria-hidden="true" />
+              <Target className="h-5 w-5" aria-hidden="true" />
             </IconTile>
             <div>
-              <p className="text-sm font-black text-slate-950">Finish the lesson, then keep the route moving.</p>
+              <p className="text-sm font-black text-slate-950">One lesson, one practical habit.</p>
               <p className="mt-1 text-sm leading-6 text-slate-600">
-                Each lesson should leave you with one clearer skill, one practical example, and one mistake to avoid.
+                The goal is not to rush. Understand the idea, test your input, improve it, then move forward.
               </p>
             </div>
           </div>
@@ -1162,4 +1223,3 @@ export default async function AIFundamentalsLessonPage({ params }: LessonPagePro
     </main>
   )
 }
-
