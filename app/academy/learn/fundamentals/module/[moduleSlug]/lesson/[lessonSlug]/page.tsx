@@ -536,6 +536,23 @@ function inferTopicProfile(rawInput: string): TopicProfile {
   const text = rawInput.toLowerCase()
   const taskSummary = limitText(rawInput, 150)
 
+  if (includesAny(text, ['lightbulb', 'light bulb', 'bulb', 'lamp', 'ceiling light'])) {
+    return {
+      task: 'Create a plain-English, step-by-step safety checklist for changing a lightbulb',
+      audience: includesAny(text, ['beginner', 'first time', 'new'])
+        ? 'a beginner who has not changed a lightbulb before'
+        : 'a home user who wants to change a lightbulb safely',
+      context:
+        'in a normal home setting where the light may be ceiling-mounted, the fitting may be hot, and the user may need a stable step ladder',
+      format: includesAny(text, ['bullet', 'bullets'])
+        ? 'bullet points under clear safety headings'
+        : 'short sections with clear bullet points',
+      safetyOrReview:
+        'include switching the power off, letting the bulb cool, using a stable ladder, checking the replacement bulb rating, and stopping if the fitting looks damaged or unsafe',
+      constraints:
+        'avoid electrical guesswork, do not encourage touching exposed wiring, and recommend a qualified electrician if anything looks damaged, loose, burned, or uncertain',
+    }
+  }
   if (includesAny(text, ['tyre', 'tire', 'wheel', 'puncture', 'flat tyre', 'flat tire'])) {
     return {
       task: 'Create a plain-English, step-by-step safety checklist for changing a car tyre',
@@ -969,11 +986,11 @@ function getTierScoreClass(tier: string) {
 
 function getTierGuidance(tier: string) {
   if (tier === 'Strong') {
-    return 'Strong structure. Copy the better version, test it in an AI tool, then compare the result with your first attempt.'
+    return 'Strong structure. Use the better version in the practice box, check it again, then compare the feedback with your first attempt.'
   }
 
   if (tier === 'Developing') {
-    return 'Good start. Fix the missing areas, copy the better version, and notice how the task becomes easier for the AI to follow.'
+    return 'Good start. Fix the missing areas, use the better version, and notice how the task becomes easier for the AI to follow.'
   }
 
   return 'Your input needs more structure before it becomes a reliable AI instruction. Use the better version below as your next attempt.'
@@ -1697,7 +1714,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
 
                   <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <p className="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">
-                      Your input reviewed
+                      Prompt reviewed
                     </p>
                     <p className="mt-2 text-sm leading-7 text-slate-700">{practiceFeedback.learnerInput}</p>
                   </div>
@@ -2109,6 +2126,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
     </main>
   )
 }
+
 
 
 
