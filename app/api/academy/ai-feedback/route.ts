@@ -23,6 +23,14 @@ type AcademyAIFeedback = {
   whyBetter: string
   practiceInstruction: string
   safetyNote: string
+  outputComparison: {
+    originalOutputTitle: string
+    improvedOutputTitle: string
+    originalOutput: string
+    improvedOutput: string
+    differenceHighlights: string[]
+    learningTakeaway: string
+  }
   rubric: {
     taskClarity: boolean
     audience: boolean
@@ -55,6 +63,7 @@ const feedbackSchema = {
     'whyBetter',
     'practiceInstruction',
     'safetyNote',
+    'outputComparison',
     'rubric',
   ],
   properties: {
@@ -113,22 +122,71 @@ const feedbackSchema = {
     betterPrompt: {
       type: 'string',
       minLength: 40,
-      maxLength: 900,
+      maxLength: 1100,
     },
     whyBetter: {
       type: 'string',
       minLength: 20,
-      maxLength: 360,
+      maxLength: 420,
     },
     practiceInstruction: {
       type: 'string',
       minLength: 20,
-      maxLength: 280,
+      maxLength: 320,
     },
     safetyNote: {
       type: 'string',
       minLength: 10,
-      maxLength: 260,
+      maxLength: 320,
+    },
+    outputComparison: {
+      type: 'object',
+      additionalProperties: false,
+      required: [
+        'originalOutputTitle',
+        'improvedOutputTitle',
+        'originalOutput',
+        'improvedOutput',
+        'differenceHighlights',
+        'learningTakeaway',
+      ],
+      properties: {
+        originalOutputTitle: {
+          type: 'string',
+          minLength: 6,
+          maxLength: 90,
+        },
+        improvedOutputTitle: {
+          type: 'string',
+          minLength: 6,
+          maxLength: 90,
+        },
+        originalOutput: {
+          type: 'string',
+          minLength: 40,
+          maxLength: 1200,
+        },
+        improvedOutput: {
+          type: 'string',
+          minLength: 40,
+          maxLength: 1400,
+        },
+        differenceHighlights: {
+          type: 'array',
+          minItems: 3,
+          maxItems: 6,
+          items: {
+            type: 'string',
+            minLength: 12,
+            maxLength: 220,
+          },
+        },
+        learningTakeaway: {
+          type: 'string',
+          minLength: 30,
+          maxLength: 360,
+        },
+      },
     },
     rubric: {
       type: 'object',
@@ -289,13 +347,20 @@ function parseFeedback(text: string): AcademyAIFeedback | null {
 function buildAcademyInstructions() {
   return [
     'You are the DeepMind Resources Academy feedback engine.',
-    'Your job is to evaluate a learner practice input and improve it as a training exercise.',
-    'Do not answer the learner task itself. Do not complete the task they are asking AI to do.',
-    'Evaluate the quality of the learner input as an instruction for AI.',
-    'The improved prompt must be directly related to the learner input. Never swap to a generic unrelated example.',
-    'Focus on: task clarity, audience, context, output shape, boundaries, safety, source grounding, and review step.',
-    'If the learner asks for something risky, unsafe, illegal, or high-impact, keep the feedback educational and make the better prompt safer by adding boundaries, warnings, and human review.',
-    'Use plain English. Be specific, practical, and learner-facing.',
+    'Your job is to evaluate a learner practice input, improve it, and show why the improved version produces a better output.',
+    'This is a training tool. The learner must see the practical difference between the first prompt and the stronger prompt.',
+    'Do not write generic feedback. Refer directly to the learner input and preserve the learner topic.',
+    'The betterPrompt field must be a direct prompt the learner can reuse. Do not start it with phrases like "Improve this AI instruction".',
+    'The betterPrompt must keep the original task, but make it clearer, safer, more specific, and easier for an AI system to follow.',
+    'Use plain English. Prefer practical wording over academic language.',
+    'Use UK English where natural.',
+    'Avoid grammar mistakes. Do not say things like "You are gave" or "You have gave".',
+    'Score the learner input honestly. Do not award 100 unless the input already includes clear task, audience, context, output shape, boundaries, and review expectations.',
+    'For outputComparison.originalOutput, simulate the likely answer quality produced by the learner input. Make it visibly weaker where the prompt is vague, but do not make it absurd.',
+    'For outputComparison.improvedOutput, simulate the likely answer quality produced by the betterPrompt. Make the practical improvement obvious.',
+    'For practical safety tasks, keep both outputs safe. Do not provide dangerous shortcuts. Add warnings, boundaries, and human review where needed.',
+    'Do not answer unsafe requests with harmful operational detail. If the learner task is unsafe, the comparison should teach safer prompting and escalation.',
+    'differenceHighlights must explain visible differences between the two outputs, such as clearer structure, safer warnings, better audience fit, stronger constraints, and better review behaviour.',
     'Return only the structured JSON requested by the schema.',
   ].join('\n')
 }
@@ -326,18 +391,44 @@ function buildAcademyInput({
       learnerInput,
       expectedFeedbackBehaviour: {
         whatWorked:
-          'Explain what is genuinely useful in the learner input, with direct reference to their wording.',
+          'Explain what is genuinely useful in the learner input, with direct reference to the learner wording.',
         improveNext:
-          'Explain what is missing or weak, and why it matters for AI output quality.',
+          'Explain what is missing or weak, and why it matters for output quality, safety, or usefulness.',
         betterPrompt:
-          'Rewrite the learner input into a stronger prompt for the same task, preserving their topic and intent.',
+          'Rewrite the learner input into a stronger prompt for the same task. The result must be directly usable, not a meta instruction about improving the prompt.',
+        outputComparison:
+          'Show a side-by-side learning comparison: likely output from the original prompt, likely output from the improved prompt, and clear difference highlights.',
         practiceInstruction:
-          'Tell the learner what to do next with the better prompt.',
+          'Tell the learner to use the better prompt, compare the outputs, and notice which prompt details changed the result.',
       },
     },
     null,
     2,
   )
+}
+
+function isFeedbackComparisonValid(feedback: AcademyAIFeedback) {
+  const comparison = feedback.outputComparison
+
+  if (!comparison || typeof comparison !== 'object') {
+    return false
+  }
+
+  if (
+    typeof comparison.originalOutputTitle !== 'string' ||
+    typeof comparison.improvedOutputTitle !== 'string' ||
+    typeof comparison.originalOutput !== 'string' ||
+    typeof comparison.improvedOutput !== 'string' ||
+    typeof comparison.learningTakeaway !== 'string'
+  ) {
+    return false
+  }
+
+  if (!Array.isArray(comparison.differenceHighlights)) {
+    return false
+  }
+
+  return comparison.differenceHighlights.every((item) => typeof item === 'string')
 }
 
 function validateFeedback(feedback: AcademyAIFeedback | null) {
@@ -377,6 +468,10 @@ function validateFeedback(feedback: AcademyAIFeedback | null) {
   }
 
   if (!feedback.rubric || typeof feedback.rubric !== 'object') {
+    return null
+  }
+
+  if (!isFeedbackComparisonValid(feedback)) {
     return null
   }
 
@@ -426,7 +521,7 @@ export async function POST(request: Request) {
       {
         ok: false,
         error: 'learner_input_too_short',
-        message: 'The learner input needs a little more detail before AI feedback can evaluate it.',
+        message: 'The learner input needs a little more detail before Academy feedback can evaluate it.',
       },
       { status: 400 },
     )
@@ -478,7 +573,7 @@ export async function POST(request: Request) {
       {
         ok: false,
         error: 'not_authenticated',
-        message: 'Sign in is required before Academy AI feedback can run.',
+        message: 'Sign in is required before Academy feedback can run.',
       },
       { status: 401 },
     )
@@ -527,7 +622,7 @@ export async function POST(request: Request) {
           ],
         },
       ],
-      max_output_tokens: 1400,
+      max_output_tokens: 2400,
       temperature: 0.2,
       text: {
         format: {
@@ -555,7 +650,7 @@ export async function POST(request: Request) {
       {
         ok: false,
         error: 'openai_feedback_failed',
-        message: 'AI feedback could not be generated for this attempt.',
+        message: 'Academy feedback could not be generated for this attempt.',
         requestId,
         detail: errorText.slice(0, 500),
       },
@@ -572,7 +667,7 @@ export async function POST(request: Request) {
       {
         ok: false,
         error: 'invalid_ai_feedback',
-        message: 'AI feedback returned an unexpected format.',
+        message: 'Academy feedback returned an unexpected format.',
         requestId,
       },
       { status: 502 },
