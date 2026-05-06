@@ -33,6 +33,9 @@ type LessonPageSearchParams = {
   missed?: string
   example?: string
   input?: string
+  check?: string
+  checkScore?: string
+  missedQuestions?: string
 }
 
 type LessonPageProps = {
@@ -91,6 +94,25 @@ type PracticeFeedback = {
   advice: string[]
   missedLabels: string[]
   strongerExample: string
+}
+
+type UnderstandingOption = {
+  value: string
+  label: string
+  correct: boolean
+  feedback: string
+}
+
+type UnderstandingQuestion = {
+  id: string
+  prompt: string
+  options: UnderstandingOption[]
+}
+
+type UnderstandingFeedback = {
+  score: number
+  passed: boolean
+  missedQuestions: string[]
 }
 
 type TopicProfile = {
@@ -858,6 +880,135 @@ async function reviewPracticeInput(formData: FormData) {
   redirect(`/academy/learn/fundamentals/module/${context.module.slug}/lesson/${context.lesson.slug}?${query.toString()}#practice`)
 }
 
+
+function getUnderstandingQuestions(context: LessonContext): UnderstandingQuestion[] {
+  const teaching = getTeachingContent(context)
+
+  return [
+    {
+      id: 'understanding-q1',
+      prompt: 'Which answer best describes the main skill this lesson is building?',
+      options: [
+        {
+          value: 'a',
+          label: 'Moving quickly through AI output so the task feels faster.',
+          correct: false,
+          feedback: 'This misses the point. Speed only helps when the output is controlled and checked.',
+        },
+        {
+          value: 'b',
+          label: teaching.mainIdea,
+          correct: true,
+          feedback: 'Correct. The lesson is about the practical habit, not just reading the page.',
+        },
+        {
+          value: 'c',
+          label: 'Learning enough AI words to recognise the topic later.',
+          correct: false,
+          feedback: 'Terminology helps, but the course is focused on working behaviour and judgement.',
+        },
+      ],
+    },
+    {
+      id: 'understanding-q2',
+      prompt: 'Before you trust or use AI output, what should happen?',
+      options: [
+        {
+          value: 'a',
+          label: 'Use the output if it sounds confident and well formatted.',
+          correct: false,
+          feedback: 'Confident style is not evidence. Polished output can still be wrong.',
+        },
+        {
+          value: 'b',
+          label: 'Check the important claims, missing context, assumptions, and risk before using it.',
+          correct: true,
+          feedback: 'Correct. Review behaviour is what makes AI use safer and more professional.',
+        },
+        {
+          value: 'c',
+          label: 'Ask the AI to make the answer longer so it looks more complete.',
+          correct: false,
+          feedback: 'More detail can make weak output look stronger without making it more reliable.',
+        },
+      ],
+    },
+    {
+      id: 'understanding-q3',
+      prompt: 'What makes a learner input stronger after using the practice checker?',
+      options: [
+        {
+          value: 'a',
+          label: 'It becomes longer, even if the task is still vague.',
+          correct: false,
+          feedback: 'Length is not the goal. Useful structure is the goal.',
+        },
+        {
+          value: 'b',
+          label: 'It gives a clear task, audience, context, output shape, boundaries, and review step.',
+          correct: true,
+          feedback: 'Correct. This is the structure that helps AI produce a better and safer result.',
+        },
+        {
+          value: 'c',
+          label: 'It removes constraints so the AI can be more creative.',
+          correct: false,
+          feedback: 'For training tasks, constraints usually improve control and reliability.',
+        },
+      ],
+    },
+  ]
+}
+
+function evaluateUnderstandingCheck(formData: FormData, context: LessonContext): UnderstandingFeedback {
+  const questions = getUnderstandingQuestions(context)
+  const missedQuestions: string[] = []
+  let correctAnswers = 0
+
+  questions.forEach((question) => {
+    const answer = formData.get(question.id)
+    const selectedOption = question.options.find((option) => option.value === answer)
+
+    if (selectedOption?.correct) {
+      correctAnswers += 1
+    } else {
+      missedQuestions.push(question.prompt)
+    }
+  })
+
+  return {
+    score: Math.round((correctAnswers / questions.length) * 100),
+    passed: correctAnswers === questions.length,
+    missedQuestions,
+  }
+}
+
+async function checkUnderstanding(formData: FormData) {
+  'use server'
+
+  const moduleSlug = formData.get('moduleSlug')
+  const lessonSlug = formData.get('lessonSlug')
+
+  if (typeof moduleSlug !== 'string' || typeof lessonSlug !== 'string') {
+    throw new Error('Missing lesson route data.')
+  }
+
+  const context = getLessonContext(moduleSlug, lessonSlug)
+
+  if (!context) {
+    throw new Error('Lesson could not be found.')
+  }
+
+  const result = evaluateUnderstandingCheck(formData, context)
+  const query = new URLSearchParams()
+
+  query.set('check', result.passed ? 'passed' : 'needs_review')
+  query.set('checkScore', String(result.score))
+  query.set('missedQuestions', result.missedQuestions.join(searchParamDivider))
+
+  redirect(`/academy/learn/fundamentals/module/${context.module.slug}/lesson/${context.lesson.slug}?${query.toString()}#understanding`)
+}
+
 async function completeLesson(formData: FormData) {
   'use server'
 
@@ -872,6 +1023,18 @@ async function completeLesson(formData: FormData) {
 
   if (!context) {
     throw new Error('Lesson could not be found.')
+  }
+
+  const understandingPassed = formData.get('understandingPassed')
+
+  if (understandingPassed !== 'true') {
+    const query = new URLSearchParams()
+
+    query.set('check', 'needs_review')
+    query.set('checkScore', '0')
+    query.set('missedQuestions', 'Complete the understanding check first')
+
+    redirect(`/academy/learn/fundamentals/module/${context.module.slug}/lesson/${context.lesson.slug}?${query.toString()}#understanding`)
   }
 
   const supabase = await createSupabaseServerClient()
@@ -1034,6 +1197,12 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
   const { module, lesson, lessonIndex, flatIndex, previousItem, nextItem } = context
   const teaching = getTeachingContent(context)
   const practiceFeedback = getPracticeFeedback(resolvedSearchParams)
+  const understandingQuestions = getUnderstandingQuestions(context)
+  const understandingAttempted =
+    resolvedSearchParams?.check === 'passed' || resolvedSearchParams?.check === 'needs_review'
+  const rawUnderstandingScore = Number(resolvedSearchParams?.checkScore ?? '0')
+  const understandingScore = Number.isNaN(rawUnderstandingScore) ? 0 : rawUnderstandingScore
+  const missedUnderstandingQuestions = splitSearchList(resolvedSearchParams?.missedQuestions)
   const supabase = await createSupabaseServerClient()
 
   if (!supabase) {
@@ -1057,6 +1226,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
 
   const progress = ((progressRows ?? []) as LessonProgressRow[])[0] ?? null
   const isCompleted = progress?.status === 'completed' || Boolean(progress?.completed_at)
+  const understandingPassed = isCompleted || resolvedSearchParams?.check === 'passed'
   const nextHref = nextItem ? getLessonHref(nextItem) : '/academy/learn/fundamentals'
 
   const structuredData = [
@@ -1419,13 +1589,22 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
 
             <LessonSection
               number="5"
-              eyebrow="Recap"
+              eyebrow="Prove"
               title="Check your understanding"
               icon={<BadgeCheck className="h-5 w-5" aria-hidden="true" />}
             >
-              <div className="grid gap-3">
+              <div id="understanding" className="rounded-3xl border border-blue-100 bg-blue-50 p-4">
+                <p className="text-sm font-black leading-6 text-slate-950">
+                  Sign off this lesson by answering three quick questions.
+                </p>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  This is not a punishment gate. If something is missed, the lesson will point you back to the training and you can try again.
+                </p>
+              </div>
+
+              <div className="mt-5 grid gap-3">
                 {teaching.recap.map((item) => (
-                  <div key={item} className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
+                  <div key={item} className="rounded-2xl border border-blue-100 bg-white p-4">
                     <div className="flex items-start gap-3">
                       <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" aria-hidden="true" />
                       <p className="text-sm font-semibold leading-6 text-slate-700">{item}</p>
@@ -1433,6 +1612,109 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                   </div>
                 ))}
               </div>
+
+              {understandingAttempted ? (
+                <div
+                  className={`mt-5 rounded-3xl border p-4 ${
+                    understandingPassed
+                      ? 'border-emerald-200 bg-emerald-50'
+                      : 'border-amber-200 bg-amber-50'
+                  }`}
+                >
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p
+                        className={`text-[11px] font-black uppercase tracking-[0.16em] ${
+                          understandingPassed ? 'text-emerald-700' : 'text-amber-700'
+                        }`}
+                      >
+                        Understanding check
+                      </p>
+                      <h3 className="mt-1 text-2xl font-black tracking-tight text-slate-950">
+                        {understandingPassed ? 'Signed off' : 'Not quite yet'}
+                      </h3>
+                      <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">
+                        {understandingPassed
+                          ? 'Good. You have shown enough understanding to complete this lesson.'
+                          : 'Nearly there. Review the missed point, then try the check again.'}
+                      </p>
+                    </div>
+                    <span
+                      className={`inline-flex h-16 w-16 items-center justify-center rounded-3xl text-xl font-black text-white ${
+                        understandingPassed ? 'bg-emerald-600' : 'bg-amber-500'
+                      }`}
+                    >
+                      {understandingScore}%
+                    </span>
+                  </div>
+
+                  {!understandingPassed && missedUnderstandingQuestions.length > 0 ? (
+                    <div className="mt-4 rounded-2xl border border-amber-200 bg-white p-4">
+                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-700">
+                        Review before trying again
+                      </p>
+                      <ul className="mt-3 space-y-2">
+                        {missedUnderstandingQuestions.map((item) => (
+                          <li key={item} className="flex gap-2 text-sm leading-6 text-slate-700">
+                            <FileQuestion className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" aria-hidden="true" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
+
+              {!understandingPassed ? (
+                <form action={checkUnderstanding} className="mt-5 space-y-4">
+                  <input type="hidden" name="moduleSlug" value={module.slug} />
+                  <input type="hidden" name="lessonSlug" value={lesson.slug} />
+
+                  {understandingQuestions.map((question, index) => (
+                    <fieldset key={question.id} className="rounded-3xl border border-blue-100 bg-white p-4">
+                      <legend className="text-sm font-black leading-6 text-slate-950">
+                        {index + 1}. {question.prompt}
+                      </legend>
+
+                      <div className="mt-3 grid gap-2">
+                        {question.options.map((option) => (
+                          <label
+                            key={option.value}
+                            className="flex cursor-pointer items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold leading-6 text-slate-700 transition hover:border-blue-200 hover:bg-blue-50"
+                          >
+                            <input
+                              required
+                              type="radio"
+                              name={question.id}
+                              value={option.value}
+                              className="mt-1 h-4 w-4 shrink-0 accent-blue-600"
+                            />
+                            <span>{option.label}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </fieldset>
+                  ))}
+
+                  <button
+                    type="submit"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-sm shadow-blue-900/20 transition hover:bg-blue-700"
+                  >
+                    Check my understanding
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                </form>
+              ) : (
+                <div className="mt-5 rounded-3xl border border-emerald-200 bg-white p-4">
+                  <div className="flex items-start gap-3">
+                    <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
+                    <p className="text-sm font-semibold leading-6 text-slate-700">
+                      Lesson understanding is signed off. You can now complete the lesson and send the completion signal to your dashboard record.
+                    </p>
+                  </div>
+                </div>
+              )}
             </LessonSection>
           </div>
 
@@ -1513,17 +1795,25 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                 {isCompleted ? 'Lesson complete' : 'Finish this lesson'}
               </h2>
               <p className="mt-3 text-sm leading-6 text-slate-600">
-                Mark the lesson complete after you have read the teaching, tried the practice input, and reviewed the feedback.
+                {understandingPassed
+                  ? 'Your understanding is signed off. Completing now saves this lesson to your training record.'
+                  : 'Complete the understanding check first. The lesson completion button unlocks once the check is signed off.'}
               </p>
 
               <form action={completeLesson} className="mt-5">
                 <input type="hidden" name="moduleSlug" value={module.slug} />
                 <input type="hidden" name="lessonSlug" value={lesson.slug} />
+                <input type="hidden" name="understandingPassed" value={understandingPassed ? 'true' : 'false'} />
                 <button
                   type="submit"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-sm shadow-blue-900/20 transition hover:bg-blue-700"
+                  disabled={!understandingPassed}
+                  className={`inline-flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-black shadow-sm transition ${
+                    understandingPassed
+                      ? 'bg-blue-600 text-white shadow-blue-900/20 hover:bg-blue-700'
+                      : 'cursor-not-allowed bg-slate-200 text-slate-500'
+                  }`}
                 >
-                  {isCompleted ? 'Continue to next lesson' : 'Complete lesson'}
+                  {isCompleted ? 'Continue to next lesson' : understandingPassed ? 'Complete lesson' : 'Check understanding first'}
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </button>
               </form>
@@ -1564,4 +1854,5 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
     </main>
   )
 }
+
 
