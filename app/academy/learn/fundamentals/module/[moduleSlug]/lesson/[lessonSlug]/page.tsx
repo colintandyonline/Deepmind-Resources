@@ -269,31 +269,36 @@ const specificTeachingBySlug: Record<string, LessonTeachingContent> = {
   },
   'ai-skill-levels-beginner-user-builder-manager': {
     mainIdea:
-      'AI competency depends on role. A beginner, daily user, builder, and manager need different levels of training.',
+      'AI skill levels are not fixed job titles. They are stages of responsibility: beginner, daily AI user, builder, and manager.',
     teaching: [
-      'AI skill is not one single ladder that everyone climbs in the same way. A beginner needs safe foundations. A practical user needs repeatable prompting and review habits. A builder needs systems thinking. A manager needs risk awareness and staff-readiness signals.',
-      'A receptionist using AI to draft customer replies does not need the same training as a developer building a retrieval workflow. A manager approving team use needs different training again.',
-      'Good AI training starts by asking what the person is responsible for. The more impact their AI use has, the more review, privacy, and workflow control they need.',
+      'AI skill is not one single ladder that everyone climbs in the same way. Different people need different training depending on what they are responsible for.',
+      'A beginner needs safe foundations: what AI is, what it can and cannot do, why output needs checking, and how to avoid trusting polished answers too quickly.',
+      'A daily AI user needs repeatable habits: writing clear instructions, giving useful context, setting output limits, and reviewing the answer before using it.',
+      'A builder needs systems thinking. Builders care about workflows, retrieval, tools, permissions, automation, testing, and what happens when AI output is connected to real actions.',
+      'A manager needs staff-readiness thinking. Managers do not need to build every workflow themselves, but they do need to know what staff should learn, what rules matter, and where human review is required.',
+      'These levels are not labels you are stuck with. You might start as a beginner, become a confident daily user, and later move toward builder or manager skills. The useful question is: what do you need for your next responsibility?',
     ],
     whyItMatters:
-      'Role-aware training prevents people from being overwhelmed by the wrong material or undertrained for high-risk responsibilities.',
+      'Role-aware learning stops beginners from being overwhelmed and stops higher-responsibility users from being undertrained for risk, privacy, review, or workflow decisions.',
     workedExampleTitle: 'Four people, four training needs',
     workedExample: [
-      'A beginner needs to understand that AI output is not automatically true.',
-      'A daily user needs to know how to write a structured prompt and check the answer.',
-      'A builder needs to design tools, retrieval, permissions, and failure handling.',
-      'A manager needs to assign training, set safe-use rules, and understand whether staff can apply AI responsibly.',
+      'Beginner: learns that AI output is not automatically true and that important answers need checking.',
+      'Daily AI user: writes structured prompts for emails, summaries, outlines, and document checks, then reviews the result before using it.',
+      'Builder: designs workflows that may use tools, files, retrieval, automation, or approval steps.',
+      'Manager: sets safe-use rules, assigns training, checks staff progress, and understands whether a team is ready to use AI responsibly.',
     ],
     practicePrompt:
-      'Choose one role: beginner, daily AI user, builder, or manager. Write what that person needs to learn first and why.',
+      'Choose your current AI level: beginner, daily AI user, builder, or manager. Then write the next level you want to move toward, what you need to learn first, why it matters, and what advanced topic you do not need to worry about yet.',
     strongerExample:
-      'A customer support team member should first learn safe drafting, privacy boundaries, and output review. They do not need agent architecture yet. Their first skill is writing controlled replies that do not expose data, overpromise, or skip human review.',
+      'I am currently a beginner and want to become a daily AI user. First, I need to learn how to write clear prompts for summaries and emails, then check whether the answer is accurate before using it. I do not need to worry about agents or automation yet because I still need strong prompting and review habits first.',
     commonMistakeFix:
-      'Do not give everyone the same AI training. Match the training depth to the role, task, and risk.',
+      'Do not jump into agents, automation, or advanced tool comparisons before you can give clear instructions and check AI output safely. Learn the level that matches your next responsibility.',
     recap: [
-      'Different AI roles need different skills.',
-      'Higher-impact work needs stronger review and control.',
-      'Training should match what the learner is expected to do.',
+      'AI skill levels are stages of responsibility, not fixed labels.',
+      'Beginners need safe foundations before advanced workflows.',
+      'Daily AI users need structured prompts and review habits.',
+      'Builders need workflow, tool, retrieval, and automation thinking.',
+      'Managers need staff training, rules, progress, and risk awareness.',
     ],
   },
   'baseline-check-what-do-you-already-understand': {
