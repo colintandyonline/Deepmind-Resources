@@ -360,6 +360,8 @@ function buildAcademyInstructions() {
     'For outputComparison.improvedOutput, simulate the likely answer quality produced by the betterPrompt. Make the practical improvement obvious.',
     'For practical safety tasks, keep both outputs safe. Do not provide dangerous shortcuts. Add warnings, boundaries, and human review where needed.',
     'Do not answer unsafe requests with harmful operational detail. If the learner task is unsafe, the comparison should teach safer prompting and escalation.',
+    'For outputComparison.originalWeaknesses, list the visible weaknesses in the likely original output. These must be specific to the learner task, not generic labels.',
+    'For outputComparison.improvedStrengths, list the visible strengths in the improved output. These must point to concrete improvements the learner can see.',
     'differenceHighlights must explain visible differences between the two outputs, such as clearer structure, safer warnings, better audience fit, stronger constraints, and better review behaviour.',
     'Return only the structured JSON requested by the schema.',
   ].join('\n')
@@ -424,11 +426,19 @@ function isFeedbackComparisonValid(feedback: AcademyAIFeedback) {
     return false
   }
 
-  if (!Array.isArray(comparison.differenceHighlights)) {
+  if (
+    !Array.isArray(comparison.originalWeaknesses) ||
+    !Array.isArray(comparison.improvedStrengths) ||
+    !Array.isArray(comparison.differenceHighlights)
+  ) {
     return false
   }
 
-  return comparison.differenceHighlights.every((item) => typeof item === 'string')
+  return (
+    comparison.originalWeaknesses.every((item) => typeof item === 'string') &&
+    comparison.improvedStrengths.every((item) => typeof item === 'string') &&
+    comparison.differenceHighlights.every((item) => typeof item === 'string')
+  )
 }
 
 function validateFeedback(feedback: AcademyAIFeedback | null) {
@@ -687,3 +697,4 @@ export async function POST(request: Request) {
     feedback,
   })
 }
+
