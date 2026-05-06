@@ -2024,24 +2024,24 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                           </label>
                         </div>
 
-                        <div className="fixed inset-0 z-[80] hidden overflow-y-auto bg-slate-950/50 p-4 backdrop-blur-sm peer-checked:block">
-                          <div className="mx-auto my-6 max-w-6xl rounded-[2rem] border border-blue-100 bg-white p-4 shadow-2xl shadow-slate-950/30 sm:p-6">
+                        <div className="fixed inset-0 z-[80] hidden overflow-y-auto bg-slate-950/55 p-3 backdrop-blur-sm peer-checked:block sm:p-4">
+                          <div className="mx-auto my-4 max-w-6xl rounded-[2rem] border border-blue-100 bg-white p-4 shadow-2xl shadow-slate-950/30 sm:my-6 sm:p-6">
                             <div className="flex flex-col gap-4 border-b border-blue-100 pb-4 sm:flex-row sm:items-start sm:justify-between">
                               <div>
                                 <p className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-600">
                                   DeepMind Resources review
                                 </p>
                                 <h3 className="mt-2 text-2xl font-black tracking-tight text-slate-950">
-                                  See what changed in the output.
+                                  Review the prompt impact.
                                 </h3>
                                 <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-                                  This view shows why prompt structure matters. The stronger prompt should produce a clearer, safer, more useful result.
+                                  This Academy review shows how task clarity, audience, context, safety limits, and output shape change the answer a learner receives.
                                 </p>
                               </div>
 
                               <label
                                 htmlFor="output-comparison-review"
-                                className="inline-flex cursor-pointer items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-black text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
+                                className="inline-flex cursor-pointer items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 sm:px-4 sm:py-2.5"
                               >
                                 Close review
                               </label>
@@ -2058,6 +2058,25 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                                 <p className="mt-3 whitespace-pre-line rounded-2xl border border-rose-100 bg-white p-4 text-sm leading-7 text-slate-700">
                                   {practiceFeedback.outputComparison.originalOutput}
                                 </p>
+
+                                <div className="mt-4 rounded-2xl border border-rose-200 bg-white p-4">
+                                  <p className="text-[11px] font-black uppercase tracking-[0.16em] text-rose-700">
+                                    Why this output is weaker
+                                  </p>
+                                  <ul className="mt-3 grid gap-2">
+                                    {[
+                                      'The task is not fully framed for the reader.',
+                                      'The context is too thin for a safe, useful answer.',
+                                      'The output has limited structure or checking guidance.',
+                                      'The learner would need to repair the result before using it.',
+                                    ].map((item) => (
+                                      <li key={item} className="flex gap-2 text-sm leading-6 text-slate-700">
+                                        <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-rose-500" aria-hidden="true" />
+                                        {item}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
                               </article>
 
                               <article className="rounded-3xl border border-emerald-200 bg-emerald-50 p-4">
@@ -2070,6 +2089,25 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                                 <p className="mt-3 whitespace-pre-line rounded-2xl border border-emerald-100 bg-white p-4 text-sm leading-7 text-slate-700">
                                   {practiceFeedback.outputComparison.improvedOutput}
                                 </p>
+
+                                <div className="mt-4 rounded-2xl border border-emerald-200 bg-white p-4">
+                                  <p className="text-[11px] font-black uppercase tracking-[0.16em] text-emerald-700">
+                                    Why this output is stronger
+                                  </p>
+                                  <ul className="mt-3 grid gap-2">
+                                    {[
+                                      'The answer follows a clearer structure.',
+                                      'The reader, situation, and risk level are easier to understand.',
+                                      'Safety limits and stopping points are more visible.',
+                                      'The output is easier to review before it is trusted.',
+                                    ].map((item) => (
+                                      <li key={item} className="flex gap-2 text-sm leading-6 text-slate-700">
+                                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" aria-hidden="true" />
+                                        {item}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
                               </article>
                             </div>
 
@@ -2396,6 +2434,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
     </main>
   )
 }
+
 
 
 
