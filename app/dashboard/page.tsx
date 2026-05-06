@@ -70,7 +70,7 @@ const academyPaths = [
   {
     title: 'AI Fundamentals',
     status: 'Active path',
-    href: '/academy/path/fundamentals',
+    href: '/academy/learn/fundamentals',
     detail: 'Start here. Core concepts, safe use, tool basics, and first sandbox proof.',
   },
   {
@@ -519,10 +519,10 @@ export default async function DashboardPage() {
 
                   <div className="mt-5 flex flex-col gap-2 sm:flex-row">
                     <Link
-                      href="/academy/path/fundamentals"
+                      href="/academy/learn/fundamentals"
                       className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:bg-blue-700"
                     >
-                      Open AI Fundamentals
+                      Open AI Fundamentals course
                     </Link>
                     <a
                       href="#sandbox"
@@ -753,10 +753,10 @@ export default async function DashboardPage() {
           </p>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link
-              href="/academy/path/fundamentals"
+              href="/academy/learn/fundamentals"
               className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-black text-white transition hover:bg-blue-700"
             >
-              Open AI Fundamentals
+              Open AI Fundamentals course
             </Link>
             <Link
               href="/"
@@ -770,6 +770,7 @@ export default async function DashboardPage() {
     </main>
   )
 }
+
 
 
 
