@@ -1750,6 +1750,18 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
   const understandingPassed = isCompleted || resolvedSearchParams?.check === 'passed'
   const lessonHref = `/academy/learn/fundamentals/module/${module.slug}/lesson/${lesson.slug}`
   const nextHref = nextItem ? getLessonHref(nextItem) : '/academy/learn/fundamentals'
+  const lessonFlowPanelClass = isCompleted
+    ? 'border-emerald-700 bg-emerald-600 shadow-emerald-900/25'
+    : 'border-blue-700 bg-blue-600 shadow-blue-900/25'
+  const lessonFlowSubtleTextClass = isCompleted ? 'text-emerald-100' : 'text-blue-100'
+  const lessonFlowBodyTextClass = isCompleted ? 'text-emerald-50' : 'text-blue-50'
+  const completionCardClass = isCompleted
+    ? 'border-emerald-200 bg-emerald-50 shadow-emerald-900/10'
+    : 'border-blue-100 bg-white shadow-blue-900/10'
+  const completionEyebrowClass = isCompleted ? 'text-emerald-600' : 'text-blue-600'
+  const completionButtonClass = isCompleted
+    ? 'bg-emerald-600 text-white shadow-emerald-900/20 hover:bg-emerald-700'
+    : 'bg-blue-600 text-white shadow-blue-900/20 hover:bg-blue-700'
 
   const structuredData = [
     {
@@ -1895,8 +1907,8 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
               </p>
             </div>
 
-            <aside className="rounded-[2rem] border border-blue-700 bg-blue-600 p-5 text-white shadow-2xl shadow-blue-900/25">
-              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-100">
+            <aside className={`rounded-[2rem] border p-5 text-white shadow-2xl ${lessonFlowPanelClass}`}>
+              <p className={`text-[11px] font-black uppercase tracking-[0.2em] ${lessonFlowSubtleTextClass}`}>
                 Lesson flow
               </p>
 
@@ -1916,13 +1928,13 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
               </div>
 
               <div className="mt-4 rounded-3xl border border-white/15 bg-white/10 p-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-blue-100">
+                <p className={`text-[10px] font-black uppercase tracking-[0.14em] ${lessonFlowSubtleTextClass}`}>
                   Progress
                 </p>
                 <p className="mt-1 text-2xl font-black text-white">
                   {isCompleted ? 'Completed' : 'Ready'}
                 </p>
-                <p className="mt-2 text-sm leading-6 text-blue-50">
+                <p className={`mt-2 text-sm leading-6 ${lessonFlowBodyTextClass}`}>
                   {isCompleted
                     ? 'This lesson has already been saved as complete.'
                     : 'Finish the practice section before marking this lesson complete.'}
@@ -2553,8 +2565,8 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
               </div>
             </section>
 
-            <section className="rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm shadow-blue-900/10">
-              <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600">
+            <section className={`rounded-[2rem] border p-5 shadow-sm ${completionCardClass}`}>
+              <p className={`text-[11px] font-black uppercase tracking-[0.22em] ${completionEyebrowClass}`}>
                 Complete
               </p>
               <h2 className="mt-2 text-xl font-black tracking-tight text-slate-950">
@@ -2575,7 +2587,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                   disabled={!understandingPassed}
                   className={`inline-flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-black shadow-sm transition ${
                     understandingPassed
-                      ? 'bg-blue-600 text-white shadow-blue-900/20 hover:bg-blue-700'
+                      ? completionButtonClass
                       : 'cursor-not-allowed bg-slate-200 text-slate-500'
                   }`}
                 >
