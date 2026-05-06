@@ -156,6 +156,16 @@ type TopicProfile = {
 
 const searchParamDivider = '~~~'
 
+function isNextRedirectError(error: unknown) {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'digest' in error &&
+    String((error as { digest?: unknown }).digest).startsWith('NEXT_REDIRECT')
+  )
+}
+
+
 const specificTeachingBySlug: Record<string, LessonTeachingContent> = {
   'what-you-will-learn-in-ai-fundamentals': {
     mainIdea:
