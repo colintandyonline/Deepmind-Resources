@@ -33,6 +33,7 @@ type LessonPageSearchParams = {
   missed?: string
   example?: string
   input?: string
+  draft?: string
   check?: string
   checkScore?: string
   missedQuestions?: string
@@ -1124,6 +1125,56 @@ function evaluateUnderstandingCheck(formData: FormData, context: LessonContext):
   }
 }
 
+
+async function useBetterPrompt(formData: FormData) {
+  'use server'
+
+  const moduleSlug = formData.get('moduleSlug')
+  const lessonSlug = formData.get('lessonSlug')
+  const betterPrompt = formData.get('betterPrompt')
+
+  if (
+    typeof moduleSlug !== 'string' ||
+    typeof lessonSlug !== 'string' ||
+    typeof betterPrompt !== 'string'
+  ) {
+    throw new Error('Missing prompt reuse data.')
+  }
+
+  const context = getLessonContext(moduleSlug, lessonSlug)
+
+  if (!context) {
+    throw new Error('Lesson could not be found.')
+  }
+
+  const query = new URLSearchParams()
+  const fieldsToKeep = [
+    'score',
+    'tier',
+    'input',
+    'strengths',
+    'advice',
+    'missed',
+    'example',
+    'source',
+    'whyBetter',
+    'practiceInstruction',
+    'safetyNote',
+  ]
+
+  fieldsToKeep.forEach((field) => {
+    const value = formData.get(field)
+
+    if (typeof value === 'string' && value.length > 0) {
+      query.set(field, value)
+    }
+  })
+
+  query.set('draft', betterPrompt)
+
+  redirect(`/academy/learn/fundamentals/module/${context.module.slug}/lesson/${context.lesson.slug}?${query.toString()}#practice`)
+}
+
 async function checkUnderstanding(formData: FormData) {
   'use server'
 
@@ -1612,7 +1663,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                   required
                   minLength={40}
                   rows={7}
-                  defaultValue={practiceFeedback?.learnerInput ?? ''}
+                  defaultValue={resolvedSearchParams?.draft ?? practiceFeedback?.learnerInput ?? ''}
                   className="w-full rounded-3xl border border-blue-100 bg-white p-4 text-sm leading-7 text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-300 focus:ring-4 focus:ring-blue-100"
                   placeholder="Write your practice input here. Include the task, who it is for, the situation, the output format, and what should be checked."
                 />
@@ -1706,18 +1757,32 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                           Better version of your input
                         </p>
                         <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">
-                          {practiceFeedback.practiceInstruction || 'Use this version in the practice box, check it again, and compare the feedback with your first attempt.'}
+                          {practiceFeedback.practiceInstruction || 'Use this version to refill the practice box, check it again, and compare the feedback with your first attempt.'}
                         </p>
                       </div>
                       <div className="flex shrink-0 flex-col gap-2 sm:items-end">
-                        <button
-                          type="button"
-                          data-copy-better-prompt={practiceFeedback.strongerExample}
-                          data-copy-label="Use this prompt"
-                          className="inline-flex items-center justify-center rounded-2xl bg-indigo-600 px-4 py-2.5 text-sm font-black text-white shadow-sm shadow-indigo-900/20 transition hover:bg-indigo-700"
-                        >
-                          Use this prompt
-                        </button>
+                                                <form action={useBetterPrompt} className="w-full sm:w-auto">
+                          <input type="hidden" name="moduleSlug" value={module.slug} />
+                          <input type="hidden" name="lessonSlug" value={lesson.slug} />
+                          <input type="hidden" name="betterPrompt" value={practiceFeedback.strongerExample} />
+                          <input type="hidden" name="score" value={String(practiceFeedback.score)} />
+                          <input type="hidden" name="tier" value={practiceFeedback.tier} />
+                          <input type="hidden" name="input" value={practiceFeedback.learnerInput} />
+                          <input type="hidden" name="strengths" value={practiceFeedback.strengths.join(searchParamDivider)} />
+                          <input type="hidden" name="advice" value={practiceFeedback.advice.join(searchParamDivider)} />
+                          <input type="hidden" name="missed" value={practiceFeedback.missedLabels.join(searchParamDivider)} />
+                          <input type="hidden" name="example" value={practiceFeedback.strongerExample} />
+                          <input type="hidden" name="source" value={practiceFeedback.source ?? 'deterministic'} />
+                          <input type="hidden" name="whyBetter" value={practiceFeedback.whyBetter ?? ''} />
+                          <input type="hidden" name="practiceInstruction" value={practiceFeedback.practiceInstruction ?? ''} />
+                          <input type="hidden" name="safetyNote" value={practiceFeedback.safetyNote ?? ''} />
+                          <button
+                            type="submit"
+                            className="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-600 px-4 py-2.5 text-sm font-black text-white shadow-sm shadow-indigo-900/20 transition hover:bg-indigo-700 sm:w-auto"
+                          >
+                            Use this prompt
+                          </button>
+                        </form>
                         <Link
                           href={lessonHref}
                           className="inline-flex items-center justify-center rounded-2xl border border-indigo-200 bg-white px-4 py-2.5 text-sm font-black text-indigo-700 transition hover:bg-indigo-100"
@@ -2044,6 +2109,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
     </main>
   )
 }
+
 
 
 
