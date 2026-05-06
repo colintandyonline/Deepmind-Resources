@@ -42,7 +42,7 @@ export const metadata: Metadata = {
 }
 
 type LessonProgressRow = {
-  lesson_id: string | null
+  module_id: string | null
   status: string | null
   completed_at: string | null
 }
@@ -63,6 +63,8 @@ type CourseMetric = {
 
 type Module = (typeof aiFundamentalsLearningPath.modules)[number]
 type Lesson = Module['lessons'][number]
+
+const academyProgressPathId = 'ai-fundamentals'
 
 function getSupabaseKey() {
   return (
@@ -98,11 +100,30 @@ async function createSupabaseServerClient() {
   })
 }
 
-function getCompletedLessonIds(rows: LessonProgressRow[]) {
+function getLessonProgressKey(module: Module, lesson: Lesson) {
+  return `${module.slug}|${lesson.slug}`
+}
+
+function getCompletedLessonKey(moduleId: string | null) {
+  if (!moduleId) {
+    return null
+  }
+
+  const [pathId, moduleSlug, lessonSlug] = moduleId.split('|')
+
+  if (pathId !== academyProgressPathId || !moduleSlug || !lessonSlug) {
+    return null
+  }
+
+  return `${moduleSlug}|${lessonSlug}`
+}
+
+function getCompletedLessonKeys(rows: LessonProgressRow[]) {
   return new Set(
     rows
-      .filter((row) => row.lesson_id && (row.status === 'completed' || row.completed_at))
-      .map((row) => row.lesson_id as string),
+      .filter((row) => row.status === 'completed' || row.completed_at)
+      .map((row) => getCompletedLessonKey(row.module_id))
+      .filter((lessonKey): lessonKey is string => Boolean(lessonKey)),
   )
 }
 
@@ -186,48 +207,48 @@ function getModuleHref(module: Module) {
   return `/academy/learn/fundamentals/module/${module.slug}`
 }
 
-function getModuleCompletedCount(module: Module, completedLessonIds: Set<string>) {
-  return module.lessons.filter((lesson) => completedLessonIds.has(lesson.id)).length
+function getModuleCompletedCount(module: Module, completedLessonKeys: Set<string>) {
+  return module.lessons.filter((lesson) => completedLessonKeys.has(getLessonProgressKey(module, lesson))).length
 }
 
-function getModuleProgress(module: Module, completedLessonIds: Set<string>) {
+function getModuleProgress(module: Module, completedLessonKeys: Set<string>) {
   if (module.lessons.length === 0) {
     return 0
   }
 
-  return Math.round((getModuleCompletedCount(module, completedLessonIds) / module.lessons.length) * 100)
+  return Math.round((getModuleCompletedCount(module, completedLessonKeys) / module.lessons.length) * 100)
 }
 
-function isModuleComplete(module: Module, completedLessonIds: Set<string>) {
-  return module.lessons.length > 0 && module.lessons.every((lesson) => completedLessonIds.has(lesson.id))
+function isModuleComplete(module: Module, completedLessonKeys: Set<string>) {
+  return module.lessons.length > 0 && module.lessons.every((lesson) => completedLessonKeys.has(getLessonProgressKey(module, lesson)))
 }
 
-function isModuleAvailable(modules: Module[], moduleIndex: number, completedLessonIds: Set<string>) {
+function isModuleAvailable(modules: Module[], moduleIndex: number, completedLessonKeys: Set<string>) {
   if (moduleIndex === 0) {
     return true
   }
 
   const previousModule = modules[moduleIndex - 1]
 
-  return previousModule ? isModuleComplete(previousModule, completedLessonIds) : false
+  return previousModule ? isModuleComplete(previousModule, completedLessonKeys) : false
 }
 
-function getNextAvailableLesson(module: Module, completedLessonIds: Set<string>) {
-  return module.lessons.find((lesson) => !completedLessonIds.has(lesson.id)) ?? module.lessons[0] ?? null
+function getNextAvailableLesson(module: Module, completedLessonKeys: Set<string>) {
+  return module.lessons.find((lesson) => !completedLessonKeys.has(getLessonProgressKey(module, lesson))) ?? module.lessons[0] ?? null
 }
 
-function getNextCourseTarget(modules: Module[], completedLessonIds: Set<string>) {
+function getNextCourseTarget(modules: Module[], completedLessonKeys: Set<string>) {
   for (let index = 0; index < modules.length; index += 1) {
     const module = modules[index]
-    const available = isModuleAvailable(modules, index, completedLessonIds)
+    const available = isModuleAvailable(modules, index, completedLessonKeys)
 
     if (!available) {
       continue
     }
 
-    const nextLesson = getNextAvailableLesson(module, completedLessonIds)
+    const nextLesson = getNextAvailableLesson(module, completedLessonKeys)
 
-    if (nextLesson && !isModuleComplete(module, completedLessonIds)) {
+    if (nextLesson && !isModuleComplete(module, completedLessonKeys)) {
       return {
         module,
         lesson: nextLesson,
@@ -357,10 +378,10 @@ function MethodCard({
 
 function RouteRail({
   modules,
-  completedLessonIds,
+  completedLessonKeys,
 }: {
   modules: Module[]
-  completedLessonIds: Set<string>
+  completedLessonKeys: Set<string>
 }) {
   return (
     <section className="mt-5 rounded-[2rem] border border-blue-100 bg-white p-4 shadow-sm shadow-blue-900/5">
@@ -378,8 +399,8 @@ function RouteRail({
 
       <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
         {modules.map((module, index) => {
-          const complete = isModuleComplete(module, completedLessonIds)
-          const available = isModuleAvailable(modules, index, completedLessonIds)
+          const complete = isModuleComplete(module, completedLessonKeys)
+          const available = isModuleAvailable(modules, index, completedLessonKeys)
 
           return (
             <a
@@ -421,20 +442,20 @@ function ModuleCard({
   module,
   moduleIndex,
   modules,
-  completedLessonIds,
+  completedLessonKeys,
 }: {
   module: Module
   moduleIndex: number
   modules: Module[]
-  completedLessonIds: Set<string>
+  completedLessonKeys: Set<string>
 }) {
-  const available = isModuleAvailable(modules, moduleIndex, completedLessonIds)
-  const complete = isModuleComplete(module, completedLessonIds)
-  const completedCount = getModuleCompletedCount(module, completedLessonIds)
-  const moduleProgress = getModuleProgress(module, completedLessonIds)
+  const available = isModuleAvailable(modules, moduleIndex, completedLessonKeys)
+  const complete = isModuleComplete(module, completedLessonKeys)
+  const completedCount = getModuleCompletedCount(module, completedLessonKeys)
+  const moduleProgress = getModuleProgress(module, completedLessonKeys)
   const requirementLabel = getSandboxRequirementLabel(module.sandboxTask.requirement)
   const moduleHref = getModuleHref(module)
-  const nextLesson = getNextAvailableLesson(module, completedLessonIds)
+  const nextLesson = getNextAvailableLesson(module, completedLessonKeys)
   const nextLessonHref = nextLesson ? getLessonHref(module, nextLesson) : moduleHref
   const statusLabel = getModuleStatusLabel({ available, complete, moduleIndex })
 
@@ -530,7 +551,7 @@ function ModuleCard({
 
             <ol className="grid gap-2 border-t border-blue-100 p-4 sm:grid-cols-2">
               {module.lessons.map((lesson) => {
-                const lessonComplete = completedLessonIds.has(lesson.id)
+                const lessonComplete = completedLessonKeys.has(getLessonProgressKey(module, lesson))
 
                 return (
                   <li
@@ -617,16 +638,24 @@ export default async function AIFundamentalsCoursePage() {
     redirect('/auth/login')
   }
 
-  const [{ data: lessonRows }, { data: sandboxRows }] = await Promise.all([
+  const [{ data: lessonRows, error: lessonError }, { data: sandboxRows }] = await Promise.all([
     supabase
-      .from('user_lesson_progress')
-      .select('lesson_id, status, completed_at')
-      .eq('user_id', user.id),
+      .from('learning_progress')
+      .select('module_id, status, completed_at')
+      .eq('user_id', user.id)
+      .like('module_id', `${academyProgressPathId}|%`),
     supabase
       .from('sandbox_attempts')
       .select('status, submitted_at, reviewed_at')
       .eq('user_id', user.id),
   ])
+
+  if (lessonError) {
+    console.error('[Academy progress] Could not read AI Fundamentals overview progress', {
+      error: lessonError.message,
+    })
+    throw new Error(`Could not read AI Fundamentals overview progress: ${lessonError.message}`)
+  }
 
   const modules = aiFundamentalsLearningPath.modules
   const totalLessons = modules.reduce((sum, module) => sum + module.lessons.length, 0)
@@ -639,13 +668,13 @@ export default async function AIFundamentalsCoursePage() {
   const lessonProgressRows = (lessonRows ?? []) as LessonProgressRow[]
   const sandboxAttemptRows = (sandboxRows ?? []) as SandboxAttemptRow[]
 
-  const completedLessonIds = getCompletedLessonIds(lessonProgressRows)
-  const completedLessons = completedLessonIds.size
+  const completedLessonKeys = getCompletedLessonKeys(lessonProgressRows)
+  const completedLessons = completedLessonKeys.size
   const submittedSandboxAttempts = getSubmittedSandboxCount(sandboxAttemptRows)
   const reviewedSandboxAttempts = getReviewedSandboxCount(sandboxAttemptRows)
-  const completedModules = modules.filter((module) => isModuleComplete(module, completedLessonIds)).length
+  const completedModules = modules.filter((module) => isModuleComplete(module, completedLessonKeys)).length
   const courseProgress = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
-  const nextTarget = getNextCourseTarget(modules, completedLessonIds)
+  const nextTarget = getNextCourseTarget(modules, completedLessonKeys)
 
   const metrics: CourseMetric[] = [
     {
@@ -864,7 +893,7 @@ export default async function AIFundamentalsCoursePage() {
           </div>
         </section>
 
-        <RouteRail modules={modules} completedLessonIds={completedLessonIds} />
+        <RouteRail modules={modules} completedLessonKeys={completedLessonKeys} />
 
         <section className="mt-5 grid gap-3 md:grid-cols-4">
           <MethodCard
@@ -915,7 +944,7 @@ export default async function AIFundamentalsCoursePage() {
                 module={module}
                 moduleIndex={index}
                 modules={modules}
-                completedLessonIds={completedLessonIds}
+                completedLessonKeys={completedLessonKeys}
               />
             ))}
           </div>
