@@ -210,31 +210,35 @@ const specificTeachingBySlug: Record<string, LessonTeachingContent> = {
   },
   'how-deepmind-resources-teaches-ai': {
     mainIdea:
-      'The Academy teaches AI as a living skill: learn the concept, practise it, prove it, then refresh it when tools change.',
+      'DeepMind Resources teaches AI as a living skill: AI update -> verified meaning -> practical lesson -> sandbox task -> user skill gain.',
     teaching: [
-      'AI training goes stale when it treats lessons as fixed forever. Tools change. Models change. File handling changes. Search, memory, coding, and automation features change.',
-      'That is why this learning path connects lessons to practice. Reading gives you understanding, but practice shows whether you can apply the idea.',
-      'The important pattern is simple: learn the concept, apply it to a realistic task, check the result, and save evidence of progress.',
-      'When AI changes affect a lesson, the platform can later point learners back to a refresher. That is how training remains useful instead of becoming an archive of old advice.',
+      'Static AI courses go stale because the subject keeps moving. A lesson about file uploads, search, memory, coding tools, image generation, or automation can be accurate when written and incomplete a few months later.',
+      'Version-aware training treats a lesson as something connected to a tool behaviour, a model capability, and a practical workflow. If the tool changes, the training can be checked against the new behaviour instead of pretending the old advice is still enough.',
+      'The DeepMind Resources loop is: AI update -> verified meaning -> practical lesson -> sandbox task -> user skill gain. First, a change is noticed. Then its real meaning is verified. Then the lesson is updated. Then the learner proves the skill in practice.',
+      'Practice evidence matters more than reading because reading only shows exposure. A sandbox task shows whether the learner can apply the idea, spot risk, use a safer review step, and produce evidence that the skill is real.',
+      'Refreshers are how the course stays useful when tools change. If a model starts handling sources differently, if an interface adds memory, or if an automation feature changes what can happen after a prompt, the learner can be pointed back to the affected lesson instead of retaking everything.',
+      'Progress records support retraining because they show which lessons a learner has signed off and which version of a skill they proved. That makes future refreshers targeted: update the relevant lesson, recheck the affected practice, and keep the learner moving forward.',
     ],
     whyItMatters:
-      'If your AI skill is based on outdated workflows, you can make confident mistakes. A version-aware course protects against that.',
-    workedExampleTitle: 'A tool changes how file answers work',
+      'If your AI skill is based on outdated workflows, you can make confident mistakes. Version-aware training protects learners by connecting updates to refreshed lessons, practice evidence, and retraining records.',
+    workedExampleTitle: 'A tool update changes the safe workflow',
     workedExample: [
-      'Imagine you learned a workflow for asking questions about uploaded files. Later, the tool changes how it searches those files.',
-      'A static course leaves the old workflow untouched. A living course can flag that lesson for review and add a new practice task.',
-      'The point is not to chase every update. The point is to update training when behaviour changes what users should do.',
+      'Imagine a team learned to ask an AI tool questions about uploaded policy documents. The original lesson taught them to check whether the answer referred back to the supplied document before using it.',
+      'Later, the tool changes how it searches files and starts mixing uploaded content with general web knowledge unless the prompt is more explicit. The old workflow is now weaker because learners may trust an answer that sounds grounded but is not limited to the policy document.',
+      'DeepMind Resources would treat that as a retraining moment: verify what changed, update the lesson, add a sandbox task that tests source-grounded answers, and record that the learner has refreshed the skill.',
+      'The goal is not to chase every headline. The goal is to refresh training when a change affects what a learner should do, check, or avoid.',
     ],
     practicePrompt:
-      'Write a short example of an AI workflow that might need retraining after a tool update. Include what changed and what the learner should recheck.',
+      'Describe an AI workflow that may need retraining after a tool update. Include what changed, who is affected, what should be rechecked, and what safe review step is needed before the workflow is used again.',
     strongerExample:
-      'If an AI tool changes how it searches uploaded policy documents, staff should recheck any workflow that relies on policy answers. The refresher should test whether answers cite the right section, avoid unsupported claims, and include a human review step before use.',
+      'If an AI tool changes how it searches uploaded policy documents, support staff who use it for customer replies may need retraining. They should recheck whether answers are based only on the uploaded policy, whether the cited section matches the claim, and whether any unsupported advice appears. The safe review step is to compare the AI answer with the source policy before sending anything to a customer.',
     commonMistakeFix:
-      'Do not assume an old AI workflow remains safe forever. Recheck workflows when the tool behaviour changes.',
+      'Do not assume an old AI workflow remains safe just because it once worked. When tool behaviour changes, recheck the affected workflow, refresh the lesson, and ask the learner to prove the updated skill in practice.',
     recap: [
-      'AI lessons should connect to practice, not just explanation.',
-      'Progress should be based on skill evidence, not page views.',
-      'Important tool changes can create refresher training.',
+      'Static AI courses go stale when tools, models, and workflows change.',
+      'DeepMind Resources uses AI update -> verified meaning -> practical lesson -> sandbox task -> user skill gain.',
+      'Practice evidence matters more than reading because it shows the learner can apply the skill.',
+      'Progress records make refreshers targeted when a lesson needs retraining.',
     ],
   },
   'ai-skill-levels-beginner-user-builder-manager': {
