@@ -1905,7 +1905,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                   (step, index) => (
                     <div key={step} className="rounded-2xl border border-white/15 bg-white/10 p-3">
                       <div className="flex items-center gap-3">
-                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white text-xs font-black text-blue-700">
+                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white text-xs font-black text-emerald-700">
                           {index + 1}
                         </span>
                         <p className="text-sm font-black text-white">{step}</p>
@@ -2538,14 +2538,14 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
             </section>
 
             <section className="rounded-[2rem] border border-blue-100 bg-white p-5 shadow-sm shadow-blue-900/10">
-              <p className="text-[11px] font-black uppercase tracking-[0.22em] text-blue-600">
+              <p className="text-[11px] font-black uppercase tracking-[0.22em] text-emerald-600">
                 Skill focus
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {lesson.blocks.map((block) => (
                   <span
                     key={block}
-                    className="inline-flex rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-black text-blue-700"
+                    className="inline-flex rounded-full border border-blue-100 bg-emerald-50 px-3 py-1.5 text-xs font-black text-emerald-700"
                   >
                     {getBlockLabel(block)}
                   </span>
