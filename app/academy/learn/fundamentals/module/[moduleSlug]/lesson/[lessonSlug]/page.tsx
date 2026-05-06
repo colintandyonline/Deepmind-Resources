@@ -36,6 +36,10 @@ type LessonPageSearchParams = {
   check?: string
   checkScore?: string
   missedQuestions?: string
+  source?: string
+  whyBetter?: string
+  practiceInstruction?: string
+  safetyNote?: string
 }
 
 type LessonPageProps = {
@@ -94,6 +98,10 @@ type PracticeFeedback = {
   advice: string[]
   missedLabels: string[]
   strongerExample: string
+  source?: 'openai' | 'deterministic'
+  whyBetter?: string
+  practiceInstruction?: string
+  safetyNote?: string
 }
 
 type UnderstandingOption = {
@@ -776,6 +784,126 @@ function evaluatePracticeSubmission(input: string): PracticeFeedback {
           ],
     missedLabels: missedChecks.map((check) => check.label),
     strongerExample: buildPersonalisedExample(learnerInput),
+    source: 'deterministic',
+    whyBetter:
+      'This version is stronger because it keeps your original task but adds clearer context, output shape, boundaries, and review expectations.',
+    practiceInstruction:
+      'Use the better version in the practice box, check it again, and compare the feedback with your first attempt.',
+    safetyNote:
+      'For real-world tasks, check any important claims, safety steps, or assumptions before using the output.',
+  }
+}
+
+
+function getAppBaseUrl() {
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, '')
+  }
+
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
+  }
+
+  return 'http://localhost:3000'
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === 'string')
+}
+
+function normaliseTier(value: unknown): PracticeFeedback['tier'] {
+  if (value === 'Strong' || value === 'Developing' || value === 'Needs work') {
+    return value
+  }
+
+  return 'Needs work'
+}
+
+async function getAIPromptFeedback({
+  moduleSlug,
+  lessonSlug,
+  learnerInput,
+}: {
+  moduleSlug: string
+  lessonSlug: string
+  learnerInput: string
+}): Promise<PracticeFeedback | null> {
+  try {
+    const cookieStore = await cookies()
+    const cookieHeader = cookieStore
+      .getAll()
+      .map(({ name, value }) => `${name}=${value}`)
+      .join('; ')
+
+    const response = await fetch(`${getAppBaseUrl()}/api/academy/ai-feedback`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(cookieHeader ? { Cookie: cookieHeader } : {}),
+      },
+      body: JSON.stringify({
+        moduleSlug,
+        lessonSlug,
+        learnerInput,
+      }),
+      cache: 'no-store',
+    })
+
+    if (!response.ok) {
+      return null
+    }
+
+    const data = (await response.json()) as {
+      ok?: unknown
+      feedback?: {
+        score?: unknown
+        tier?: unknown
+        learnerInputSummary?: unknown
+        whatWorked?: unknown
+        improveNext?: unknown
+        missingAreas?: unknown
+        betterPrompt?: unknown
+        whyBetter?: unknown
+        practiceInstruction?: unknown
+        safetyNote?: unknown
+      }
+    }
+
+    if (data.ok !== true || !data.feedback) {
+      return null
+    }
+
+    const feedback = data.feedback
+
+    if (
+      typeof feedback.score !== 'number' ||
+      typeof feedback.learnerInputSummary !== 'string' ||
+      typeof feedback.betterPrompt !== 'string' ||
+      !isStringArray(feedback.whatWorked) ||
+      !isStringArray(feedback.improveNext) ||
+      !isStringArray(feedback.missingAreas)
+    ) {
+      return null
+    }
+
+    return {
+      score: Math.max(0, Math.min(100, Math.round(feedback.score))),
+      tier: normaliseTier(feedback.tier),
+      learnerInput: limitText(learnerInput, 700),
+      strengths: feedback.whatWorked.slice(0, 4),
+      advice: feedback.improveNext.slice(0, 4),
+      missedLabels: feedback.missingAreas.slice(0, 8),
+      strongerExample: feedback.betterPrompt,
+      source: 'openai',
+      whyBetter: typeof feedback.whyBetter === 'string' ? feedback.whyBetter : '',
+      practiceInstruction:
+        typeof feedback.practiceInstruction === 'string'
+          ? feedback.practiceInstruction
+          : 'Use the better version in the practice box, check it again, and compare the feedback.',
+      safetyNote: typeof feedback.safetyNote === 'string' ? feedback.safetyNote : '',
+    }
+  } catch {
+    return null
   }
 }
 
@@ -806,6 +934,10 @@ function getPracticeFeedback(searchParams: LessonPageSearchParams | undefined): 
     advice: splitSearchList(searchParams.advice),
     missedLabels: splitSearchList(searchParams.missed),
     strongerExample: searchParams.example ?? '',
+    source: searchParams.source === 'openai' ? 'openai' : 'deterministic',
+    whyBetter: searchParams.whyBetter ?? '',
+    practiceInstruction: searchParams.practiceInstruction ?? '',
+    safetyNote: searchParams.safetyNote ?? '',
   }
 }
 
@@ -866,7 +998,12 @@ async function reviewPracticeInput(formData: FormData) {
     throw new Error('Lesson could not be found.')
   }
 
-  const evaluation = evaluatePracticeSubmission(learnerInput)
+  const aiEvaluation = await getAIPromptFeedback({
+    moduleSlug: context.module.slug,
+    lessonSlug: context.lesson.slug,
+    learnerInput,
+  })
+  const evaluation = aiEvaluation ?? evaluatePracticeSubmission(learnerInput)
   const query = new URLSearchParams()
 
   query.set('score', String(evaluation.score))
@@ -876,6 +1013,10 @@ async function reviewPracticeInput(formData: FormData) {
   query.set('advice', evaluation.advice.join(searchParamDivider))
   query.set('missed', evaluation.missedLabels.join(searchParamDivider))
   query.set('example', evaluation.strongerExample)
+  query.set('source', evaluation.source ?? 'deterministic')
+  query.set('whyBetter', evaluation.whyBetter ?? '')
+  query.set('practiceInstruction', evaluation.practiceInstruction ?? '')
+  query.set('safetyNote', evaluation.safetyNote ?? '')
 
   redirect(`/academy/learn/fundamentals/module/${context.module.slug}/lesson/${context.lesson.slug}?${query.toString()}#practice`)
 }
@@ -1489,7 +1630,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-600">
-                        Practice result
+                        {practiceFeedback.source === 'openai' ? 'AI feedback result' : 'Training checker result'}
                       </p>
                       <h3 className="mt-1 text-2xl font-black tracking-tight text-slate-950">
                         {practiceFeedback.tier}
@@ -1565,7 +1706,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                           Better version of your input
                         </p>
                         <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">
-                          Use this version in the practice box, check it again, and compare the feedback with your first attempt.
+                          {practiceFeedback.practiceInstruction || 'Use this version in the practice box, check it again, and compare the feedback with your first attempt.'}
                         </p>
                       </div>
                       <div className="flex shrink-0 flex-col gap-2 sm:items-end">
@@ -1589,6 +1730,24 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                     <div className="mt-4 rounded-2xl border border-indigo-100 bg-white p-4">
                       <p className="text-sm leading-7 text-slate-800">{practiceFeedback.strongerExample}</p>
                     </div>
+
+                    {practiceFeedback.whyBetter ? (
+                      <div className="mt-3 rounded-2xl border border-indigo-100 bg-white p-4">
+                        <p className="text-[11px] font-black uppercase tracking-[0.16em] text-indigo-700">
+                          Why this is better
+                        </p>
+                        <p className="mt-2 text-sm leading-7 text-slate-700">{practiceFeedback.whyBetter}</p>
+                      </div>
+                    ) : null}
+
+                    {practiceFeedback.safetyNote ? (
+                      <div className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                        <p className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-700">
+                          Safety note
+                        </p>
+                        <p className="mt-2 text-sm leading-7 text-slate-700">{practiceFeedback.safetyNote}</p>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               ) : null}
@@ -1885,6 +2044,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
     </main>
   )
 }
+
 
 
 
