@@ -64,6 +64,14 @@ type LessonProgressRow = {
   completed_at: string | null
 }
 
+type AcademyRewardKey = 'first_lesson_signed_off' | 'prompt_practice_signed_off' | 'module_one_started'
+
+type AcademyRewardDefinition = {
+  reward_key: AcademyRewardKey
+  title: string
+  description: string
+}
+
 type Module = (typeof aiFundamentalsLearningPath.modules)[number]
 type Lesson = Module['lessons'][number]
 
@@ -163,6 +171,24 @@ type TopicProfile = {
 
 const searchParamDivider = '~~~'
 const academyProgressPathId = 'ai-fundamentals'
+
+const academyRewardDefinitions: AcademyRewardDefinition[] = [
+  {
+    reward_key: 'first_lesson_signed_off',
+    title: 'First lesson signed off',
+    description: 'Awarded when a learner signs off their first Academy lesson.',
+  },
+  {
+    reward_key: 'prompt_practice_signed_off',
+    title: 'Prompt practice signed off',
+    description: 'Awarded when a learner signs off an improved lesson practice prompt.',
+  },
+  {
+    reward_key: 'module_one_started',
+    title: 'Module one started',
+    description: 'Awarded when a learner begins recording progress in the first AI Fundamentals module.',
+  },
+]
 
 function getLearningProgressLessonKey(moduleSlug: string, lessonSlug: string, versionNumber: number) {
   return `${academyProgressPathId}|${moduleSlug}|${lessonSlug}|v${versionNumber}`
@@ -473,6 +499,258 @@ async function createSupabaseServerClient() {
   })
 }
 
+type SupabaseServerClient = NonNullable<Awaited<ReturnType<typeof createSupabaseServerClient>>>
+type SupabaseError = {
+  code?: string
+  message?: string
+}
+
+function isMissingConflictConstraint(error: SupabaseError) {
+  return (
+    error.code === '42P10' ||
+    error.message?.toLowerCase().includes('no unique or exclusion constraint') === true
+  )
+}
+
+function getErrorMessage(error: SupabaseError) {
+  return error.message ?? 'Unknown Supabase error'
+}
+
+async function saveAcademySkillTrace({
+  supabase,
+  userId,
+  context,
+  lessonVersionId,
+  score,
+  source,
+  metadata,
+}: {
+  supabase: SupabaseServerClient
+  userId: string
+  context: LessonContext
+  lessonVersionId: string
+  score: number | null
+  source: string
+  metadata: Record<string, unknown>
+}) {
+  const payload = {
+    user_id: userId,
+    module_slug: context.module.slug,
+    lesson_slug: context.lesson.slug,
+    lesson_version_id: lessonVersionId,
+    evidence_type: 'lesson_practice',
+    status: 'completed',
+    score,
+    source,
+    metadata,
+  }
+
+  const { error } = await supabase.from('academy_skill_traces').upsert(payload, {
+    onConflict: 'user_id,module_slug,lesson_slug,lesson_version_id,evidence_type',
+  })
+
+  if (!error) {
+    return
+  }
+
+  if (!isMissingConflictConstraint(error)) {
+    console.error('[Academy skill trace] Could not save skill trace', {
+      moduleSlug: context.module.slug,
+      lessonSlug: context.lesson.slug,
+      error: getErrorMessage(error),
+    })
+    throw new Error(`Could not save Academy skill trace: ${getErrorMessage(error)}`)
+  }
+
+  const { data: existingRows, error: existingError } = await supabase
+    .from('academy_skill_traces')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('module_slug', context.module.slug)
+    .eq('lesson_slug', context.lesson.slug)
+    .eq('lesson_version_id', lessonVersionId)
+    .eq('evidence_type', 'lesson_practice')
+    .limit(1)
+
+  if (existingError) {
+    console.error('[Academy skill trace] Could not check existing skill trace', {
+      moduleSlug: context.module.slug,
+      lessonSlug: context.lesson.slug,
+      error: getErrorMessage(existingError),
+    })
+    throw new Error(`Could not check Academy skill trace: ${getErrorMessage(existingError)}`)
+  }
+
+  const existingId = ((existingRows ?? []) as { id: string }[])[0]?.id
+  const fallbackResult = existingId
+    ? await supabase.from('academy_skill_traces').update(payload).eq('id', existingId)
+    : await supabase.from('academy_skill_traces').insert(payload)
+
+  if (fallbackResult.error) {
+    console.error('[Academy skill trace] Could not save fallback skill trace', {
+      moduleSlug: context.module.slug,
+      lessonSlug: context.lesson.slug,
+      error: getErrorMessage(fallbackResult.error),
+    })
+    throw new Error(`Could not save Academy skill trace: ${getErrorMessage(fallbackResult.error)}`)
+  }
+}
+
+async function recordAcademyProgressEvent({
+  supabase,
+  userId,
+  context,
+  lessonVersionId,
+}: {
+  supabase: SupabaseServerClient
+  userId: string
+  context: LessonContext
+  lessonVersionId: string
+}) {
+  const { error } = await supabase.from('academy_progress_events').insert({
+    user_id: userId,
+    module_slug: context.module.slug,
+    lesson_slug: context.lesson.slug,
+    lesson_version_id: lessonVersionId,
+    event_type: 'lesson_completed',
+    source: 'lesson_completion',
+  })
+
+  if (error) {
+    console.error('[Academy progress event] Could not record lesson completion event', {
+      moduleSlug: context.module.slug,
+      lessonSlug: context.lesson.slug,
+      error: getErrorMessage(error),
+    })
+    throw new Error(`Could not record Academy progress event: ${getErrorMessage(error)}`)
+  }
+}
+
+async function ensureAcademyRewardDefinitions(supabase: SupabaseServerClient) {
+  const { error } = await supabase.from('academy_reward_definitions').upsert(academyRewardDefinitions, {
+    onConflict: 'reward_key',
+  })
+
+  if (error) {
+    console.error('[Academy rewards] Could not ensure reward definitions', {
+      error: getErrorMessage(error),
+    })
+  }
+}
+
+async function awardAcademyUserReward({
+  supabase,
+  userId,
+  context,
+  lessonVersionId,
+  rewardKey,
+  metadata,
+}: {
+  supabase: SupabaseServerClient
+  userId: string
+  context: LessonContext
+  lessonVersionId: string
+  rewardKey: AcademyRewardKey
+  metadata: Record<string, unknown>
+}) {
+  const { data: existingRows, error: existingError } = await supabase
+    .from('academy_user_rewards')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('reward_key', rewardKey)
+    .limit(1)
+
+  if (existingError) {
+    console.error('[Academy rewards] Could not check existing user reward', {
+      rewardKey,
+      error: getErrorMessage(existingError),
+    })
+    throw new Error(`Could not check Academy user reward: ${getErrorMessage(existingError)}`)
+  }
+
+  if (((existingRows ?? []) as { id: string }[]).length > 0) {
+    return
+  }
+
+  const { error } = await supabase.from('academy_user_rewards').insert({
+    user_id: userId,
+    reward_key: rewardKey,
+    module_slug: context.module.slug,
+    lesson_slug: context.lesson.slug,
+    lesson_version_id: lessonVersionId,
+    metadata,
+  })
+
+  if (error) {
+    console.error('[Academy rewards] Could not award user reward', {
+      rewardKey,
+      moduleSlug: context.module.slug,
+      lessonSlug: context.lesson.slug,
+      error: getErrorMessage(error),
+    })
+    throw new Error(`Could not award Academy user reward: ${getErrorMessage(error)}`)
+  }
+}
+
+async function awardAcademyUserRewards({
+  supabase,
+  userId,
+  context,
+  lessonVersionId,
+  rewardKeys,
+  metadata,
+}: {
+  supabase: SupabaseServerClient
+  userId: string
+  context: LessonContext
+  lessonVersionId: string
+  rewardKeys: AcademyRewardKey[]
+  metadata: Record<string, unknown>
+}) {
+  if (rewardKeys.length === 0) {
+    return
+  }
+
+  await ensureAcademyRewardDefinitions(supabase)
+
+  const rewardRows = rewardKeys.map((rewardKey) => ({
+    user_id: userId,
+    reward_key: rewardKey,
+    module_slug: context.module.slug,
+    lesson_slug: context.lesson.slug,
+    lesson_version_id: lessonVersionId,
+    metadata,
+  }))
+
+  const { error } = await supabase.from('academy_user_rewards').upsert(rewardRows, {
+    onConflict: 'user_id,reward_key',
+    ignoreDuplicates: true,
+  })
+
+  if (!error) {
+    return
+  }
+
+  if (!isMissingConflictConstraint(error)) {
+    console.error('[Academy rewards] Could not award user rewards', {
+      rewardKeys,
+      error: getErrorMessage(error),
+    })
+    throw new Error(`Could not award Academy user rewards: ${getErrorMessage(error)}`)
+  }
+
+  for (const rewardKey of rewardKeys) {
+    await awardAcademyUserReward({
+      supabase,
+      userId,
+      context,
+      lessonVersionId,
+      rewardKey,
+      metadata,
+    })
+  }
+}
+
 function getFlatLessons() {
   return aiFundamentalsLearningPath.modules.flatMap((module) =>
     module.lessons.map((lesson) => ({
@@ -577,6 +855,23 @@ function limitText(input: string, maxLength: number) {
   }
 
   return `${cleaned.slice(0, maxLength - 1).trim()}…`
+}
+
+function getFormText(formData: FormData, key: string, maxLength: number) {
+  const value = formData.get(key)
+
+  return typeof value === 'string' ? limitText(value, maxLength) : ''
+}
+
+function getFormNumber(formData: FormData, key: string) {
+  const value = formData.get(key)
+  const parsed = typeof value === 'string' ? Number(value) : Number.NaN
+
+  return Number.isFinite(parsed) ? parsed : null
+}
+
+function getFormList(formData: FormData, key: string, maxLength: number) {
+  return getFormText(formData, key, maxLength).split(searchParamDivider).filter(Boolean)
 }
 
 function inferTopicProfile(rawInput: string): TopicProfile {
@@ -1579,6 +1874,7 @@ async function completeLesson(formData: FormData) {
 
   const now = new Date().toISOString()
   const moduleHref = `/academy/learn/fundamentals/module/${context.module.slug}`
+  const lessonVersionId = `v${context.lesson.versionNumber}`
   const lessonProgressKey = getLearningProgressLessonKey(
     context.module.slug,
     context.lesson.slug,
@@ -1608,6 +1904,85 @@ async function completeLesson(formData: FormData) {
     })
     throw new Error(`Could not save lesson progress: ${progressError.message}`)
   }
+
+  const practiceScore = getFormNumber(formData, 'score')
+  const practiceSignedOff = formData.get('practiceSignedOff') === 'true'
+  const practiceSource = getFormText(formData, 'source', 40) || 'deterministic'
+  const originalInput = getFormText(formData, 'originalInput', 700)
+  const learnerInput = getFormText(formData, 'input', 700)
+  const improvedPrompt = getFormText(formData, 'improvedPrompt', 900)
+  const skillTraceMetadata = {
+    path_id: academyProgressPathId,
+    module_title: context.module.title,
+    lesson_title: context.lesson.title,
+    lesson_progress_key: lessonProgressKey,
+    lesson_version_number: context.lesson.versionNumber,
+    signed_off_at: now,
+    practice: {
+      signed_off: practiceSignedOff,
+      tier: getFormText(formData, 'tier', 80),
+      learner_input: learnerInput,
+      original_input: originalInput || learnerInput,
+      improved_prompt: improvedPrompt,
+      strengths: getFormList(formData, 'strengths', 1200),
+      advice: getFormList(formData, 'advice', 1200),
+      missed: getFormList(formData, 'missed', 1200),
+      why_better: getFormText(formData, 'whyBetter', 1200),
+      practice_instruction: getFormText(formData, 'practiceInstruction', 500),
+      safety_note: getFormText(formData, 'safetyNote', 500),
+      original_output_title: getFormText(formData, 'originalOutputTitle', 200),
+      improved_output_title: getFormText(formData, 'improvedOutputTitle', 200),
+      original_output: getFormText(formData, 'originalOutput', 1200),
+      improved_output: getFormText(formData, 'improvedOutput', 1200),
+      difference_highlights: getFormList(formData, 'differenceHighlights', 1200),
+      learning_takeaway: getFormText(formData, 'learningTakeaway', 500),
+    },
+    understanding: {
+      signed_off: true,
+    },
+  }
+
+  await saveAcademySkillTrace({
+    supabase,
+    userId: user.id,
+    context,
+    lessonVersionId,
+    score: practiceScore,
+    source: practiceSource,
+    metadata: skillTraceMetadata,
+  })
+
+  await recordAcademyProgressEvent({
+    supabase,
+    userId: user.id,
+    context,
+    lessonVersionId,
+  })
+
+  const rewardKeys: AcademyRewardKey[] = ['first_lesson_signed_off']
+
+  if (practiceSignedOff) {
+    rewardKeys.push('prompt_practice_signed_off')
+  }
+
+  if (context.module.moduleNumber === 1) {
+    rewardKeys.push('module_one_started')
+  }
+
+  await awardAcademyUserRewards({
+    supabase,
+    userId: user.id,
+    context,
+    lessonVersionId,
+    rewardKeys,
+    metadata: {
+      path_id: academyProgressPathId,
+      module_title: context.module.title,
+      lesson_title: context.lesson.title,
+      awarded_from: 'lesson_completion',
+      signed_off_at: now,
+    },
+  })
 
   redirect(moduleHref)
 }
@@ -2582,6 +2957,33 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                 <input type="hidden" name="moduleSlug" value={module.slug} />
                 <input type="hidden" name="lessonSlug" value={lesson.slug} />
                 <input type="hidden" name="understandingPassed" value={understandingPassed ? 'true' : 'false'} />
+                {practiceFeedback ? (
+                  <>
+                    <input type="hidden" name="practiceSignedOff" value={practiceFeedback.signedOff ? 'true' : 'false'} />
+                    <input type="hidden" name="score" value={String(practiceFeedback.score)} />
+                    <input type="hidden" name="tier" value={practiceFeedback.tier} />
+                    <input type="hidden" name="input" value={practiceFeedback.learnerInput} />
+                    <input type="hidden" name="strengths" value={practiceFeedback.strengths.join(searchParamDivider)} />
+                    <input type="hidden" name="advice" value={practiceFeedback.advice.join(searchParamDivider)} />
+                    <input type="hidden" name="missed" value={practiceFeedback.missedLabels.join(searchParamDivider)} />
+                    <input type="hidden" name="originalInput" value={practiceFeedback.originalInput ?? practiceFeedback.learnerInput} />
+                    <input type="hidden" name="improvedPrompt" value={practiceFeedback.improvedPrompt ?? practiceFeedback.strongerExample} />
+                    <input type="hidden" name="source" value={practiceFeedback.source ?? 'deterministic'} />
+                    <input type="hidden" name="whyBetter" value={practiceFeedback.whyBetter ?? ''} />
+                    <input type="hidden" name="practiceInstruction" value={practiceFeedback.practiceInstruction ?? ''} />
+                    <input type="hidden" name="safetyNote" value={practiceFeedback.safetyNote ?? ''} />
+                    <input type="hidden" name="originalOutputTitle" value={practiceFeedback.outputComparison?.originalOutputTitle ?? ''} />
+                    <input type="hidden" name="improvedOutputTitle" value={practiceFeedback.outputComparison?.improvedOutputTitle ?? ''} />
+                    <input type="hidden" name="originalOutput" value={practiceFeedback.outputComparison?.originalOutput ?? ''} />
+                    <input type="hidden" name="improvedOutput" value={practiceFeedback.outputComparison?.improvedOutput ?? ''} />
+                    <input
+                      type="hidden"
+                      name="differenceHighlights"
+                      value={practiceFeedback.outputComparison?.differenceHighlights.join(searchParamDivider) ?? ''}
+                    />
+                    <input type="hidden" name="learningTakeaway" value={practiceFeedback.outputComparison?.learningTakeaway ?? ''} />
+                  </>
+                ) : null}
                 <button
                   type="submit"
                   disabled={!understandingPassed}

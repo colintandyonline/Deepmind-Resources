@@ -321,6 +321,8 @@ export default async function DashboardPage() {
   const [
     { data: lessonRows, error: lessonError },
     { data: sandboxRows, error: sandboxError },
+    { count: skillTraceCount, error: skillTraceError },
+    { count: rewardCount, error: rewardError },
     { data: subscriptionRows, error: subscriptionError },
     { data: entitlementRows, error: entitlementError },
   ] = await Promise.all([
@@ -332,6 +334,14 @@ export default async function DashboardPage() {
     supabase
       .from('sandbox_attempts')
       .select('status, submitted_at, reviewed_at, sandbox_task_id, sandbox_task_version_id')
+      .eq('user_id', user.id),
+    supabase
+      .from('academy_skill_traces')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id),
+    supabase
+      .from('academy_user_rewards')
+      .select('id', { count: 'exact', head: true })
       .eq('user_id', user.id),
     supabase
       .from('subscriptions')
@@ -355,10 +365,26 @@ export default async function DashboardPage() {
     throw new Error(`Could not read dashboard lesson progress: ${lessonError.message}`)
   }
 
+  if (skillTraceError) {
+    console.error('[Academy skill trace] Could not read dashboard skill traces', {
+      error: skillTraceError.message,
+    })
+    throw new Error(`Could not read dashboard skill traces: ${skillTraceError.message}`)
+  }
+
+  if (rewardError) {
+    console.error('[Academy rewards] Could not read dashboard user rewards', {
+      error: rewardError.message,
+    })
+    throw new Error(`Could not read dashboard user rewards: ${rewardError.message}`)
+  }
+
   const lessonProgressRows = (lessonRows ?? []) as LessonProgressRow[]
   const sandboxAttemptRows = (sandboxRows ?? []) as SandboxAttemptRow[]
   const personalSubscriptions = (subscriptionRows ?? []) as SubscriptionRow[]
   const activeEntitlements = (entitlementRows ?? []) as EntitlementRow[]
+  const savedSkillTraces = skillTraceCount ?? 0
+  const savedRewards = rewardCount ?? 0
 
   const progressStorageAvailable = !lessonError && !sandboxError
   const billingStorageAvailable = !subscriptionError && !entitlementError
@@ -407,22 +433,22 @@ export default async function DashboardPage() {
       state: completedLessons > 0 ? 'active' : 'empty',
     },
     {
-      label: 'Sandbox evidence',
-      value: String(submittedSandboxAttempts),
+      label: 'Skill evidence',
+      value: String(savedSkillTraces),
       detail:
-        submittedSandboxAttempts === 0
-          ? 'No sandbox task evidence submitted yet.'
-          : `${formatCount(reviewedSandboxAttempts, 'reviewed sandbox attempt', 'reviewed sandbox attempts')}.`,
-      state: submittedSandboxAttempts > 0 ? 'active' : 'empty',
+        savedSkillTraces === 0
+          ? 'No skill trace evidence saved yet.'
+          : `${formatCount(savedSkillTraces, 'skill trace', 'skill traces')} saved.`,
+      state: savedSkillTraces > 0 ? 'active' : 'empty',
     },
     {
-      label: 'Refreshers',
-      value: String(refresherCount),
+      label: 'Rewards',
+      value: String(savedRewards),
       detail:
-        refresherCount === 0
-          ? 'No saved lesson is currently marked for refresh.'
-          : `${formatCount(refresherCount, 'saved lesson needs', 'saved lessons need')} a refresher.`,
-      state: refresherCount > 0 ? 'active' : 'empty',
+        savedRewards === 0
+          ? 'No Academy rewards earned yet.'
+          : `${formatCount(savedRewards, 'Academy reward', 'Academy rewards')} earned.`,
+      state: savedRewards > 0 ? 'active' : 'empty',
     },
   ]
 
@@ -621,7 +647,7 @@ export default async function DashboardPage() {
             <SectionHeader
               eyebrow="Progress"
               title="Skill evidence"
-              description="Progress is based on saved lesson records and sandbox submissions, not page views."
+              description="Progress is based on saved lesson records, skill traces, and sandbox submissions, not page views."
             />
 
             <div className="space-y-3">
@@ -636,6 +662,20 @@ export default async function DashboardPage() {
                   {completedLessons === 0
                     ? 'No versioned lesson completion has been saved yet.'
                     : `${formatCount(completedLessons, 'lesson completion', 'lesson completions')} saved.`}
+                </p>
+              </article>
+
+              <article className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="font-black text-slate-950">Skill traces</p>
+                  <StatusBadge state={savedSkillTraces > 0 ? 'active' : 'empty'}>
+                    {savedSkillTraces > 0 ? 'Saved' : 'None saved'}
+                  </StatusBadge>
+                </div>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  {savedSkillTraces === 0
+                    ? 'No lesson practice evidence has been saved yet.'
+                    : `${formatCount(savedSkillTraces, 'skill trace', 'skill traces')} saved from signed-off practice.`}
                 </p>
               </article>
 
@@ -656,10 +696,14 @@ export default async function DashboardPage() {
               <article id="awards" className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <p className="font-black text-slate-950">Awards</p>
-                  <StatusBadge state="empty">Not earned</StatusBadge>
+                  <StatusBadge state={savedRewards > 0 ? 'active' : 'empty'}>
+                    {savedRewards > 0 ? 'Earned' : 'Not earned'}
+                  </StatusBadge>
                 </div>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  Verified skill awards will show here after the required lesson, sandbox, and review evidence exists.
+                  {savedRewards === 0
+                    ? 'Verified skill awards will show here after the required lesson, sandbox, and review evidence exists.'
+                    : `${formatCount(savedRewards, 'Academy reward', 'Academy rewards')} earned.`}
                 </p>
               </article>
             </div>
