@@ -1052,7 +1052,7 @@ async function completeLesson(formData: FormData) {
   }
 
   const now = new Date().toISOString()
-  const nextHref = context.nextItem ? getLessonHref(context.nextItem) : '/academy/learn/fundamentals'
+  const moduleHref = `/academy/learn/fundamentals/module/${context.module.slug}`
 
   const { data: existingRows, error: readError } = await supabase
     .from('user_lesson_progress')
@@ -1098,7 +1098,7 @@ async function completeLesson(formData: FormData) {
     }
   }
 
-  redirect(nextHref)
+  redirect(moduleHref)
 }
 
 function IconTile({ children, solid = false }: { children: ReactNode; solid?: boolean }) {
@@ -1298,6 +1298,13 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
         dangerouslySetInnerHTML={{
           __html:
             "if(window.location.search){window.history.replaceState({},document.title,window.location.pathname+window.location.hash);}",
+        }}
+      />
+
+      <script
+        dangerouslySetInnerHTML={{
+          __html:
+            "document.addEventListener('click',function(event){var target=event.target;var trigger=target&&target.closest?target.closest('[data-copy-better-prompt]'):null;if(!trigger){return;}event.preventDefault();event.stopImmediatePropagation();var text=trigger.getAttribute('data-copy-better-prompt')||'';var original=trigger.getAttribute('data-copy-label')||'Use this prompt';var textarea=document.querySelector('textarea[name=\"learnerInput\"]');if(textarea){textarea.value=text;textarea.dispatchEvent(new Event('input',{bubbles:true}));textarea.focus();textarea.scrollIntoView({behavior:'smooth',block:'center'});trigger.textContent='Prompt added — check it again';setTimeout(function(){trigger.textContent=original;},2200);}else{trigger.textContent='Practice box not found';setTimeout(function(){trigger.textContent=original;},2200);}},true);",
         }}
       />
 
@@ -1558,17 +1565,17 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                           Better version of your input
                         </p>
                         <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">
-                          Copy this version, paste it into your AI tool, and compare the result with your first attempt.
+                          Use this version in the practice box, check it again, and compare the feedback with your first attempt.
                         </p>
                       </div>
                       <div className="flex shrink-0 flex-col gap-2 sm:items-end">
                         <button
                           type="button"
                           data-copy-better-prompt={practiceFeedback.strongerExample}
-                          data-copy-label="Copy better prompt"
+                          data-copy-label="Use this prompt"
                           className="inline-flex items-center justify-center rounded-2xl bg-indigo-600 px-4 py-2.5 text-sm font-black text-white shadow-sm shadow-indigo-900/20 transition hover:bg-indigo-700"
                         >
-                          Copy better prompt
+                          Use this prompt
                         </button>
                         <Link
                           href={lessonHref}
@@ -1727,7 +1734,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                     <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
                     <div>
                       <p className="text-sm font-semibold leading-6 text-slate-700">
-                        Great — your understanding is signed off. Complete the lesson, then check your dashboard to see this training progress added to your Academy record.
+                        Great — your understanding is signed off. Complete the lesson to return to the module overview, where your progress and next lesson are shown.
                       </p>
                       <Link
                         href={lessonHref}
@@ -1820,7 +1827,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
               </h2>
               <p className="mt-3 text-sm leading-6 text-slate-600">
                 {understandingPassed
-                  ? 'Your understanding is signed off. Completing now adds this lesson to your Academy progress so it can show on your dashboard.'
+                  ? 'Your understanding is signed off. Completing now adds this lesson to your Academy progress and returns you to the module overview.'
                   : 'Complete the understanding check first. The lesson completion button unlocks once your understanding is signed off.'}
               </p>
 
@@ -1837,7 +1844,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                       : 'cursor-not-allowed bg-slate-200 text-slate-500'
                   }`}
                 >
-                  {isCompleted ? 'Continue to next lesson' : understandingPassed ? 'Complete lesson' : 'Check understanding first'}
+                  {isCompleted ? 'Back to module' : understandingPassed ? 'Complete lesson' : 'Check understanding first'}
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </button>
               </form>
@@ -1878,6 +1885,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
     </main>
   )
 }
+
 
 
 
