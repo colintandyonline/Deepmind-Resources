@@ -41,6 +41,12 @@ type LessonPageSearchParams = {
   whyBetter?: string
   practiceInstruction?: string
   safetyNote?: string
+  originalOutputTitle?: string
+  improvedOutputTitle?: string
+  originalOutput?: string
+  improvedOutput?: string
+  differenceHighlights?: string
+  learningTakeaway?: string
 }
 
 type LessonPageProps = {
@@ -91,6 +97,15 @@ type PracticeCheck = {
   advice: string
 }
 
+type OutputComparison = {
+  originalOutputTitle: string
+  improvedOutputTitle: string
+  originalOutput: string
+  improvedOutput: string
+  differenceHighlights: string[]
+  learningTakeaway: string
+}
+
 type PracticeFeedback = {
   score: number
   tier: string
@@ -103,6 +118,12 @@ type PracticeFeedback = {
   whyBetter?: string
   practiceInstruction?: string
   safetyNote?: string
+  originalOutputTitle?: string
+  improvedOutputTitle?: string
+  originalOutput?: string
+  improvedOutput?: string
+  differenceHighlights?: string
+  learningTakeaway?: string
 }
 
 type UnderstandingOption = {
@@ -620,7 +641,7 @@ function inferTopicProfile(rawInput: string): TopicProfile {
 
   return {
     task: taskSummary
-      ? `Improve this AI instruction: ${taskSummary}`
+      ? `Create a clear, safe, practical instruction for this task: ${taskSummary}`
       : 'Create a clearer AI instruction for the task',
     audience: includesAny(text, ['staff', 'team'])
       ? 'the relevant staff or team'
@@ -638,6 +659,70 @@ function buildPersonalisedExample(rawInput: string) {
   const profile = inferTopicProfile(rawInput)
 
   return `${profile.task} for ${profile.audience}. Set the context: ${profile.context}. Format the answer as ${profile.format}. Add a safety and review rule: ${profile.safetyOrReview}. Constraints: ${profile.constraints}.`
+}
+
+
+function buildDeterministicOutputComparison(
+  learnerInput: string,
+  betterPrompt: string,
+): OutputComparison {
+  const profile = inferTopicProfile(learnerInput)
+  const text = learnerInput.toLowerCase()
+
+  if (includesAny(text, ['lightbulb', 'light bulb', 'bulb', 'lamp', 'ceiling light'])) {
+    return {
+      originalOutputTitle: 'Likely result from your first prompt',
+      improvedOutputTitle: 'Likely result from the stronger prompt',
+      originalOutput:
+        '1. Turn off the light. 2. Remove the old bulb. 3. Put in the new bulb. 4. Turn the light back on. Be careful and use a ladder if needed.',
+      improvedOutput:
+        'Safety checklist for changing a lightbulb:\n\nBefore you start:\n- Switch the light off and let the bulb cool.\n- Use a stable step ladder if the bulb is above comfortable reach.\n- Check the replacement bulb matches the fitting and wattage guidance.\n\nChanging the bulb:\n- Hold the fitting steady if safe to do so.\n- Remove the old bulb gently without forcing it.\n- Fit the replacement bulb securely, but do not overtighten.\n\nStop and get help if:\n- The fitting is cracked, loose, burned, wet, sparking, or exposing wiring.\n- You are unsure which bulb is suitable.\n\nFinal check:\n- Step down safely before switching the light back on.',
+      differenceHighlights: [
+        'The stronger output includes safety checks before the task starts.',
+        'It gives clearer step-by-step structure for a home user.',
+        'It explains when to stop instead of pushing ahead.',
+        'It avoids unsafe electrical guesswork.',
+      ],
+      learningTakeaway:
+        'A stronger prompt does not just ask for instructions. It defines the audience, situation, format, safety limits, and review points so the output becomes more useful and safer.',
+    }
+  }
+
+  if (includesAny(text, ['tyre', 'tire', 'wheel', 'puncture', 'flat tyre', 'flat tire'])) {
+    return {
+      originalOutputTitle: 'Likely result from your first prompt',
+      improvedOutputTitle: 'Likely result from the stronger prompt',
+      originalOutput:
+        'Park the car, get the spare wheel, use the jack, remove the nuts, change the tyre, tighten everything, and drive away carefully.',
+      improvedOutput:
+        'Safety checklist for changing a car tyre:\n\nBefore attempting the change:\n- Stop only in a safe, visible place away from traffic.\n- Use hazard lights and the handbrake.\n- Do not attempt the change on a motorway hard shoulder or unstable ground.\n- Call roadside assistance if the location, weather, traffic, tools, or your confidence make the task unsafe.\n\nChanging the tyre:\n- Check the vehicle manual for the correct jack point.\n- Loosen wheel nuts before lifting the car.\n- Raise the vehicle only on firm, level ground.\n- Fit the spare wheel and tighten nuts gradually in a cross pattern.\n\nBefore driving:\n- Check the wheel is secure.\n- Drive slowly if using a temporary spare.\n- Get the wheel checked professionally as soon as possible.',
+      differenceHighlights: [
+        'The stronger output includes when not to attempt the task.',
+        'It adds roadside, traffic, weather, and ground safety context.',
+        'It avoids assuming the learner already knows the jack point.',
+        'It includes final checks before driving.',
+      ],
+      learningTakeaway:
+        'The improved prompt produces a safer and more complete answer because it gives the AI context, risk boundaries, audience level, and output structure.',
+    }
+  }
+
+  return {
+    originalOutputTitle: 'Likely result from your first prompt',
+    improvedOutputTitle: 'Likely result from the stronger prompt',
+    originalOutput:
+      `A likely answer would complete the task in a broad way, but it may miss the audience, context, safety checks, source limits, or review step because the original instruction did not make those requirements clear.`,
+    improvedOutput:
+      `A stronger answer would follow this improved instruction:\n\n${betterPrompt}\n\nThe result should be clearer, better structured, more audience-aware, and easier to check before use.`,
+    differenceHighlights: [
+      'The stronger version gives the AI a clearer task.',
+      'It defines who the output is for.',
+      'It adds context and constraints.',
+      'It includes a review or safety step before the output is trusted.',
+    ],
+    learningTakeaway:
+      'The visible difference comes from better instruction design: task, audience, context, format, boundaries, and review expectations.',
+  }
 }
 
 function getPracticeChecks(input: string): PracticeCheck[] {
@@ -809,6 +894,10 @@ function evaluatePracticeSubmission(input: string): PracticeFeedback {
       'Use the better version in the practice box, check it again, and compare the feedback with your first attempt.',
     safetyNote:
       'For real-world tasks, check any important claims, safety steps, or assumptions before using the output.',
+    outputComparison: buildDeterministicOutputComparison(
+      learnerInput,
+      buildPersonalisedExample(learnerInput),
+    ),
   }
 }
 
@@ -835,6 +924,61 @@ function normaliseTier(value: unknown): PracticeFeedback['tier'] {
   }
 
   return 'Needs work'
+}
+
+
+function normaliseOutputComparison(value: unknown): OutputComparison | undefined {
+  if (!value || typeof value !== 'object') {
+    return undefined
+  }
+
+  const comparison = value as {
+    originalOutputTitle?: unknown
+    improvedOutputTitle?: unknown
+    originalOutput?: unknown
+    improvedOutput?: unknown
+    differenceHighlights?: unknown
+    learningTakeaway?: unknown
+  }
+
+  if (
+    typeof comparison.originalOutputTitle !== 'string' ||
+    typeof comparison.improvedOutputTitle !== 'string' ||
+    typeof comparison.originalOutput !== 'string' ||
+    typeof comparison.improvedOutput !== 'string' ||
+    typeof comparison.learningTakeaway !== 'string' ||
+    !isStringArray(comparison.differenceHighlights)
+  ) {
+    return undefined
+  }
+
+  return {
+    originalOutputTitle: comparison.originalOutputTitle,
+    improvedOutputTitle: comparison.improvedOutputTitle,
+    originalOutput: comparison.originalOutput,
+    improvedOutput: comparison.improvedOutput,
+    differenceHighlights: comparison.differenceHighlights,
+    learningTakeaway: comparison.learningTakeaway,
+  }
+}
+
+function getOutputComparisonFromSearchParams(
+  searchParams: LessonPageSearchParams,
+): OutputComparison | undefined {
+  if (!searchParams.originalOutput || !searchParams.improvedOutput) {
+    return undefined
+  }
+
+  return {
+    originalOutputTitle: searchParams.originalOutputTitle ?? 'Likely result from your first prompt',
+    improvedOutputTitle: searchParams.improvedOutputTitle ?? 'Likely result from the stronger prompt',
+    originalOutput: searchParams.originalOutput,
+    improvedOutput: searchParams.improvedOutput,
+    differenceHighlights: splitSearchList(searchParams.differenceHighlights),
+    learningTakeaway:
+      searchParams.learningTakeaway ??
+      'The stronger prompt changes the output because it gives clearer task, context, format, boundary, and review signals.',
+  }
 }
 
 async function getAIPromptFeedback({
@@ -884,6 +1028,7 @@ async function getAIPromptFeedback({
         whyBetter?: unknown
         practiceInstruction?: unknown
         safetyNote?: unknown
+        outputComparison?: unknown
       }
     }
 
@@ -904,6 +1049,8 @@ async function getAIPromptFeedback({
       return null
     }
 
+    const outputComparison = normaliseOutputComparison(feedback.outputComparison)
+
     return {
       score: Math.max(0, Math.min(100, Math.round(feedback.score))),
       tier: normaliseTier(feedback.tier),
@@ -919,6 +1066,7 @@ async function getAIPromptFeedback({
           ? feedback.practiceInstruction
           : 'Use the better version in the practice box, check it again, and compare the feedback.',
       safetyNote: typeof feedback.safetyNote === 'string' ? feedback.safetyNote : '',
+      outputComparison,
     }
   } catch {
     return null
@@ -956,6 +1104,7 @@ function getPracticeFeedback(searchParams: LessonPageSearchParams | undefined): 
     whyBetter: searchParams.whyBetter ?? '',
     practiceInstruction: searchParams.practiceInstruction ?? '',
     safetyNote: searchParams.safetyNote ?? '',
+    outputComparison: getOutputComparisonFromSearchParams(searchParams),
   }
 }
 
@@ -1035,6 +1184,18 @@ async function reviewPracticeInput(formData: FormData) {
   query.set('whyBetter', evaluation.whyBetter ?? '')
   query.set('practiceInstruction', evaluation.practiceInstruction ?? '')
   query.set('safetyNote', evaluation.safetyNote ?? '')
+
+  if (evaluation.outputComparison) {
+    query.set('originalOutputTitle', evaluation.outputComparison.originalOutputTitle)
+    query.set('improvedOutputTitle', evaluation.outputComparison.improvedOutputTitle)
+    query.set('originalOutput', evaluation.outputComparison.originalOutput)
+    query.set('improvedOutput', evaluation.outputComparison.improvedOutput)
+    query.set(
+      'differenceHighlights',
+      evaluation.outputComparison.differenceHighlights.join(searchParamDivider),
+    )
+    query.set('learningTakeaway', evaluation.outputComparison.learningTakeaway)
+  }
 
   redirect(`/academy/learn/fundamentals/module/${context.module.slug}/lesson/${context.lesson.slug}?${query.toString()}#practice`)
 }
@@ -1793,6 +1954,16 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                           <input type="hidden" name="whyBetter" value={practiceFeedback.whyBetter ?? ''} />
                           <input type="hidden" name="practiceInstruction" value={practiceFeedback.practiceInstruction ?? ''} />
                           <input type="hidden" name="safetyNote" value={practiceFeedback.safetyNote ?? ''} />
+                          <input type="hidden" name="originalOutputTitle" value={practiceFeedback.outputComparison?.originalOutputTitle ?? ''} />
+                          <input type="hidden" name="improvedOutputTitle" value={practiceFeedback.outputComparison?.improvedOutputTitle ?? ''} />
+                          <input type="hidden" name="originalOutput" value={practiceFeedback.outputComparison?.originalOutput ?? ''} />
+                          <input type="hidden" name="improvedOutput" value={practiceFeedback.outputComparison?.improvedOutput ?? ''} />
+                          <input
+                            type="hidden"
+                            name="differenceHighlights"
+                            value={practiceFeedback.outputComparison?.differenceHighlights.join(searchParamDivider) ?? ''}
+                          />
+                          <input type="hidden" name="learningTakeaway" value={practiceFeedback.outputComparison?.learningTakeaway ?? ''} />
                           <button
                             type="submit"
                             className="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-600 px-4 py-2.5 text-sm font-black text-white shadow-sm shadow-indigo-900/20 transition hover:bg-indigo-700 sm:w-auto"
@@ -1830,7 +2001,106 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                         <p className="mt-2 text-sm leading-7 text-slate-700">{practiceFeedback.safetyNote}</p>
                       </div>
                     ) : null}
-                  </div>
+                  
+                    {practiceFeedback.outputComparison ? (
+                      <div className="mt-4 rounded-3xl border border-indigo-200 bg-white p-4">
+                        <input id="output-comparison-review" type="checkbox" className="peer sr-only" />
+
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                          <div>
+                            <p className="text-[11px] font-black uppercase tracking-[0.16em] text-indigo-700">
+                              Visual learning review
+                            </p>
+                            <p className="mt-1 text-sm leading-6 text-slate-700">
+                              Compare the likely output from your first prompt with the output from the improved prompt.
+                            </p>
+                          </div>
+
+                          <label
+                            htmlFor="output-comparison-review"
+                            className="inline-flex cursor-pointer items-center justify-center rounded-2xl bg-indigo-600 px-4 py-2.5 text-sm font-black text-white shadow-sm shadow-indigo-900/20 transition hover:bg-indigo-700"
+                          >
+                            Review output comparison
+                          </label>
+                        </div>
+
+                        <div className="fixed inset-0 z-[80] hidden overflow-y-auto bg-slate-950/50 p-4 backdrop-blur-sm peer-checked:block">
+                          <div className="mx-auto my-6 max-w-6xl rounded-[2rem] border border-blue-100 bg-white p-4 shadow-2xl shadow-slate-950/30 sm:p-6">
+                            <div className="flex flex-col gap-4 border-b border-blue-100 pb-4 sm:flex-row sm:items-start sm:justify-between">
+                              <div>
+                                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-600">
+                                  DeepMind Resources review
+                                </p>
+                                <h3 className="mt-2 text-2xl font-black tracking-tight text-slate-950">
+                                  See what changed in the output.
+                                </h3>
+                                <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+                                  This view shows why prompt structure matters. The stronger prompt should produce a clearer, safer, more useful result.
+                                </p>
+                              </div>
+
+                              <label
+                                htmlFor="output-comparison-review"
+                                className="inline-flex cursor-pointer items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-black text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
+                              >
+                                Close review
+                              </label>
+                            </div>
+
+                            <div className="mt-5 grid gap-4 lg:grid-cols-2">
+                              <article className="rounded-3xl border border-rose-200 bg-rose-50 p-4">
+                                <p className="text-[11px] font-black uppercase tracking-[0.16em] text-rose-700">
+                                  Original prompt output
+                                </p>
+                                <h4 className="mt-2 text-lg font-black text-slate-950">
+                                  {practiceFeedback.outputComparison.originalOutputTitle}
+                                </h4>
+                                <p className="mt-3 whitespace-pre-line rounded-2xl border border-rose-100 bg-white p-4 text-sm leading-7 text-slate-700">
+                                  {practiceFeedback.outputComparison.originalOutput}
+                                </p>
+                              </article>
+
+                              <article className="rounded-3xl border border-emerald-200 bg-emerald-50 p-4">
+                                <p className="text-[11px] font-black uppercase tracking-[0.16em] text-emerald-700">
+                                  Improved prompt output
+                                </p>
+                                <h4 className="mt-2 text-lg font-black text-slate-950">
+                                  {practiceFeedback.outputComparison.improvedOutputTitle}
+                                </h4>
+                                <p className="mt-3 whitespace-pre-line rounded-2xl border border-emerald-100 bg-white p-4 text-sm leading-7 text-slate-700">
+                                  {practiceFeedback.outputComparison.improvedOutput}
+                                </p>
+                              </article>
+                            </div>
+
+                            <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+                              <article className="rounded-3xl border border-blue-100 bg-blue-50 p-4">
+                                <p className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-700">
+                                  Difference highlights
+                                </p>
+                                <ul className="mt-3 grid gap-2">
+                                  {practiceFeedback.outputComparison.differenceHighlights.map((highlight) => (
+                                    <li key={highlight} className="flex gap-2 text-sm leading-6 text-slate-700">
+                                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" aria-hidden="true" />
+                                      {highlight}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </article>
+
+                              <article className="rounded-3xl border border-indigo-200 bg-indigo-50 p-4">
+                                <p className="text-[11px] font-black uppercase tracking-[0.16em] text-indigo-700">
+                                  Learning takeaway
+                                </p>
+                                <p className="mt-3 text-sm font-semibold leading-7 text-slate-700">
+                                  {practiceFeedback.outputComparison.learningTakeaway}
+                                </p>
+                              </article>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}</div>
                 </div>
               ) : null}
             </LessonSection>
@@ -2126,6 +2396,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
     </main>
   )
 }
+
 
 
 
