@@ -65,6 +65,15 @@ type LessonProgressRow = {
   last_seen_at: string | null
 }
 
+type ProgressContentRow = {
+  id: string
+  current_version_id: string | null
+}
+
+type ProgressVersionRow = {
+  id: string
+}
+
 type Module = (typeof aiFundamentalsLearningPath.modules)[number]
 type Lesson = Module['lessons'][number]
 
@@ -1527,18 +1536,13 @@ async function checkUnderstanding(formData: FormData) {
   redirect(`/academy/learn/fundamentals/module/${context.module.slug}/lesson/${context.lesson.slug}?${query.toString()}#understanding`)
 }
 
-async function completeLesson(moduleSlug: string, lessonSlug: string, formData: FormData) {
+async function completeLesson(formData: FormData) {
   'use server'
 
-  const submittedModuleSlug = formData.get('moduleSlug')
-  const submittedLessonSlug = formData.get('lessonSlug')
+  const moduleSlug = formData.get('moduleSlug')
+  const lessonSlug = formData.get('lessonSlug')
 
-  if (
-    typeof submittedModuleSlug !== 'string' ||
-    typeof submittedLessonSlug !== 'string' ||
-    submittedModuleSlug !== moduleSlug ||
-    submittedLessonSlug !== lessonSlug
-  ) {
+  if (typeof moduleSlug !== 'string' || typeof lessonSlug !== 'string') {
     throw new Error('Missing lesson route data.')
   }
 
@@ -1577,47 +1581,84 @@ async function completeLesson(moduleSlug: string, lessonSlug: string, formData: 
   const now = new Date().toISOString()
   const moduleHref = `/academy/learn/fundamentals/module/${context.module.slug}`
 
-  const { data: existingRows, error: readError } = await supabase
-    .from('user_lesson_progress')
-    .select('lesson_id')
-    .eq('user_id', user.id)
-    .eq('lesson_id', context.lesson.id)
+  const { data: moduleRows, error: moduleLookupError } = await supabase
+    .from('modules')
+    .select('id')
+    .eq('slug', context.module.slug)
     .limit(1)
 
-  if (readError) {
-    throw new Error(`Could not read lesson progress: ${readError.message}`)
+  if (moduleLookupError) {
+    throw new Error(`Could not read module progress target: ${moduleLookupError.message}`)
   }
 
-  if (existingRows && existingRows.length > 0) {
-    const { error: updateError } = await supabase
-      .from('user_lesson_progress')
-      .update({
-        lesson_version_id: getLessonVersionId(context.lesson),
+  const moduleRow = moduleRows?.[0] as { id?: string } | undefined
+  const { data: lessonRows, error: lessonLookupError } = moduleRow?.id
+    ? await supabase
+        .from('lessons')
+        .select('id, current_version_id')
+        .eq('module_id', moduleRow.id)
+        .eq('slug', context.lesson.slug)
+        .limit(1)
+    : { data: null, error: null }
+
+  if (lessonLookupError) {
+    throw new Error(`Could not read lesson progress target: ${lessonLookupError.message}`)
+  }
+
+  const progressLesson = ((lessonRows ?? []) as ProgressContentRow[])[0] ?? null
+  const { data: versionRows, error: versionLookupError } = progressLesson?.id
+    ? await supabase
+        .from('lesson_versions')
+        .select('id')
+        .eq('lesson_id', progressLesson.id)
+        .eq('version_number', context.lesson.versionNumber)
+        .limit(1)
+    : { data: null, error: null }
+
+  if (versionLookupError) {
+    throw new Error(`Could not read lesson version progress target: ${versionLookupError.message}`)
+  }
+
+  const progressVersion = ((versionRows ?? []) as ProgressVersionRow[])[0] ?? null
+
+  if (progressLesson && progressVersion) {
+    const { error: upsertError } = await supabase.from('user_lesson_progress').upsert(
+      {
+        user_id: user.id,
+        lesson_id: progressLesson.id,
+        lesson_version_id: progressVersion.id,
         status: 'completed',
         progress_percentage: 100,
+        started_at: now,
         completed_at: now,
         last_seen_at: now,
-      })
-      .eq('user_id', user.id)
-      .eq('lesson_id', context.lesson.id)
+      },
+      {
+        onConflict: 'user_id,lesson_id,lesson_version_id',
+      },
+    )
 
-    if (updateError) {
-      throw new Error(`Could not update lesson progress: ${updateError.message}`)
+    if (upsertError) {
+      throw new Error(`Could not save lesson progress: ${upsertError.message}`)
     }
   } else {
-    const { error: insertError } = await supabase.from('user_lesson_progress').insert({
-      user_id: user.id,
-      lesson_id: context.lesson.id,
-      lesson_version_id: getLessonVersionId(context.lesson),
-      status: 'completed',
-      progress_percentage: 100,
-      started_at: now,
-      completed_at: now,
-      last_seen_at: now,
-    })
+    const { error: fallbackError } = await supabase.from('learning_progress').upsert(
+      {
+        user_id: user.id,
+        module_id: context.module.slug,
+        module_title: context.module.title,
+        status: 'completed',
+        progress_percentage: 100,
+        started_at: now,
+        completed_at: now,
+      },
+      {
+        onConflict: 'user_id,module_id',
+      },
+    )
 
-    if (insertError) {
-      throw new Error(`Could not save lesson progress: ${insertError.message}`)
+    if (fallbackError) {
+      throw new Error(`Could not save lesson progress: ${fallbackError.message}`)
     }
   }
 
@@ -1752,7 +1793,6 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
   const isCompleted = progress?.status === 'completed' || Boolean(progress?.completed_at)
   const understandingPassed = isCompleted || resolvedSearchParams?.check === 'passed'
   const lessonHref = `/academy/learn/fundamentals/module/${module.slug}/lesson/${lesson.slug}`
-  const completeLessonAction = completeLesson.bind(null, module.slug, lesson.slug)
   const nextHref = nextItem ? getLessonHref(nextItem) : '/academy/learn/fundamentals'
 
   const structuredData = [
@@ -2570,7 +2610,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                   : 'Complete the understanding check first. The lesson completion button unlocks once your understanding is signed off.'}
               </p>
 
-              <form action={completeLessonAction} className="mt-5">
+              <form action={completeLesson} className="mt-5">
                 <input type="hidden" name="moduleSlug" value={module.slug} />
                 <input type="hidden" name="lessonSlug" value={lesson.slug} />
                 <input type="hidden" name="understandingPassed" value={understandingPassed ? 'true' : 'false'} />
