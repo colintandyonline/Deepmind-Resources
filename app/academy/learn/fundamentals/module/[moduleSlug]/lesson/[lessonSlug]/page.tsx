@@ -276,17 +276,17 @@ const specificTeachingBySlug: Record<string, LessonTeachingContent> = {
   },
   'ai-skill-levels-beginner-user-builder-manager': {
     mainIdea:
-      'AI skill stages show how much responsibility someone has when using AI: beginner, daily AI user, builder, and manager.',
+      'AI skill levels are not fixed job titles. They are stages of responsibility: beginner, daily AI user, builder, and manager.',
     teaching: [
-      'These are not fixed job titles. They are practical stages. You can move from one stage to another as your confidence, responsibility, and risk level increase.',
-      'A beginner needs safe foundations. They need to understand what AI is, why output can be wrong, why confident answers need checking, and how to avoid sharing sensitive information.',
-      'A daily AI user needs clear working habits. They should know how to write useful prompts, give enough context, set limits, ask for a specific format, and review the output before using it.',
-      'A builder needs workflow thinking. Builders may connect AI to files, retrieval, tools, automations, approval steps, or systems that affect real work.',
-      'A manager needs readiness thinking. Managers need to decide what staff should learn, what rules apply, which tasks need review, and whether a team is ready to use AI safely.',
-      'The key is not to learn everything at once. The key is to know your current stage, your next stage, and the one skill that matters most before moving forward.',
+      'AI skill is not one single ladder that everyone climbs in the same way. Different people need different training depending on what they are responsible for.',
+      'A beginner needs safe foundations: what AI is, what it can and cannot do, why output needs checking, and how to avoid trusting polished answers too quickly.',
+      'A daily AI user needs repeatable habits: writing clear instructions, giving useful context, setting output limits, and reviewing the answer before using it.',
+      'A builder needs systems thinking. Builders care about workflows, retrieval, tools, permissions, automation, testing, and what happens when AI output is connected to real actions.',
+      'A manager needs staff-readiness thinking. Managers do not need to build every workflow themselves, but they do need to know what staff should learn, what rules matter, and where human review is required.',
+      'These levels are not labels you are stuck with. You might start as a beginner, become a confident daily user, and later move toward builder or manager skills. The useful question is: what do you need for your next responsibility?',
     ],
     whyItMatters:
-      'A beginner should not be buried in automation or agents before they can write a clear prompt and check an answer. A manager should not approve team AI use without understanding training, privacy, and review needs.',
+      'Role-aware learning stops beginners from being overwhelmed and stops higher-responsibility users from being undertrained for risk, privacy, review, or workflow decisions.',
     workedExampleTitle: 'Four people, four training needs',
     workedExample: [
       'Beginner: learns that AI output is not automatically true and that important answers need checking.',
@@ -295,13 +295,13 @@ const specificTeachingBySlug: Record<string, LessonTeachingContent> = {
       'Manager: sets safe-use rules, assigns training, checks staff progress, and understands whether a team is ready to use AI responsibly.',
     ],
     practicePrompt:
-      'Fill in this short template. Current stage: beginner, daily AI user, builder, or manager. Next stage I want to reach: write one stage. AI task I want to handle: name a simple task, such as summarising notes, writing an email, checking a document, planning content, or reviewing an AI answer. What I need to learn first: write one skill. What I should check before trusting the result: write one review step. What I can ignore for now: name one advanced topic you do not need yet.',
+      'Choose your current AI level: beginner, daily AI user, builder, or manager. Then write the next level you want to move toward, what you need to learn first, why it matters, and what advanced topic you do not need to worry about yet.',
     strongerExample:
-      'Current stage: beginner. Next stage I want to reach: daily AI user. AI task I want to handle: summarising meeting notes. What I need to learn first: how to give the AI clear notes, a clear output format, and a rule not to invent missing actions. What I should check before trusting the result: whether the summary only uses the notes I provided. What I can ignore for now: agents and automation.',
+      'I am currently a beginner and want to become a daily AI user. First, I need to learn how to write clear prompts for summaries and emails, then check whether the answer is accurate before using it. I do not need to worry about agents or automation yet because I still need strong prompting and review habits first.',
     commonMistakeFix:
-      'Do not jump into agents, automation, or advanced tool comparisons before you can give clear instructions and check AI output safely. Learn the stage that matches your next responsibility.',
+      'Do not jump into agents, automation, or advanced tool comparisons before you can give clear instructions and check AI output safely. Learn the level that matches your next responsibility.',
     recap: [
-      'AI skill stages are levels of responsibility, not fixed labels.',
+      'AI skill levels are stages of responsibility, not fixed labels.',
       'Beginners need safe foundations before advanced workflows.',
       'Daily AI users need structured prompts and review habits.',
       'Builders need workflow, tool, retrieval, and automation thinking.',
@@ -822,7 +822,7 @@ function getFallbackTeachingContent(context: LessonContext): LessonTeachingConte
   return {
     mainIdea: lesson.outcome,
     teaching: [
-      `${getLessonDisplayTitle(lesson)} belongs to ${module.title}. The skill is practical: understand the idea, use it in a task, and know what to check before relying on the result.`,
+      `${lesson.title} belongs to ${module.title}. The skill is practical: understand the idea, use it in a task, and know what to check before relying on the result.`,
       lesson.outcome,
       'As you read, focus on behaviour. What would you do differently when writing a prompt, choosing a tool, checking an answer, or deciding whether AI is safe for the task?',
     ],
@@ -2154,7 +2154,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
     {
       '@context': 'https://schema.org',
       '@type': 'LearningResource',
-      name: getLessonDisplayTitle(lesson),
+      name: lesson.title,
       description: lesson.outcome,
       position: flatIndex + 1,
       isPartOf: {
@@ -2193,7 +2193,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
         {
           '@type': 'ListItem',
           position: 4,
-          name: getLessonDisplayTitle(lesson),
+          name: lesson.title,
           item: `https://deepmindresources.pro/academy/learn/fundamentals/module/${module.slug}/lesson/${lesson.slug}`,
         },
       ],
@@ -2286,7 +2286,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
               </div>
 
               <h1 className="mt-5 max-w-4xl text-3xl font-black tracking-tight text-slate-950 sm:text-4xl lg:text-5xl">
-                {getLessonDisplayTitle(lesson)}
+                {lesson.title}
               </h1>
 
               <p className="mt-5 max-w-3xl text-base leading-8 text-slate-600 sm:text-lg">
@@ -2824,12 +2824,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
               ) : null}
 
               {!understandingPassed ? (
-                
-              <details className="mt-5 rounded-[1.5rem] border border-blue-100 bg-white/80 p-4 shadow-sm understanding-check-toggle">
-                <summary className="cursor-pointer list-none text-xs font-black uppercase tracking-[0.22em] text-blue-700">
-                  Open the understanding check
-                </summary>
-                <div className="mt-4"><form action={checkUnderstanding} className="mt-5 space-y-4">
+                <form action={checkUnderstanding} className="mt-5 space-y-4">
                   <input type="hidden" name="moduleSlug" value={module.slug} />
                   <input type="hidden" name="lessonSlug" value={lesson.slug} />
 
@@ -2867,8 +2862,6 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </button>
                 </form>
-                </div>
-              </details>
               ) : (
                 <div className="mt-5 rounded-3xl border border-emerald-200 bg-white p-4">
                   <div className="flex items-start gap-3">
@@ -2924,7 +2917,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                       Previous
                     </p>
                     <p className="mt-2 text-sm font-black leading-6 text-slate-950">
-                      {previousItem.getLessonDisplayTitle(lesson)}
+                      {previousItem.lesson.title}
                     </p>
                   </Link>
                 ) : null}
@@ -2937,7 +2930,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                     Next
                   </p>
                   <p className="mt-2 text-sm font-black leading-6 text-slate-950">
-                    {nextItem ? nextItem.getLessonDisplayTitle(lesson) : 'Course overview'}
+                    {nextItem ? nextItem.lesson.title : 'Course overview'}
                   </p>
                 </Link>
               </div>
