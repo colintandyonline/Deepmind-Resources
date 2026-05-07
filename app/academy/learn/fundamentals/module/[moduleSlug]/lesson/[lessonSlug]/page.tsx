@@ -571,7 +571,7 @@ async function saveAcademySkillTrace({
       lessonSlug: context.lesson.slug,
       error: getErrorMessage(error),
     })
-    throw new Error(`Could not save Academy skill trace: ${getErrorMessage(error)}`)
+    return
   }
 
   const { data: existingRows, error: existingError } = await supabase
@@ -590,7 +590,7 @@ async function saveAcademySkillTrace({
       lessonSlug: context.lesson.slug,
       error: getErrorMessage(existingError),
     })
-    throw new Error(`Could not check Academy skill trace: ${getErrorMessage(existingError)}`)
+    return
   }
 
   const existingId = ((existingRows ?? []) as { id: string }[])[0]?.id
@@ -604,7 +604,7 @@ async function saveAcademySkillTrace({
       lessonSlug: context.lesson.slug,
       error: getErrorMessage(fallbackResult.error),
     })
-    throw new Error(`Could not save Academy skill trace: ${getErrorMessage(fallbackResult.error)}`)
+    return
   }
 }
 
@@ -634,7 +634,7 @@ async function recordAcademyProgressEvent({
       lessonSlug: context.lesson.slug,
       error: getErrorMessage(error),
     })
-    throw new Error(`Could not record Academy progress event: ${getErrorMessage(error)}`)
+    return
   }
 }
 
@@ -677,7 +677,7 @@ async function awardAcademyUserReward({
       rewardKey,
       error: getErrorMessage(existingError),
     })
-    throw new Error(`Could not check Academy user reward: ${getErrorMessage(existingError)}`)
+    return
   }
 
   if (((existingRows ?? []) as { id: string }[]).length > 0) {
@@ -700,7 +700,7 @@ async function awardAcademyUserReward({
       lessonSlug: context.lesson.slug,
       error: getErrorMessage(error),
     })
-    throw new Error(`Could not award Academy user reward: ${getErrorMessage(error)}`)
+    return
   }
 }
 
@@ -748,7 +748,7 @@ async function awardAcademyUserRewards({
       rewardKeys,
       error: getErrorMessage(error),
     })
-    throw new Error(`Could not award Academy user rewards: ${getErrorMessage(error)}`)
+    return
   }
 
   for (const rewardKey of rewardKeys) {
