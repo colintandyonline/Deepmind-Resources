@@ -169,6 +169,13 @@ type TopicProfile = {
   constraints: string
 }
 
+function getLessonDisplayTitle(lesson: Lesson) {
+  if (lesson.slug === 'ai-skill-levels-beginner-user-builder-manager') {
+    return 'AI skill stages: beginner, daily user, builder, manager'
+  }
+
+  return lesson.title
+}
 const searchParamDivider = '~~~'
 const academyProgressPathId = 'ai-fundamentals'
 
@@ -1890,7 +1897,7 @@ async function completeLesson(formData: FormData) {
     {
       user_id: user.id,
       module_id: lessonProgressKey,
-      module_title: `${context.module.title} | ${context.lesson.title}`,
+      module_title: `${context.module.title} | ${getLessonDisplayTitle(context.lesson)}`,
       status: 'completed',
       progress_percentage: 100,
       started_at: now,
@@ -1919,7 +1926,7 @@ async function completeLesson(formData: FormData) {
   const skillTraceMetadata = {
     path_id: academyProgressPathId,
     module_title: context.module.title,
-    lesson_title: context.lesson.title,
+    lesson_title: getLessonDisplayTitle(context.lesson),
     lesson_progress_key: lessonProgressKey,
     lesson_version_number: context.lesson.versionNumber,
     signed_off_at: now,
@@ -1983,7 +1990,7 @@ async function completeLesson(formData: FormData) {
     metadata: {
       path_id: academyProgressPathId,
       module_title: context.module.title,
-      lesson_title: context.lesson.title,
+      lesson_title: getLessonDisplayTitle(context.lesson),
       awarded_from: 'lesson_completion',
       signed_off_at: now,
     },
@@ -2061,13 +2068,13 @@ export async function generateMetadata({ params }: LessonPageProps): Promise<Met
   }
 
   return {
-    title: `${context.lesson.title} | AI Fundamentals Lesson | DeepMind Resources Academy`,
+    title: `${getLessonDisplayTitle(context.lesson)} | AI Fundamentals Lesson | DeepMind Resources Academy`,
     description: context.lesson.outcome,
     alternates: {
       canonical: `https://deepmindresources.pro/academy/learn/fundamentals/module/${context.module.slug}/lesson/${context.lesson.slug}`,
     },
     openGraph: {
-      title: `${context.lesson.title} | AI Fundamentals Lesson`,
+      title: `${getLessonDisplayTitle(context.lesson)} | AI Fundamentals Lesson`,
       description: context.lesson.outcome,
       url: `https://deepmindresources.pro/academy/learn/fundamentals/module/${context.module.slug}/lesson/${context.lesson.slug}`,
       siteName: 'DeepMind Resources',
