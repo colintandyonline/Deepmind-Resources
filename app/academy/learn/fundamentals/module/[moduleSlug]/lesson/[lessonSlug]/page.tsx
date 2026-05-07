@@ -822,7 +822,7 @@ function getFallbackTeachingContent(context: LessonContext): LessonTeachingConte
   return {
     mainIdea: lesson.outcome,
     teaching: [
-      `${lesson.title} belongs to ${module.title}. The skill is practical: understand the idea, use it in a task, and know what to check before relying on the result.`,
+      `${getLessonDisplayTitle(lesson)} belongs to ${module.title}. The skill is practical: understand the idea, use it in a task, and know what to check before relying on the result.`,
       lesson.outcome,
       'As you read, focus on behaviour. What would you do differently when writing a prompt, choosing a tool, checking an answer, or deciding whether AI is safe for the task?',
     ],
@@ -2286,7 +2286,7 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
               </div>
 
               <h1 className="mt-5 max-w-4xl text-3xl font-black tracking-tight text-slate-950 sm:text-4xl lg:text-5xl">
-                {lesson.title}
+                {getLessonDisplayTitle(lesson)}
               </h1>
 
               <p className="mt-5 max-w-3xl text-base leading-8 text-slate-600 sm:text-lg">
@@ -2824,7 +2824,13 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
               ) : null}
 
               {!understandingPassed ? (
-                <form action={checkUnderstanding} className="mt-5 space-y-4">
+                
+              <details className="mt-5 rounded-[1.5rem] border border-blue-100 bg-white/80 p-4 shadow-sm understanding-check-toggle">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-xs font-black uppercase tracking-[0.22em] text-blue-700">
+                  <span>Open the understanding check</span>
+                  <span aria-hidden="true">+</span>
+                </summary>
+                <div className="mt-4"><form action={checkUnderstanding} className="mt-5 space-y-4">
                   <input type="hidden" name="moduleSlug" value={module.slug} />
                   <input type="hidden" name="lessonSlug" value={lesson.slug} />
 
@@ -2862,6 +2868,8 @@ export default async function AIFundamentalsLessonPage({ params, searchParams }:
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </button>
                 </form>
+                </div>
+              </details>
               ) : (
                 <div className="mt-5 rounded-3xl border border-emerald-200 bg-white p-4">
                   <div className="flex items-start gap-3">
