@@ -106,3 +106,11 @@ Use the environment **variable names** documented in [AGENTS.md](./AGENTS.md); d
 
 Statistics are a point-in-time GitHub snapshot, not an indication of release readiness.
 <!-- CTDG-ENGINEERING-END -->
+
+<!-- CTDG-TECH-START -->
+## Technology stack
+
+Technologies used in this project.
+
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white) ![React](https://img.shields.io/badge/React-087EA4?style=flat-square&logo=react&logoColor=white) ![Next.js](https://img.shields.io/badge/Next.js-242424?style=flat-square&logo=nextdotjs&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-0891B2?style=flat-square&logo=tailwindcss&logoColor=white) ![Supabase](https://img.shields.io/badge/Supabase-168B68?style=flat-square&logo=supabase&logoColor=white)
+<!-- CTDG-TECH-END -->
