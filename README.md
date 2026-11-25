@@ -87,3 +87,22 @@ Use the environment **variable names** documented in [AGENTS.md](./AGENTS.md); d
 *Learn with clarity. Practise with purpose. Keep improving.*
 
 </div>
+<!-- CTDG-ENGINEERING-START -->
+## CTDG engineering intelligence
+
+![CTDG](https://img.shields.io/badge/CTDG-17466c?style=flat-square) ![ai-education](https://img.shields.io/badge/ai--education-17466c?style=flat-square) ![developer-resources](https://img.shields.io/badge/developer--resources-17466c?style=flat-square) ![learning-platform](https://img.shields.io/badge/learning--platform-17466c?style=flat-square) ![typescript](https://img.shields.io/badge/typescript-17466c?style=flat-square)
+
+![Repository statistics](./assets/ctdg-repository-intelligence.svg)
+
+| Repository detail | Verified snapshot |
+| --- | --- |
+| Primary language | TypeScript |
+| Repository stars | 1 |
+| Forks | 0 |
+| Open pull requests | 2 |
+| Data date (UTC) | 2026-11-25 |
+
+[CT DIGITAL GROUP](https://ctdigital.group/) · [Repository activity](https://github.com/colintandyonline/Deepmind-Resources/activity) · [Pull requests](https://github.com/colintandyonline/Deepmind-Resources/pulls)
+
+Statistics are a point-in-time GitHub snapshot, not an indication of release readiness.
+<!-- CTDG-ENGINEERING-END -->
